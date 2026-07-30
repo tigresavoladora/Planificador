@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Operativo Personal — Semestre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12181c;
+  --ink-soft:#3a444a;
+  --paper:#eef1ee;
+  --paper-raised:#ffffff;
+  --line:#c9d0cb;
+  --pine:#2f4d3f;
+  --pine-soft:#5c7b6c;
+  --amber:#c67a2f;
+  --amber-soft:#f0dcc0;
+  --clay:#a9503b;
+  --sky:#3b6e8f;
+  --lilac:#6a5a8c;
+  --radius:10px;
+  --shadow: 0 1px 2px rgba(18,24,28,0.06), 0 4px 14px rgba(18,24,28,0.05);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--amber-soft);}
+h1,h2,h3{font-family:'Newsreader', serif; font-weight:600; margin:0;}
+.mono{font-family:'IBM Plex Mono', monospace;}
+
+/* ---------- top bar ---------- */
+header.top{
+  position:sticky; top:0; z-index:50;
+  background:var(--paper); border-bottom:1px solid var(--line);
+  padding:18px 28px 0 28px;
+}
+.top-inner{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+.brand{display:flex; align-items:baseline; gap:12px;}
+.brand .mark{
+  width:30px;height:30px;border-radius:7px;background:var(--pine);
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--paper); font-family:'IBM Plex Mono'; font-size:13px; font-weight:600;
+  transform:translateY(4px);
+}
+.brand h1{font-size:22px; letter-spacing:-0.01em;}
+.brand .sub{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono'; letter-spacing:0.02em;}
+nav.tabs{display:flex; gap:2px; margin-top:16px;}
+nav.tabs button{
+  appearance:none; border:none; background:transparent; cursor:pointer;
+  padding:10px 16px; font-family:'IBM Plex Sans'; font-size:13.5px; font-weight:500;
+  color:var(--ink-soft); border-bottom:2px solid transparent; letter-spacing:0.01em;
+}
+nav.tabs button.active{color:var(--pine); border-bottom-color:var(--pine); font-weight:600;}
+nav.tabs button:hover{color:var(--ink);}
+
+main{max-width:1180px; margin:0 auto; padding:28px;}
+.view{display:none;}
+.view.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+.eyebrow{
+  font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--pine-soft); margin-bottom:6px;
+}
+.card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.pad{padding:20px 22px;}
+button.btn{
+  appearance:none; border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+  padding:9px 16px; border-radius:7px; font-family:'IBM Plex Sans'; font-weight:500;
+  font-size:13px; cursor:pointer; letter-spacing:0.01em;
+}
+button.btn:hover{background:#000;}
+button.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+button.btn.ghost:hover{border-color:var(--ink);}
+button.btn.pine{background:var(--pine); border-color:var(--pine);}
+button.btn.small{padding:5px 10px; font-size:12px; border-radius:6px;}
+textarea, input[type=text], input[type=date], input[type=number], select{
+  font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--ink);
+  border:1px solid var(--line); border-radius:6px; padding:8px 10px; background:#fff;
+  width:100%;
+}
+textarea{resize:vertical; min-height:70px; line-height:1.5;}
+label.field-label{
+  display:block; font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:5px; margin-top:12px;
+}
+label.field-label:first-child{margin-top:0;}
+
+/* ---------- Filosofia ---------- */
+.philo-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
+.philo-card{border-top:3px solid var(--pine);}
+.philo-card:nth-child(2){border-top-color:var(--amber);}
+.philo-card:nth-child(3){border-top-color:var(--clay);}
+.philo-card h3{font-size:17px; margin-bottom:10px;}
+.philo-card [contenteditable]{
+  outline:none; font-size:14px; line-height:1.65; color:var(--ink-soft); white-space:pre-wrap;
+}
+.philo-card [contenteditable]:focus{color:var(--ink);}
+.philo-hint{font-size:11px; color:var(--pine-soft); font-family:'IBM Plex Mono'; margin-top:10px;}
+.pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px;}
+.pillar{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px 18px;
+}
+.pillar .dot{width:8px;height:8px;border-radius:50%; margin-bottom:10px;}
+.pillar h4{font-family:'IBM Plex Sans'; font-weight:600; font-size:13.5px; margin:0 0 4px 0;}
+.pillar p{font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
+
+/* ---------- Ramos ---------- */
+.subjects-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px;}
+.subject-card{border-left:5px solid var(--sub-color, var(--pine));}
+.subject-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.subject-card .head input[type=text]{font-family:'Newsreader'; font-size:17px; font-weight:600; border:none; padding:2px 0; background:transparent;}
+.subject-card .head input[type=text]:focus{outline:none; border-bottom:1px solid var(--line);}
+.chip-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+.chip{
+  font-family:'IBM Plex Mono'; font-size:11px; background:var(--paper); border:1px solid var(--line);
+  border-radius:20px; padding:3px 10px; color:var(--ink-soft);
+}
+.test-list{margin-top:6px; display:flex; flex-direction:column; gap:6px;}
+.test-row{display:flex; gap:6px; align-items:center;}
+.test-row input[type=text]{flex:2;}
+.test-row input[type=date]{flex:1.3;}
+.test-row .days-badge{
+  font-family:'IBM Plex Mono'; font-size:10.5px; padding:3px 7px; border-radius:5px; white-space:nowrap;
+  background:var(--amber-soft); color:#7a4d18;
+}
+.test-row .days-badge.urgent{background:#f3d3ca; color:#7a2c17;}
+.icon-btn{
+  appearance:none; border:none; background:transparent; cursor:pointer; color:var(--ink-soft);
+  font-size:15px; padding:2px 6px; border-radius:5px; line-height:1;
+}
+.icon-btn:hover{background:var(--paper); color:var(--clay);}
+.add-subject-btn{
+  border:1.5px dashed var(--line); border-radius:var(--radius); display:flex; align-items:center; justify-content:center;
+  min-height:120px; color:var(--ink-soft); cursor:pointer; font-size:13px; font-family:'IBM Plex Mono';
+}
+.add-subject-btn:hover{border-color:var(--pine); color:var(--pine);}
+
+/* ---------- Semana (grilla horaria) ---------- */
+.week-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
+.week-toolbar .range{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--ink-soft);}
+.week-toolbar .actions{display:flex; gap:8px; flex-wrap:wrap;}
+
+.horario-panel{margin-bottom:18px;}
+.horario-panel h3{font-size:15px; margin-bottom:10px;}
+.class-row{display:grid; grid-template-columns:1.1fr 1.4fr 0.8fr 0.8fr 28px; gap:6px; align-items:center; margin-bottom:6px;}
+
+.add-block-panel{margin-bottom:18px;}
+.add-block-panel h3{font-size:15px; margin-bottom:10px;}
+.add-block-grid{display:grid; grid-template-columns:1fr 1fr 0.7fr 0.7fr 1.6fr auto; gap:8px; align-items:end;}
+.add-block-grid label.field-label{margin-top:0;}
+
+.weeks-wrap{display:flex; flex-direction:column; gap:26px;}
+.week-block .week-label{
+  font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase; letter-spacing:0.07em;
+  color:var(--pine-soft); margin-bottom:8px;
+}
+.time-grid{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+.time-grid-header{display:grid; grid-template-columns:52px repeat(7,1fr);}
+.time-grid-header .day-head{
+  padding:7px 4px; text-align:center; border-bottom:1px solid var(--line); border-left:1px solid var(--line);
+}
+.time-grid-header .day-head span{display:block; font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--ink-soft);}
+.time-grid-header .day-head b{display:block; font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--ink); font-weight:600;}
+.time-grid-header .day-head.weekend{background:#f4f2ec;}
+.time-grid-body{display:grid; grid-template-columns:52px repeat(7,1fr); position:relative;}
+.hour-gutter{position:relative;}
+.hour-gutter .hour-label{
+  position:absolute; right:6px; transform:translateY(-6px); font-family:'IBM Plex Mono'; font-size:9.5px; color:var(--ink-soft);
+}
+.hour-line{position:absolute; left:0; right:0; border-top:1px solid var(--line); opacity:0.55; pointer-events:none;}
+.day-col-grid{position:relative; border-left:1px solid var(--line);}
+.day-col-grid.weekend{background:#f4f2ec;}
+.day-col-grid.drag-over{background:var(--amber-soft);}
+.block-abs{
+  position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 6px; font-size:10.5px; line-height:1.3;
+  overflow:hidden; cursor:grab; border:1px solid transparent; box-shadow:0 1px 2px rgba(0,0,0,0.06);
+}
+.block-abs.fixed{cursor:default; border-style:solid; border-width:1px;}
+.block-abs.done{opacity:0.4; text-decoration:line-through;}
+.block-abs .b-range{font-family:'IBM Plex Mono'; font-size:8.5px; opacity:0.8; display:block;}
+.block-abs .b-actions{position:absolute; top:2px; right:3px; display:none; gap:3px;}
+.block-abs:hover .b-actions{display:flex;}
+.block-abs .b-actions span{cursor:pointer; font-size:10px; opacity:0.75; background:rgba(255,255,255,0.7); border-radius:3px; padding:0 2px;}
+.block-abs .b-actions span:hover{opacity:1;}
+.type-clase{background:#dfe6e2; border-color:#b9c9c0;}
+.type-estudio{background:#e4ecf3; border-color:#c7d8e6;}
+.type-sugerido{background:#f3e9d3; border-color:#e3cc9a; border-style:dashed;}
+.type-gym{background:#f0dcc0; border-color:#e0c294;}
+.type-social{background:#e9e1f0; border-color:#d3c3e6;}
+.type-otro{background:#eee; border-color:#ddd;}
+
+.legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; font-size:11.5px; color:var(--ink-soft);}
+.legend span{display:inline-flex; align-items:center; gap:5px;}
+.legend i{width:10px;height:10px;border-radius:3px; display:inline-block;}
+
+/* ---------- Comida ---------- */
+.meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
+.meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
+.meal-slot{margin-bottom:8px;}
+.meal-slot label.field-label{margin-top:0;}
+
+footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
+
+@media (max-width:900px){
+  .time-grid{overflow-x:auto;}
+  .time-grid-header, .time-grid-body{min-width:760px;}
+  .philo-grid{grid-template-columns:1fr;}
+  .pillars{grid-template-columns:1fr;}
+  .add-block-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="mark">OS</span>
+      <div>
+        <h1>Sistema Operativo Personal</h1>
+        <div class="sub">Ingeniería Civil Informática · 2do semestre</div>
+      </div>
+    </div>
+    <div class="mono" style="font-size:12px; color:var(--ink-soft);" id="today-label"></div>
+  </div>
+  <nav class="tabs">
+    <button data-view="filosofia" class="active">Filosofía</button>
+    <button data-view="ramos">Ramos</button>
+    <button data-view="semana">Semana</button>
+    <button data-view="comida">Comida</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= FILOSOFIA ================= -->
+  <section class="view active" id="view-filosofia">
+    <div class="eyebrow">Parte 1 · Siempre a la vista</div>
+    <div class="philo-grid">
+      <div class="card pad philo-card">
+        <h3>Objetivos</h3>
+        <div contenteditable="true" id="philo-objetivos" data-key="objetivos"></div>
+      </div>
+      <div class="card pad philo-card">
+        <h3>Prioridades</h3>
+        <div contenteditable="true" id="philo-prioridades" data-key="prioridades"></div>
+      </div>
+      <div class="card pad philo-card">
+        <h3>Reglas</h3>
+        <div contenteditable="true" id="philo-reglas" data-key="reglas"></div>
+      </div>
+    </div>
+    <div class="philo-hint">Haz clic en cualquier texto para editarlo. Se guarda automáticamente en este navegador.</div>
+
+    <div class="pillars">
+      <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos por sobre relectura y resúmenes gigantes.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>Gimnasio lunes/miércoles/viernes y psicólogo semanal no son extras: son pilares con el mismo peso que la universidad.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien, ver amigas y llegar al final del semestre sin destruirse mentalmente es parte de "me fue bien".</p></div>
+    </div>
+  </section>
+
+  <!-- ================= RAMOS ================= -->
+  <section class="view" id="view-ramos">
+    <div class="eyebrow">Parte 3 · Ficha por ramo</div>
+    <div class="subjects-grid" id="subjects-grid"></div>
+  </section>
+
+  <!-- ================= SEMANA ================= -->
+  <section class="view" id="view-semana">
+    <div class="eyebrow">Parte 2 y 9 · Vista de dos semanas por horas + predicción</div>
+
+    <div class="card pad add-block-panel">
+      <h3>Agregar bloque a un día puntual</h3>
+      <div class="add-block-grid">
+        <div><label class="field-label">Día</label><input type="date" id="nb-date"></div>
+        <div><label class="field-label">Tipo</label>
+          <select id="nb-type">
+            <option value="estudio">Estudio</option>
+            <option value="gym">Gimnasio</option>
+            <option value="social">Vida social</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div><label class="field-label">Inicio</label><input type="time" id="nb-start" value="18:00"></div>
+        <div><label class="field-label">Fin</label><input type="time" id="nb-end" value="19:00"></div>
+        <div><label class="field-label">Descripción</label><input type="text" id="nb-label" placeholder="Ej: repasar unidad 2"></div>
+        <button class="btn small" id="btn-add-block">+ agregar</button>
+      </div>
+    </div>
+
+    <div class="week-toolbar">
+      <div class="range mono" id="week-range"></div>
+      <div class="actions">
+        <button class="btn ghost small" id="btn-prev-fortnight">← Quincena anterior</button>
+        <button class="btn ghost small" id="btn-next-fortnight">Quincena siguiente →</button>
+        <button class="btn pine small" id="btn-predict">Generar sugerencia de estudio</button>
+      </div>
+    </div>
+    <div class="weeks-wrap" id="weeks-wrap"></div>
+    <div class="legend">
+      <span><i style="background:#dfe6e2"></i>Clase (fija)</span>
+      <span><i style="background:#e4ecf3"></i>Estudio</span>
+      <span><i style="background:#f3e9d3"></i>Sugerido (arrástralo para confirmarlo)</span>
+      <span><i style="background:#f0dcc0"></i>Gimnasio</span>
+      <span><i style="background:#e9e1f0"></i>Vida social</span>
+      <span><i style="background:#eee"></i>Otro</span>
+    </div>
+
+    <div class="card pad horario-panel" style="margin-top:26px;">
+      <h3>Horario de clases (se repite todas las semanas)</h3>
+      <div id="class-template-list"></div>
+      <button class="btn ghost small" id="btn-add-class">+ agregar clase al horario</button>
+    </div>
+  </section>
+
+  <!-- ================= COMIDA ================= -->
+  <section class="view" id="view-comida">
+    <div class="eyebrow">Parte 6 · Minuta editable</div>
+    <div class="meals-grid" id="meals-grid"></div>
+  </section>
+
+</main>
+
+<footer class="foot">Todo se guarda localmente en este navegador (localStorage). Sin servidor, sin cuentas.</footer>
+
+<script>
+/* ============================================================
+   ESTADO Y PERSISTENCIA
+   ============================================================ */
+const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const WEEKEND = [5,6];
+
+function loadJSON(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  }catch(e){ return fallback; }
+}
+function saveJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+/* --- Filosofía --- */
+const defaultPhilo = {
+  objetivos: "Aprobar los 5 ramos (Matemática II es prioridad máxima, no se puede reprobar). Terminar el semestre pudiendo decir: me fue bien, aprendí, dormí bien la mayoría del tiempo, fui constante, entrené y no me destruí mentalmente.",
+  prioridades: "1) Matemática II. 2) El resto de los ramos, repartidos según carga de pruebas. 3) Gimnasio lunes/miércoles/viernes. 4) Psicólogo, sin saltarlo. 5) Vida social con amigas.",
+  reglas: "No estudiar más, estudiar mejor: active recall, repetición espaciada, ejercicios y certámenes antiguos por sobre releer o hacer resúmenes gigantes. Las sesiones de estudio con compañeras siempre tienen un objetivo concreto, nunca son solo para conversar. El psicólogo no es un recurso de emergencia, es parte fija del sistema."
+};
+const philo = loadJSON('philosophy', defaultPhilo);
+
+/* --- Ramos --- */
+const defaultSubjects = [
+  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', schedule:'Lunes, martes, miércoles y jueves (bloques por confirmar) + ayudantía jueves', content:'', tests:[]},
+  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
+  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
+  {id:uid(), name:'Análisis y Diseño de Software', color:'#5c7b6c', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
+  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
+];
+let subjects = loadJSON('subjects', defaultSubjects);
+
+/* --- Bloques puntuales (fecha específica) --- */
+let blocks = loadJSON('blocks', []); // {id, date:'YYYY-MM-DD', type, subjectId, label, start:'HH:MM', end:'HH:MM', done}
+// migración de bloques viejos sin start/end (versión anterior sin grilla horaria)
+blocks.forEach(b=>{ if(!b.start){ b.start='18:00'; b.end='19:00'; } });
+
+/* --- Horario de clases fijo, se repite cada semana --- */
+// day: 0=Lunes ... 6=Domingo
+const defaultClassTemplate = [
+  {id:uid(), day:0, subjectId:null, subjectName:'Matemática II', start:'09:40', end:'10:50'},
+  {id:uid(), day:1, subjectId:null, subjectName:'Arquitectura y Organización de Computadores', start:'08:15', end:'09:25'},
+  {id:uid(), day:1, subjectId:null, subjectName:'Inglés 6', start:'09:40', end:'10:50'},
+  {id:uid(), day:1, subjectId:null, subjectName:'Análisis y Diseño de Software', start:'11:05', end:'12:15'},
+  {id:uid(), day:1, subjectId:null, subjectName:'Algoritmos y Complejidad', start:'14:40', end:'15:50'},
+  {id:uid(), day:2, subjectId:null, subjectName:'Matemática II', start:'08:15', end:'09:25'},
+  {id:uid(), day:3, subjectId:null, subjectName:'Análisis y Diseño de Software', start:'08:15', end:'09:25'},
+  {id:uid(), day:3, subjectId:null, subjectName:'Algoritmos y Complejidad', start:'09:40', end:'10:50'},
+  {id:uid(), day:3, subjectId:null, subjectName:'Matemática II', start:'11:05', end:'12:15'},
+  {id:uid(), day:3, subjectId:null, subjectName:'Inglés 6', start:'14:40', end:'15:15'},
+  {id:uid(), day:3, subjectId:null, subjectName:'Ayudantía Matemática II', start:'16:05', end:'17:15'},
+];
+let classTemplate = loadJSON('classTemplate', defaultClassTemplate);
+
+/* --- Comida --- */
+const MEAL_SLOTS = ['Colación pre-gym','Almuerzo','Cena'];
+let meals = loadJSON('meals', Object.fromEntries(DAYS.map(d=>[d, Object.fromEntries(MEAL_SLOTS.map(s=>[s,'']))])));
+
+/* --- fecha ancla: lunes de la primera semana visible --- */
+function mondayOf(d){
+  const date = new Date(d);
+  const day = (date.getDay()+6)%7; // 0=lunes
+  date.setDate(date.getDate()-day);
+  date.setHours(0,0,0,0);
+  return date;
+}
+let fortnightStart = loadJSON('fortnightStart', mondayOf(new Date()).toISOString());
+fortnightStart = new Date(fortnightStart);
+
+function fmt(d){ return d.toISOString().slice(0,10); }
+function fmtLong(d){ return d.toLocaleDateString('es-CL', {day:'numeric', month:'short'}); }
+
+document.getElementById('today-label').textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
+
+/* ============================================================
+   NAV
+   ============================================================ */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+  });
+});
+
+/* ============================================================
+   FILOSOFIA
+   ============================================================ */
+['objetivos','prioridades','reglas'].forEach(k=>{
+  const el = document.getElementById('philo-'+k);
+  el.textContent = philo[k];
+  el.addEventListener('input', ()=>{
+    philo[k] = el.textContent;
+    saveJSON('philosophy', philo);
+  });
+});
+
+/* ============================================================
+   RAMOS
+   ============================================================ */
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(dateStr+'T00:00:00');
+  return Math.round((target-today)/86400000);
+}
+
+function renderSubjects(){
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = '';
+  subjects.forEach(sub=>{
+    const card = document.createElement('div');
+    card.className = 'card pad subject-card';
+    card.style.setProperty('--sub-color', sub.color);
+    card.innerHTML = `
+      <div class="head">
+        <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
+        <span class="icon-btn" title="Eliminar ramo" data-action="delete">✕</span>
+      </div>
+      <div class="chip-row">
+        <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
+      </div>
+      <label class="field-label">Horario</label>
+      <input type="text" value="${escapeAttr(sub.schedule)}" data-field="schedule">
+      <label class="field-label">Contenidos vistos / por ver</label>
+      <textarea data-field="content" placeholder="Ej: unidad 1 — límites y continuidad...">${escapeAttr(sub.content)}</textarea>
+      <label class="field-label">Fechas de pruebas</label>
+      <div class="test-list" data-testlist></div>
+      <button class="btn ghost small" style="margin-top:8px" data-action="add-test">+ agregar prueba</button>
+    `;
+    grid.appendChild(card);
+
+    // field bindings
+    card.querySelectorAll('[data-field]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        sub[inp.dataset.field] = inp.value;
+        saveJSON('subjects', subjects);
+      });
+    });
+    card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
+      if(confirm(`¿Eliminar ${sub.name}?`)){
+        subjects = subjects.filter(s=>s.id!==sub.id);
+        saveJSON('subjects', subjects);
+        renderSubjects();
+      }
+    });
+    card.querySelector('[data-action="add-test"]').addEventListener('click', ()=>{
+      sub.tests.push({id:uid(), name:'', date:''});
+      saveJSON('subjects', subjects);
+      renderTests(card, sub);
+    });
+    renderTests(card, sub);
+  });
+
+  // add-subject tile
+  const addTile = document.createElement('div');
+  addTile.className = 'add-subject-btn';
+  addTile.textContent = '+ agregar ramo';
+  addTile.addEventListener('click', ()=>{
+    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', schedule:'', content:'', tests:[]});
+    saveJSON('subjects', subjects);
+    renderSubjects();
+  });
+  grid.appendChild(addTile);
+}
+
+function renderTests(card, sub){
+  const list = card.querySelector('[data-testlist]');
+  list.innerHTML = '';
+  sub.tests.forEach(test=>{
+    const row = document.createElement('div');
+    row.className = 'test-row';
+    const du = daysUntil(test.date);
+    let badge = '';
+    if(du !== null){
+      const label = du<0 ? 'pasó' : (du===0 ? 'hoy' : `en ${du}d`);
+      badge = `<span class="days-badge ${du!==null && du>=0 && du<=7 ? 'urgent':''}">${label}</span>`;
+    }
+    row.innerHTML = `
+      <input type="text" placeholder="Ej: Certamen 1" value="${escapeAttr(test.name)}" data-tf="name">
+      <input type="date" value="${test.date||''}" data-tf="date">
+      ${badge}
+      <span class="icon-btn" data-taction="delete">✕</span>
+    `;
+    list.appendChild(row);
+    row.querySelectorAll('[data-tf]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        test[inp.dataset.tf] = inp.value;
+        saveJSON('subjects', subjects);
+        renderTests(card, sub);
+      });
+    });
+    row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
+      sub.tests = sub.tests.filter(t=>t.id!==test.id);
+      saveJSON('subjects', subjects);
+      renderTests(card, sub);
+    });
+  });
+}
+
+function randomColor(){
+  const palette = ['#2f4d3f','#c67a2f','#a9503b','#3b6e8f','#6a5a8c','#5c7b6c'];
+  return palette[Math.floor(Math.random()*palette.length)];
+}
+function escapeAttr(str){
+  return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+/* ============================================================
+   SEMANA (2 semanas, drag & drop)
+   ============================================================ */
+const HOUR_START = 5, HOUR_END = 23; // grilla visible 05:00–23:00
+const PX_PER_HOUR = 48;
+const GRID_HEIGHT = (HOUR_END-HOUR_START)*PX_PER_HOUR;
+
+function timeToMin(t){ const [h,m] = t.split(':').map(Number); return h*60+m; }
+function minToY(min){ return (min - HOUR_START*60) * (PX_PER_HOUR/60); }
+function yToTime(y){
+  let min = HOUR_START*60 + y/(PX_PER_HOUR/60);
+  min = Math.round(min/15)*15; // snap a 15 min
+  min = Math.max(HOUR_START*60, Math.min(HOUR_END*60-15, min));
+  const h = Math.floor(min/60), m = min%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+function addMin(t, delta){
+  let min = timeToMin(t)+delta;
+  const h = Math.floor(min/60), m = min%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+/* --- Horario fijo de clases: panel editor --- */
+function linkClassSubjects(){
+  classTemplate.forEach(c=>{
+    if(!c.subjectId){
+      const match = subjects.find(s=>s.name===c.subjectName);
+      if(match) c.subjectId = match.id;
+    }
+  });
+}
+function renderClassTemplate(){
+  linkClassSubjects();
+  const list = document.getElementById('class-template-list');
+  list.innerHTML = '';
+  classTemplate.forEach(c=>{
+    const row = document.createElement('div');
+    row.className = 'class-row';
+    row.innerHTML = `
+      <select data-cf="day">${DAYS.slice(0,5).map((d,i)=>`<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('')}</select>
+      <select data-cf="subjectId">${subjects.map(s=>`<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${escapeAttr(s.name)}</option>`).join('')}</select>
+      <input type="time" data-cf="start" value="${c.start}">
+      <input type="time" data-cf="end" value="${c.end}">
+      <span class="icon-btn" data-caction="delete" title="Eliminar">✕</span>
+    `;
+    list.appendChild(row);
+    row.querySelectorAll('[data-cf]').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const f = inp.dataset.cf;
+        c[f] = f==='day' ? Number(inp.value) : inp.value;
+        if(f==='subjectId'){ const s = subjects.find(x=>x.id===inp.value); c.subjectName = s ? s.name : ''; }
+        saveJSON('classTemplate', classTemplate);
+        renderWeeks();
+      });
+    });
+    row.querySelector('[data-caction="delete"]').addEventListener('click', ()=>{
+      classTemplate = classTemplate.filter(x=>x.id!==c.id);
+      saveJSON('classTemplate', classTemplate);
+      renderClassTemplate();
+      renderWeeks();
+    });
+  });
+}
+document.getElementById('btn-add-class').addEventListener('click', ()=>{
+  classTemplate.push({id:uid(), day:0, subjectId:subjects[0]?.id||null, subjectName:subjects[0]?.name||'', start:'09:00', end:'10:00'});
+  saveJSON('classTemplate', classTemplate);
+  renderClassTemplate();
+  renderWeeks();
+});
+
+/* --- Agregar bloque puntual --- */
+document.getElementById('btn-add-block').addEventListener('click', ()=>{
+  const date = document.getElementById('nb-date').value;
+  const type = document.getElementById('nb-type').value;
+  const start = document.getElementById('nb-start').value;
+  const end = document.getElementById('nb-end').value;
+  const label = document.getElementById('nb-label').value.trim();
+  if(!date || !label){ alert('Falta el día o la descripción.'); return; }
+  blocks.push({id:uid(), date, type, label, start, end, done:false});
+  saveJSON('blocks', blocks);
+  document.getElementById('nb-label').value='';
+  renderWeeks();
+});
+
+function ensureDefaultGymBlocks(){
+  for(let i=0;i<14;i++){
+    const d = new Date(fortnightStart); d.setDate(d.getDate()+i);
+    const dow = (d.getDay()+6)%7;
+    if([0,2,4].includes(dow)){
+      const dateStr = fmt(d);
+      const exists = blocks.some(b=>b.date===dateStr && b.type==='gym');
+      if(!exists){
+        blocks.push({id:uid(), date:dateStr, type:'gym', label:'Gimnasio · Full Body', start:'18:00', end:'19:15', done:false});
+      }
+    }
+  }
+  saveJSON('blocks', blocks);
+}
+
+function renderWeekRange(){
+  const end = new Date(fortnightStart); end.setDate(end.getDate()+13);
+  document.getElementById('week-range').textContent = `${fmtLong(fortnightStart)} — ${fmtLong(end)}`;
+  document.getElementById('nb-date').min = fmt(fortnightStart);
+  document.getElementById('nb-date').max = fmt(end);
+  if(!document.getElementById('nb-date').value) document.getElementById('nb-date').value = fmt(new Date());
+}
+
+function renderWeeks(){
+  ensureDefaultGymBlocks();
+  renderClassTemplate();
+  renderWeekRange();
+  const wrap = document.getElementById('weeks-wrap');
+  wrap.innerHTML = '';
+  for(let w=0; w<2; w++){
+    const weekDiv = document.createElement('div');
+    weekDiv.className = 'week-block';
+    const weekMonday = new Date(fortnightStart); weekMonday.setDate(weekMonday.getDate()+w*7);
+    weekDiv.innerHTML = `<div class="week-label">Semana ${w+1} · desde ${fmtLong(weekMonday)}</div>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'time-grid';
+
+    // header
+    const header = document.createElement('div');
+    header.className = 'time-grid-header';
+    header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d=>{
+      const date = new Date(weekMonday); date.setDate(date.getDate()+d);
+      return `<div class="day-head${WEEKEND.includes(d)?' weekend':''}"><span>${fmtLong(date)}</span><b>${DAYS[d]}</b></div>`;
+    }).join('');
+    grid.appendChild(header);
+
+    // body
+    const body = document.createElement('div');
+    body.className = 'time-grid-body';
+    body.style.height = GRID_HEIGHT+'px';
+
+    const gutter = document.createElement('div');
+    gutter.className = 'hour-gutter';
+    gutter.style.height = GRID_HEIGHT+'px';
+    for(let h=HOUR_START; h<=HOUR_END; h++){
+      const lbl = document.createElement('div');
+      lbl.className = 'hour-label';
+      lbl.style.top = minToY(h*60)+'px';
+      lbl.textContent = String(h).padStart(2,'0')+':00';
+      gutter.appendChild(lbl);
+    }
+    body.appendChild(gutter);
+
+    for(let d=0; d<7; d++){
+      const date = new Date(weekMonday); date.setDate(date.getDate()+d);
+      const dateStr = fmt(date);
+      const col = document.createElement('div');
+      col.className = 'day-col-grid' + (WEEKEND.includes(d) ? ' weekend':'');
+      col.style.height = GRID_HEIGHT+'px';
+      col.dataset.date = dateStr;
+      col.dataset.day = d;
+      for(let h=HOUR_START; h<=HOUR_END; h++){
+        const line = document.createElement('div');
+        line.className = 'hour-line';
+        line.style.top = minToY(h*60)+'px';
+        col.appendChild(line);
+      }
+      body.appendChild(col);
+      setupDropZone(col);
+      renderDayColumnBlocks(col, dateStr, d);
+    }
+    grid.appendChild(body);
+    weekDiv.appendChild(grid);
+    wrap.appendChild(weekDiv);
+  }
+}
+
+function layoutOverlaps(items){
+  // items: [{start,end,...}] en minutos -> asigna col/cols para dibujarlos lado a lado si se topan
+  items.sort((a,b)=>a.start-b.start);
+  items.forEach(it=>{ it.col=0; it.cols=1; });
+  for(let i=0;i<items.length;i++){
+    const cluster = [items[i]];
+    let maxEnd = items[i].end;
+    for(let j=i+1;j<items.length;j++){
+      if(items[j].start < maxEnd){ cluster.push(items[j]); maxEnd = Math.max(maxEnd, items[j].end); }
+      else break;
+    }
+    if(cluster.length>1){
+      cluster.forEach((it,idx)=>{ it.col=idx; it.cols=cluster.length; });
+    }
+  }
+  return items;
+}
+
+function renderDayColumnBlocks(col, dateStr, dayIdx){
+  const fixed = classTemplate.filter(c=>c.day===dayIdx).map(c=>({
+    start:timeToMin(c.start), end:timeToMin(c.end), kind:'clase', ref:c
+  }));
+  const movable = blocks.filter(b=>b.date===dateStr).map(b=>({
+    start:timeToMin(b.start), end:timeToMin(b.end), kind:'movable', ref:b
+  }));
+  const items = layoutOverlaps([...fixed, ...movable]);
+  items.forEach(it=>{
+    const el = it.kind==='clase' ? renderClassBlock(it) : renderMovableBlock(it);
+    const top = minToY(it.start);
+    const height = Math.max(18, minToY(it.end)-top);
+    const widthPct = 100/it.cols;
+    el.style.top = top+'px';
+    el.style.height = height+'px';
+    el.style.left = `calc(${it.col*widthPct}% + 2px)`;
+    el.style.width = `calc(${widthPct}% - 4px)`;
+    col.appendChild(el);
+  });
+}
+
+function renderClassBlock(it){
+  const c = it.ref;
+  const sub = subjects.find(s=>s.id===c.subjectId);
+  const el = document.createElement('div');
+  el.className = 'block-abs type-clase fixed';
+  if(sub) el.style.borderColor = sub.color;
+  el.innerHTML = `<span class="b-range">${c.start}–${c.end}</span>${escapeAttr(sub?sub.name:c.subjectName)}`;
+  return el;
+}
+
+function renderMovableBlock(it){
+  const b = it.ref;
+  const el = document.createElement('div');
+  el.className = `block-abs type-${b.type}` + (b.done?' done':'');
+  el.draggable = true;
+  el.dataset.id = b.id;
+  el.innerHTML = `
+    <div class="b-actions">
+      <span data-baction="edit" title="Editar">✎</span>
+      <span data-baction="toggle" title="Marcar cumplido">✓</span>
+      <span data-baction="delete" title="Eliminar">✕</span>
+    </div>
+    <span class="b-range">${b.start}–${b.end}</span>${escapeAttr(b.label)}
+  `;
+  el.addEventListener('dragstart', e=>{
+    e.dataTransfer.setData('text/plain', b.id);
+    setTimeout(()=>el.style.opacity='0.3',0);
+  });
+  el.addEventListener('dragend', ()=> el.style.opacity='1');
+  el.querySelector('[data-baction="toggle"]').addEventListener('click', ()=>{
+    b.done = !b.done; saveJSON('blocks', blocks); renderWeeks();
+  });
+  el.querySelector('[data-baction="delete"]').addEventListener('click', ()=>{
+    blocks = blocks.filter(x=>x.id!==b.id); saveJSON('blocks', blocks); renderWeeks();
+  });
+  el.querySelector('[data-baction="edit"]').addEventListener('click', ()=>{
+    const newLabel = prompt('Descripción', b.label); if(newLabel===null) return;
+    const newStart = prompt('Hora de inicio (HH:MM)', b.start); if(newStart===null) return;
+    const newEnd = prompt('Hora de término (HH:MM)', b.end); if(newEnd===null) return;
+    b.label = newLabel.trim() || b.label; b.start = newStart; b.end = newEnd;
+    saveJSON('blocks', blocks); renderWeeks();
+  });
+  return el;
+}
+
+function setupDropZone(col){
+  col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('drag-over'); });
+  col.addEventListener('dragleave', ()=> col.classList.remove('drag-over'));
+  col.addEventListener('drop', e=>{
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    const id = e.dataTransfer.getData('text/plain');
+    const b = blocks.find(x=>x.id===id);
+    if(b){
+      const rect = col.getBoundingClientRect();
+      const offsetY = e.clientY - rect.top;
+      const duration = timeToMin(b.end)-timeToMin(b.start);
+      const newStart = yToTime(offsetY);
+      b.date = col.dataset.date;
+      b.start = newStart;
+      b.end = addMin(newStart, duration);
+      if(b.type==='sugerido') b.type='estudio'; // al moverla manualmente, la confirmamos
+      saveJSON('blocks', blocks);
+      renderWeeks();
+    }
+  });
+}
+
+document.getElementById('btn-prev-fortnight').addEventListener('click', ()=>{
+  fortnightStart.setDate(fortnightStart.getDate()-14);
+  saveJSON('fortnightStart', fortnightStart.toISOString());
+  renderWeeks();
+});
+document.getElementById('btn-next-fortnight').addEventListener('click', ()=>{
+  fortnightStart.setDate(fortnightStart.getDate()+14);
+  saveJSON('fortnightStart', fortnightStart.toISOString());
+  renderWeeks();
+});
+
+/* ---------- Predicción ---------- */
+// Regla simple y transparente:
+// - Para cada ramo con prueba dentro de los próximos 14 días, urgencia = peso_ramo / max(días_hasta_prueba, 1)
+// - Mate II tiene peso extra por ser prioridad máxima
+// - Para cada bloque sugerido busca un hueco real (90 min) en la grilla horaria de ese día,
+//   revisando las clases fijas y los bloques ya puestos para no chocar con nada.
+function getOccupiedRanges(dateStr, dayIdx){
+  const fixed = classTemplate.filter(c=>c.day===dayIdx).map(c=>[timeToMin(c.start), timeToMin(c.end)]);
+  const movable = blocks.filter(b=>b.date===dateStr).map(b=>[timeToMin(b.start), timeToMin(b.end)]);
+  return [...fixed, ...movable];
+}
+function findFreeSlot(dateStr, dayIdx, durationMin){
+  const occupied = getOccupiedRanges(dateStr, dayIdx);
+  const searchStarts = [];
+  for(let m=17*60; m<=HOUR_END*60-durationMin; m+=30) searchStarts.push(m); // prioriza tarde/noche
+  for(let m=HOUR_START*60; m<17*60; m+=30) searchStarts.push(m); // luego el resto del día
+  for(const start of searchStarts){
+    const end = start+durationMin;
+    const overlaps = occupied.some(([os,oe])=> start<oe && end>os);
+    if(!overlaps){
+      const h=Math.floor(start/60), m=start%60;
+      const h2=Math.floor(end/60), m2=end%60;
+      return [String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'), String(h2).padStart(2,'0')+':'+String(m2).padStart(2,'0')];
+    }
+  }
+  return null;
+}
+
+document.getElementById('btn-predict').addEventListener('click', ()=>{
+  blocks = blocks.filter(b=>b.type!=='sugerido');
+
+  const horizon = 14;
+  const weighted = subjects.map(sub=>{
+    const upcoming = sub.tests
+      .map(t=>({...t, d: daysUntil(t.date)}))
+      .filter(t=>t.d!==null && t.d>=0 && t.d<=horizon)
+      .sort((a,b)=>a.d-b.d);
+    if(upcoming.length===0) return null;
+    const nearest = upcoming[0];
+    const priorityBoost = /matemática/i.test(sub.name) ? 1.6 : 1;
+    const urgency = priorityBoost / Math.max(nearest.d, 1);
+    return {sub, nearest, urgency};
+  }).filter(Boolean);
+
+  if(weighted.length===0){
+    alert('Agrega al menos una fecha de prueba en "Ramos" (dentro de los próximos 14 días) para generar sugerencias.');
+    return;
+  }
+
+  const totalUrgency = weighted.reduce((s,w)=>s+w.urgency,0);
+  const totalBlocksToPlace = Math.round(weighted.length*2.5);
+  weighted.sort((a,b)=>b.urgency-a.urgency);
+
+  weighted.forEach(w=>{
+    const share = Math.max(1, Math.round((w.urgency/totalUrgency)*totalBlocksToPlace));
+    let placed = 0;
+    for(let i=0;i<14 && placed<share;i++){
+      const d = new Date(fortnightStart); d.setDate(d.getDate()+i);
+      const dow = (d.getDay()+6)%7;
+      const dateStr = fmt(d);
+      const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
+      if(alreadyThisSubject) continue;
+      const slot = findFreeSlot(dateStr, dow, 90);
+      if(!slot) continue;
+      blocks.push({
+        id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
+        label:`Estudiar ${w.sub.name} (${w.nearest.name||'prueba'} en ${w.nearest.d}d)`,
+        start:slot[0], end:slot[1], done:false
+      });
+      placed++;
+    }
+  });
+
+  saveJSON('blocks', blocks);
+  renderWeeks();
+});
+
+/* ============================================================
+   COMIDA
+   ============================================================ */
+function renderMeals(){
+  const grid = document.getElementById('meals-grid');
+  grid.innerHTML = '';
+  DAYS.slice(0,7).forEach(day=>{
+    const div = document.createElement('div');
+    div.className = 'card pad meal-day';
+    div.innerHTML = `<h4>${day}</h4>`;
+    MEAL_SLOTS.forEach(slot=>{
+      const wrap = document.createElement('div');
+      wrap.className = 'meal-slot';
+      wrap.innerHTML = `<label class="field-label">${slot}</label><input type="text" value="${escapeAttr(meals[day][slot])}">`;
+      const input = wrap.querySelector('input');
+      input.addEventListener('input', ()=>{
+        meals[day][slot] = input.value;
+        saveJSON('meals', meals);
+      });
+      div.appendChild(wrap);
+    });
+    grid.appendChild(div);
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+saveJSON('subjects', subjects);
+linkClassSubjects();
+saveJSON('classTemplate', classTemplate);
+renderSubjects();
+renderWeeks();
+renderMeals();
+</script>
+</body>
+</html>
