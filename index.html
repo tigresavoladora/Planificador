@@ -512,43 +512,108 @@ const philo = loadJSON('philosophy', defaultPhilo);
 
 /* --- Ramos --- */
 const defaultSubjects = [
-  {id:uid(), name:'Ramo 1', color:'#a9503b', credits:'', schedule:'', content:'', tests:[]},
-  {id:uid(), name:'Ramo 2', color:'#3b6e8f', credits:'', schedule:'', content:'', tests:[]},
-  {id:uid(), name:'Ramo 3', color:'#c67a2f', credits:'', schedule:'', content:'', tests:[]},
-  {id:uid(), name:'Ramo 4', color:'#5c7b6c', credits:'', schedule:'', content:'', tests:[]},
-  {id:uid(), name:'Ramo 5', color:'#6a5a8c', credits:'', schedule:'', content:'', tests:[]},
+  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Análisis y Diseño de Software', color:'#2f4d3f', credits:'', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', schedule:'', topics:[], tests:[]},
 ];
-let subjects = loadJSON('subjects', defaultSubjects);
-// migración: convertir el campo "content" viejo en una lista de temas, y agregar temario a las pruebas
-subjects.forEach(s=>{
-  if(!s.topics){
-    s.topics = (s.content && s.content.trim()) ? [{id:uid(), name:s.content.trim().slice(0,120), status:'sinver'}] : [];
-  }
-  (s.tests||[]).forEach(t=>{ if(!t.temario) t.temario = []; });
-});
+
+/* Normaliza un arreglo de ramos para que siempre tenga la forma correcta,
+   sin importar si viene de localStorage, de la nube, o de una versión vieja.
+   Se llama SIEMPRE que los ramos se reemplazan por completo (carga inicial o sync). */
+function normalizeSubjects(arr){
+  if(!Array.isArray(arr)) return JSON.parse(JSON.stringify(defaultSubjects));
+  arr.forEach(s=>{
+    if(!s.id) s.id = uid();
+    if(!s.name) s.name = 'Ramo sin nombre';
+    if(!s.color) s.color = randomColor();
+    if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
+    if(!Array.isArray(s.topics)){
+      s.topics = (s.content && String(s.content).trim()) ? [{id:uid(), name:String(s.content).trim().slice(0,120), status:'sinver'}] : [];
+    }
+    s.topics.forEach(t=>{
+      if(!t.id) t.id = uid();
+      if(!t.status || !['sinver','debil','dominado'].includes(t.status)) t.status = 'sinver';
+    });
+    if(!Array.isArray(s.tests)) s.tests = [];
+    s.tests.forEach(t=>{
+      if(!t.id) t.id = uid();
+      if(!Array.isArray(t.temario)) t.temario = [];
+      // filtra referencias a temas que ya no existen, para que nunca truene el conteo
+      t.temario = t.temario.filter(tid => s.topics.some(top=>top.id===tid));
+    });
+  });
+  return arr;
+}
+let subjects = normalizeSubjects(loadJSON('subjects', JSON.parse(JSON.stringify(defaultSubjects))));
 
 /* --- Bloques puntuales (fecha específica) --- */
-let blocks = loadJSON('blocks', []); // {id, date:'YYYY-MM-DD', type, subjectId, label, start:'HH:MM', end:'HH:MM', done}
-// migración de bloques viejos sin start/end (versión anterior sin grilla horaria)
-blocks.forEach(b=>{ if(!b.start){ b.start='18:00'; b.end='19:00'; } });
+function normalizeBlocks(arr){
+  if(!Array.isArray(arr)) return [];
+  arr.forEach(b=>{
+    if(!b.id) b.id = uid();
+    if(!b.start) b.start = '18:00';
+    if(!b.end) b.end = '19:00';
+    if(typeof b.done !== 'boolean') b.done = false;
+    if(!b.type) b.type = 'otro';
+  });
+  return arr;
+}
+let blocks = normalizeBlocks(loadJSON('blocks', []));
 
 /* --- Horario de clases fijo, se repite cada semana --- */
-// day: 0=Lunes ... 6=Domingo. Vacío por defecto: cada quien agrega el suyo desde la sección Semana.
-const defaultClassTemplate = [];
-let classTemplate = loadJSON('classTemplate', defaultClassTemplate);
+// day: 0=Lunes ... 4=Viernes.
+// Los bloques marcados como "tope: true" son horarios que se cruzan (aún no resueltos);
+// se dibujan uno al lado del otro para que se note el conflicto de horario.
+const defaultClassTemplate = [
+  {id:uid(), day:0, subjectName:'Matemática II', start:'09:40', end:'10:50'},
+
+  {id:uid(), day:1, subjectName:'Arquitectura y Organización de Computadores', start:'08:15', end:'09:25'},
+  {id:uid(), day:1, subjectName:'Inglés 6', start:'09:40', end:'10:50'},
+  {id:uid(), day:1, subjectName:'Análisis y Diseño de Software', start:'11:05', end:'12:15', tope:true},
+  {id:uid(), day:1, subjectName:'Matemática II', start:'11:05', end:'12:15', tope:true},
+  {id:uid(), day:1, subjectName:'Algoritmos y Complejidad', start:'14:40', end:'15:50'},
+
+  {id:uid(), day:2, subjectName:'Matemática II', start:'08:15', end:'09:25'},
+
+  {id:uid(), day:3, subjectName:'Análisis y Diseño de Software', start:'08:15', end:'09:25'},
+  {id:uid(), day:3, subjectName:'Algoritmos y Complejidad', start:'09:40', end:'10:50', tope:true},
+  {id:uid(), day:3, subjectName:'Arquitectura y Organización de Computadores', start:'09:40', end:'10:50', tope:true},
+  {id:uid(), day:3, subjectName:'Matemática II', start:'11:05', end:'12:15'},
+  {id:uid(), day:3, subjectName:'Inglés 6', start:'14:40', end:'15:50'},
+  {id:uid(), day:3, subjectName:'Matemática II', start:'16:05', end:'17:15', label:'Ayudantía'},
+];
+function normalizeClassTemplate(arr){
+  if(!Array.isArray(arr)) return [];
+  arr.forEach(c=>{
+    if(!c.id) c.id = uid();
+    if(typeof c.day !== 'number') c.day = 0;
+    if(!c.start) c.start = '09:00';
+    if(!c.end) c.end = '10:00';
+  });
+  return arr;
+}
+let classTemplate = normalizeClassTemplate(loadJSON('classTemplate', JSON.parse(JSON.stringify(defaultClassTemplate))));
 
 /* --- Comida --- */
 const legacyMealSlots = ['Colación pre-gym','Almuerzo','Cena'];
-let meals = loadJSON('meals', Object.fromEntries(DAYS.map(d=>[d, []])));
-// migración: del formato viejo {dia: {slot: texto}} al nuevo {dia: [{id,name,value}]}
-DAYS.forEach(d=>{
-  const val = meals[d];
-  if(val && !Array.isArray(val)){
-    meals[d] = legacyMealSlots.filter(slot=>val[slot] && val[slot].trim()).map(slot=>({id:uid(), name:slot, value:val[slot]}));
-  }else if(!val){
-    meals[d] = [];
+function normalizeMeals(obj){
+  const result = Object.fromEntries(DAYS.map(d=>[d, []]));
+  if(obj && typeof obj === 'object'){
+    DAYS.forEach(d=>{
+      const val = obj[d];
+      if(Array.isArray(val)){
+        result[d] = val.map(e=>({id:e.id||uid(), name:e.name||'', value:e.value||''}));
+      }else if(val && typeof val === 'object'){
+        // formato viejo: {dia: {slot: texto}}
+        result[d] = legacyMealSlots.filter(slot=>val[slot] && String(val[slot]).trim()).map(slot=>({id:uid(), name:slot, value:val[slot]}));
+      }
+    });
   }
-});
+  return result;
+}
+let meals = normalizeMeals(loadJSON('meals', null));
 
 /* --- fecha ancla: lunes de la primera semana visible --- */
 function mondayOf(d){
@@ -610,10 +675,10 @@ function getFullState(){
 function applyFullState(state){
   suppressCloudSync = true;
   if(state.philosophy) Object.assign(philo, state.philosophy);
-  if(state.subjects) subjects = state.subjects;
-  if(state.blocks) blocks = state.blocks;
-  if(state.classTemplate) classTemplate = state.classTemplate;
-  if(state.meals) meals = state.meals;
+  if(state.subjects) subjects = normalizeSubjects(state.subjects);
+  if(state.blocks) blocks = normalizeBlocks(state.blocks);
+  if(state.classTemplate) classTemplate = normalizeClassTemplate(state.classTemplate);
+  if(state.meals) meals = normalizeMeals(state.meals);
   if(state.fortnightStart) fortnightStart = new Date(state.fortnightStart);
   if(state.gymSeededDates) gymSeededDates = new Set(state.gymSeededDates);
   localStorage.setItem('philosophy', JSON.stringify(philo));
@@ -627,11 +692,15 @@ function applyFullState(state){
   suppressCloudSync = false;
 }
 function renderAll(){
-  renderPhilosophy();
-  renderSubjects();
-  renderWeeks();
-  renderMeals();
-  renderAsistente();
+  try{
+    renderPhilosophy();
+    renderSubjects();
+    renderWeeks();
+    renderMeals();
+    renderAsistente();
+  }catch(err){
+    console.error('Error al dibujar la página:', err);
+  }
 }
 
 function scheduleCloudSync(){
@@ -641,7 +710,10 @@ function scheduleCloudSync(){
   cloudSyncTimer = setTimeout(()=>{
     db.collection('users').doc(currentUser.uid).set(getFullState())
       .then(()=> setSyncStatus('on', currentUser.email))
-      .catch(()=> setSyncStatus('', 'Error al sincronizar, se guardó solo localmente'));
+      .catch((err)=>{
+        console.error('Error al sincronizar con Firestore:', err);
+        setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)');
+      });
   }, 900);
 }
 
@@ -693,9 +765,11 @@ if(cloudEnabled){
           applyFullState(doc.data());
           setSyncStatus('on', user.email);
         }else{
-          db.collection('users').doc(user.uid).set(getFullState()).then(()=> setSyncStatus('on', user.email));
+          db.collection('users').doc(user.uid).set(getFullState())
+            .then(()=> setSyncStatus('on', user.email))
+            .catch(()=> setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)'));
         }
-      });
+      }).catch(()=> setSyncStatus('', 'Error al leer desde Firestore (revisa las reglas)'));
     }else{
       widget.innerHTML = `<span class="sync-dot" id="sync-dot"></span><span id="account-status">Sin sincronizar</span><button id="btn-open-login">Iniciar sesión</button>`;
       document.getElementById('btn-open-login').addEventListener('click', openLoginModal);
@@ -747,69 +821,73 @@ function renderSubjects(){
   const grid = document.getElementById('subjects-grid');
   grid.innerHTML = '';
   subjects.forEach(sub=>{
-    const card = document.createElement('div');
-    card.className = 'card pad subject-card';
-    card.style.setProperty('--sub-color', sub.color);
-    const creditsNum = parseFloat(sub.credits);
-    const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
-    card.innerHTML = `
-      <div class="head">
-        <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
-        <span class="icon-btn" title="Eliminar ramo" data-action="delete">✕</span>
-      </div>
-      <div class="chip-row">
-        <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
-        <span class="hours-hint" data-hours-hint>${hoursHint}</span>
-      </div>
-      <label class="field-label">Temas del ramo</label>
-      <div class="topics-list" data-topiclist></div>
-      <div class="add-topic-row">
-        <input type="text" placeholder="Agregar tema (ej: unidad 2 — recursión)" data-newtopic>
-        <button class="btn ghost small" data-action="add-topic">+</button>
-      </div>
-      <label class="field-label">Fechas de pruebas</label>
-      <div class="test-list" data-testlist></div>
-      <button class="btn ghost small" style="margin-top:8px" data-action="add-test">+ agregar prueba</button>
-    `;
-    grid.appendChild(card);
+    try{
+      const card = document.createElement('div');
+      card.className = 'card pad subject-card';
+      card.style.setProperty('--sub-color', sub.color);
+      const creditsNum = parseFloat(sub.credits);
+      const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+      card.innerHTML = `
+        <div class="head">
+          <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
+          <span class="icon-btn" title="Eliminar ramo" data-action="delete">✕</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
+          <span class="hours-hint" data-hours-hint>${hoursHint}</span>
+        </div>
+        <label class="field-label">Temas del ramo</label>
+        <div class="topics-list" data-topiclist></div>
+        <div class="add-topic-row">
+          <input type="text" placeholder="Agregar tema (ej: unidad 2 — recursión)" data-newtopic>
+          <button class="btn ghost small" data-action="add-topic">+</button>
+        </div>
+        <label class="field-label">Fechas de pruebas</label>
+        <div class="test-list" data-testlist></div>
+        <button class="btn ghost small" style="margin-top:8px" data-action="add-test">+ agregar prueba</button>
+      `;
+      grid.appendChild(card);
 
-    // field bindings
-    card.querySelectorAll('[data-field]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        sub[inp.dataset.field] = inp.value;
-        saveJSON('subjects', subjects);
-        if(inp.dataset.field==='credits'){
-          const c = parseFloat(sub.credits);
-          card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+      // field bindings
+      card.querySelectorAll('[data-field]').forEach(inp=>{
+        inp.addEventListener('input', ()=>{
+          sub[inp.dataset.field] = inp.value;
+          saveJSON('subjects', subjects);
+          if(inp.dataset.field==='credits'){
+            const c = parseFloat(sub.credits);
+            card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+          }
+        });
+      });
+      card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
+        if(confirm(`¿Eliminar ${sub.name}?`)){
+          subjects = subjects.filter(s=>s.id!==sub.id);
+          saveJSON('subjects', subjects);
+          renderSubjects();
+          renderAsistente();
         }
       });
-    });
-    card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
-      if(confirm(`¿Eliminar ${sub.name}?`)){
-        subjects = subjects.filter(s=>s.id!==sub.id);
+      card.querySelector('[data-action="add-test"]').addEventListener('click', ()=>{
+        sub.tests.push({id:uid(), name:'', date:'', temario:[]});
         saveJSON('subjects', subjects);
-        renderSubjects();
+        renderTests(card, sub);
+      });
+      card.querySelector('[data-action="add-topic"]').addEventListener('click', ()=>{
+        const inp = card.querySelector('[data-newtopic]');
+        const name = inp.value.trim();
+        if(!name) return;
+        sub.topics.push({id:uid(), name, status:'sinver'});
+        saveJSON('subjects', subjects);
+        inp.value='';
+        renderTopics(card, sub);
+        renderTests(card, sub); // por si algún temario referencia temas nuevos
         renderAsistente();
-      }
-    });
-    card.querySelector('[data-action="add-test"]').addEventListener('click', ()=>{
-      sub.tests.push({id:uid(), name:'', date:'', temario:[]});
-      saveJSON('subjects', subjects);
-      renderTests(card, sub);
-    });
-    card.querySelector('[data-action="add-topic"]').addEventListener('click', ()=>{
-      const inp = card.querySelector('[data-newtopic]');
-      const name = inp.value.trim();
-      if(!name) return;
-      sub.topics.push({id:uid(), name, status:'sinver'});
-      saveJSON('subjects', subjects);
-      inp.value='';
+      });
       renderTopics(card, sub);
-      renderTests(card, sub); // por si algún temario referencia temas nuevos
-      renderAsistente();
-    });
-    renderTopics(card, sub);
-    renderTests(card, sub);
+      renderTests(card, sub);
+    }catch(err){
+      console.error('No se pudo dibujar el ramo', sub && sub.name, err);
+    }
   });
 
   // add-subject tile
@@ -1160,7 +1238,9 @@ function renderClassBlock(it){
   const el = document.createElement('div');
   el.className = 'block-abs type-clase fixed';
   if(sub) el.style.borderColor = sub.color;
-  el.innerHTML = `<span class="b-range">${c.start}–${c.end}</span>${escapeAttr(sub?sub.name:c.subjectName)}`;
+  if(c.tope) el.style.borderStyle = 'dashed';
+  const name = (sub?sub.name:c.subjectName) + (c.tope ? ' (tope)' : '') + (c.label ? ' · '+c.label : '');
+  el.innerHTML = `<span class="b-range">${c.start}–${c.end}</span>${escapeAttr(name)}`;
   return el;
 }
 
@@ -1501,6 +1581,7 @@ function renderMeals(){
       const inp = div.querySelector('[data-newmealname]');
       const name = inp.value.trim();
       if(!name) return;
+      if(!Array.isArray(meals[day])) meals[day] = [];
       meals[day].push({id:uid(), name, value:''});
       saveJSON('meals', meals);
       inp.value='';
@@ -1512,7 +1593,7 @@ function renderMeals(){
 function renderMealEntries(div, day){
   const wrap = div.querySelector('[data-entries]');
   wrap.innerHTML = '';
-  meals[day].forEach(entry=>{
+  (meals[day]||[]).forEach(entry=>{
     const row = document.createElement('div');
     row.className = 'meal-entry';
     row.innerHTML = `
@@ -1541,9 +1622,7 @@ function renderMealEntries(div, day){
 saveJSON('subjects', subjects);
 linkClassSubjects();
 saveJSON('classTemplate', classTemplate);
-renderSubjects();
-renderWeeks();
-renderMeals();
+renderAll();
 </script>
 </body>
 </html>
