@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planificador Semanal — Semestre</title>
+<title>Planificador Semanal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -275,6 +275,23 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 }
 .account-widget button:hover{border-color:var(--ink);}
 
+.theme-picker{display:flex; align-items:center; gap:8px; position:relative;}
+.theme-picker .theme-toggle{
+  appearance:none; border:1px solid var(--line); background:var(--paper-raised); cursor:pointer;
+  width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.theme-picker .theme-toggle:hover{border-color:var(--ink);}
+.theme-menu{
+  display:none; position:absolute; top:38px; right:0; z-index:60;
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:10px;
+  box-shadow:var(--shadow); padding:10px; gap:8px; flex-direction:column; min-width:170px;
+}
+.theme-menu.open{display:flex;}
+.theme-opt{display:flex; align-items:center; gap:8px; cursor:pointer; padding:5px 6px; border-radius:6px; font-size:12.5px; color:var(--ink);}
+.theme-opt:hover{background:var(--paper);}
+.theme-opt.active{font-weight:600;}
+.theme-swatch{width:16px; height:16px; border-radius:50%; border:1px solid rgba(0,0,0,0.15); flex-shrink:0;}
+
 .modal-overlay{
   display:none; position:fixed; inset:0; background:rgba(18,24,28,0.45); z-index:100;
   align-items:center; justify-content:center; padding:20px;
@@ -311,17 +328,23 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <div class="brand">
       <span class="mark">OS</span>
       <div>
-        <h1>Sistema Operativo Personal</h1>
+        <h1>Planificador Semanal</h1>
         <div class="sub">Tu semestre, en un solo lugar</div>
       </div>
     </div>
     <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
   </div>
   <div class="top-inner" style="margin-top:8px;">
-    <div class="account-widget" id="account-widget">
-      <span class="sync-dot" id="sync-dot"></span>
-      <span id="account-status">Sin sincronizar</span>
-      <button id="btn-open-login">Iniciar sesión</button>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div class="account-widget" id="account-widget">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span id="account-status">Sin sincronizar</span>
+        <button id="btn-open-login">Iniciar sesión</button>
+      </div>
+      <div class="theme-picker">
+        <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">🎨</button>
+        <div class="theme-menu" id="theme-menu"></div>
+      </div>
     </div>
   </div>
   <nav class="tabs">
@@ -501,6 +524,69 @@ function saveJSON(key, value){
 }
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
+
+/* ============================================================
+   TEMAS DE COLOR
+   ============================================================ */
+const THEMES = {
+  bosque: {
+    label:'Bosque (original)', swatch:'#2f4d3f',
+    vars:{ '--paper':'#eef1ee', '--paper-raised':'#ffffff', '--line':'#c9d0cb', '--ink':'#12181c', '--ink-soft':'#3a444a',
+      '--pine':'#2f4d3f', '--pine-soft':'#5c7b6c', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
+      '--clay':'#a9503b', '--sky':'#3b6e8f', '--lilac':'#6a5a8c' }
+  },
+  rosa: {
+    label:'Rosa pastel', swatch:'#c9748c',
+    vars:{ '--paper':'#fbeef1', '--paper-raised':'#fffbfc', '--line':'#f0d2da', '--ink':'#3a2530', '--ink-soft':'#7d5c66',
+      '--pine':'#c9748c', '--pine-soft':'#e0a9b8', '--amber':'#dc9a58', '--amber-soft':'#f6ddb9',
+      '--clay':'#b3495f', '--sky':'#9caed0', '--lilac':'#b78cc9' }
+  },
+  morado: {
+    label:'Morado', swatch:'#6a4c93',
+    vars:{ '--paper':'#f2eef7', '--paper-raised':'#ffffff', '--line':'#dcccec', '--ink':'#2b2140', '--ink-soft':'#5d4d75',
+      '--pine':'#6a4c93', '--pine-soft':'#a488c4', '--amber':'#caa0da', '--amber-soft':'#ecdff5',
+      '--clay':'#8e3b6b', '--sky':'#7c6fae', '--lilac':'#9b7cc4' }
+  },
+  azul: {
+    label:'Azul oscuro', swatch:'#2f5d8a',
+    vars:{ '--paper':'#e9eef3', '--paper-raised':'#ffffff', '--line':'#c3cfda', '--ink':'#101b26', '--ink-soft':'#3f5265',
+      '--pine':'#2f5d8a', '--pine-soft':'#5f8ab0', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
+      '--clay':'#a9503b', '--sky':'#2f5d8a', '--lilac':'#5a5f9e' }
+  },
+  noche: {
+    label:'Modo noche', swatch:'#5fa8d3',
+    vars:{ '--paper':'#161d26', '--paper-raised':'#212a35', '--line':'#37424f', '--ink':'#e9eef2', '--ink-soft':'#a3b1bd',
+      '--pine':'#5fa8d3', '--pine-soft':'#7fb8dc', '--amber':'#e0a458', '--amber-soft':'#3d3222',
+      '--clay':'#e0725f', '--sky':'#5fa8d3', '--lilac':'#a495d6' }
+  }
+};
+
+function applyTheme(key){
+  const theme = THEMES[key] || THEMES.bosque;
+  Object.entries(theme.vars).forEach(([k,v])=> document.documentElement.style.setProperty(k, v));
+  localStorage.setItem('theme', key);
+  renderThemeMenu(key);
+}
+function renderThemeMenu(activeKey){
+  const menu = document.getElementById('theme-menu');
+  menu.innerHTML = Object.entries(THEMES).map(([key, t])=>`
+    <div class="theme-opt${key===activeKey?' active':''}" data-theme="${key}">
+      <span class="theme-swatch" style="background:${t.swatch}"></span>${t.label}
+    </div>
+  `).join('');
+  menu.querySelectorAll('[data-theme]').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      applyTheme(opt.dataset.theme);
+      menu.classList.remove('open');
+    });
+  });
+}
+document.getElementById('theme-toggle').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  document.getElementById('theme-menu').classList.toggle('open');
+});
+document.addEventListener('click', ()=> document.getElementById('theme-menu').classList.remove('open'));
+applyTheme(localStorage.getItem('theme') || 'bosque');
 
 /* --- Filosofía --- */
 const defaultPhilo = {
