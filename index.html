@@ -125,12 +125,56 @@ label.field-label:first-child{margin-top:0;}
 .subject-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
 .subject-card .head input[type=text]{font-family:'Newsreader'; font-size:17px; font-weight:600; border:none; padding:2px 0; background:transparent;}
 .subject-card .head input[type=text]:focus{outline:none; border-bottom:1px solid var(--line);}
-.chip-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+.chip-row{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;}
 .chip{
   font-family:'IBM Plex Mono'; font-size:11px; background:var(--paper); border:1px solid var(--line);
   border-radius:20px; padding:3px 10px; color:var(--ink-soft);
 }
-.test-list{margin-top:6px; display:flex; flex-direction:column; gap:6px;}
+.hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
+
+/* --- temas / topics --- */
+.topics-list{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
+.topic-row{display:flex; align-items:center; gap:6px;}
+.topic-row input[type=text]{flex:1; font-size:12.5px; padding:5px 8px;}
+.status-btn{
+  font-family:'IBM Plex Mono'; font-size:9.5px; text-transform:uppercase; letter-spacing:0.03em;
+  border:none; border-radius:5px; padding:4px 7px; cursor:pointer; white-space:nowrap;
+}
+.status-btn.sinver{background:#eee; color:#777;}
+.status-btn.debil{background:#f3d3ca; color:#7a2c17;}
+.status-btn.dominado{background:#d7e6da; color:#245c3a;}
+.add-topic-row{display:flex; gap:6px; margin-top:6px;}
+.add-topic-row input{flex:1;}
+
+.temario-box{margin-top:6px; padding:8px 10px; background:var(--paper); border-radius:7px; display:none;}
+.temario-box.open{display:block;}
+.temario-box label.field-label{margin-top:0; margin-bottom:6px;}
+.temario-chip-row{display:flex; flex-wrap:wrap; gap:6px;}
+.temario-chip{
+  font-family:'IBM Plex Sans'; font-size:11.5px; border:1px solid var(--line); border-radius:16px;
+  padding:3px 10px; cursor:pointer; background:#fff; user-select:none;
+}
+.temario-chip.selected{background:var(--pine); border-color:var(--pine); color:#fff;}
+.link-btn{background:none; border:none; color:var(--pine-soft); font-family:'IBM Plex Mono'; font-size:10.5px; cursor:pointer; padding:0; margin-top:4px;}
+
+/* ---------- Asistente ---------- */
+.asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
+.asistente-form label.field-label{margin-top:12px;}
+.asistente-topic-list{display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:260px; overflow-y:auto;}
+.asistente-topic-opt{
+  display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:8px;
+  padding:8px 10px; cursor:pointer; font-size:12.5px;
+}
+.asistente-topic-opt.selected{border-color:var(--pine); background:#eef3ef;}
+.asistente-topic-opt .badge{
+  font-family:'IBM Plex Mono'; font-size:9px; text-transform:uppercase; border-radius:5px; padding:2px 6px;
+}
+.asistente-topic-opt .badge.temario{background:var(--amber-soft); color:#7a4d18;}
+.asistente-preview{border-left:3px solid var(--pine); padding-left:16px;}
+.plan-step{margin-bottom:12px;}
+.plan-step .p-title{font-weight:600; font-size:13.5px; display:flex; justify-content:space-between;}
+.plan-step .p-title span.mins{font-family:'IBM Plex Mono'; font-size:11px; color:var(--pine-soft); font-weight:400;}
+.plan-step p{margin:4px 0 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
 .test-row{display:flex; gap:6px; align-items:center;}
 .test-row input[type=text]{flex:2;}
 .test-row input[type=date]{flex:1.3;}
@@ -187,16 +231,16 @@ label.field-label:first-child{margin-top:0;}
 .day-col-grid.weekend{background:#f4f2ec;}
 .day-col-grid.drag-over{background:var(--amber-soft);}
 .block-abs{
-  position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 6px; font-size:10.5px; line-height:1.3;
+  position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 34px 3px 6px; font-size:10.5px; line-height:1.3;
   overflow:hidden; cursor:grab; border:1px solid transparent; box-shadow:0 1px 2px rgba(0,0,0,0.06);
 }
 .block-abs.fixed{cursor:default; border-style:solid; border-width:1px;}
+.block-abs.has-plan{box-shadow:0 0 0 1px rgba(47,77,63,0.3), 0 1px 2px rgba(0,0,0,0.06);}
 .block-abs.done{opacity:0.4; text-decoration:line-through;}
 .block-abs .b-range{font-family:'IBM Plex Mono'; font-size:8.5px; opacity:0.8; display:block;}
-.block-abs .b-actions{position:absolute; top:2px; right:3px; display:none; gap:3px;}
-.block-abs:hover .b-actions{display:flex;}
-.block-abs .b-actions span{cursor:pointer; font-size:10px; opacity:0.75; background:rgba(255,255,255,0.7); border-radius:3px; padding:0 2px;}
-.block-abs .b-actions span:hover{opacity:1;}
+.block-abs .b-actions{position:absolute; top:2px; right:3px; display:flex; gap:3px; background:rgba(255,255,255,0.85); border-radius:4px; padding:1px;}
+.block-abs .b-actions span{cursor:pointer; font-size:10px; opacity:0.8; border-radius:3px; padding:0 2px;}
+.block-abs .b-actions span:hover{opacity:1; background:rgba(255,255,255,0.9);}
 .type-clase{background:#dfe6e2; border-color:#b9c9c0;}
 .type-estudio{background:#e4ecf3; border-color:#c7d8e6;}
 .type-sugerido{background:#f3e9d3; border-color:#e3cc9a; border-style:dashed;}
@@ -211,8 +255,11 @@ label.field-label:first-child{margin-top:0;}
 /* ---------- Comida ---------- */
 .meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
 .meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
-.meal-slot{margin-bottom:8px;}
-.meal-slot label.field-label{margin-top:0;}
+.meal-entry{display:flex; gap:5px; margin-bottom:6px; align-items:center;}
+.meal-entry input.meal-name{width:88px; font-size:11px; font-family:'IBM Plex Mono'; flex-shrink:0;}
+.meal-entry input.meal-value{flex:1; font-size:12px;}
+.add-meal-row{display:flex; gap:5px; margin-top:8px;}
+.add-meal-row input{flex:1; font-size:12px;}
 
 footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
 
@@ -237,6 +284,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   background:var(--paper-raised); border-radius:12px; padding:26px 26px 22px 26px; width:100%; max-width:360px;
   box-shadow:0 8px 30px rgba(0,0,0,0.2);
 }
+.modal-box.wide{max-width:520px; max-height:80vh; overflow-y:auto;}
 .modal-box h3{font-size:19px; margin-bottom:4px;}
 .modal-box p.sub{font-size:12.5px; color:var(--ink-soft); margin:0 0 16px 0;}
 .modal-box .msg{font-size:12px; margin-top:10px; min-height:16px;}
@@ -280,6 +328,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <button data-view="filosofia" class="active">Filosofía</button>
     <button data-view="ramos">Ramos</button>
     <button data-view="semana">Semana</button>
+    <button data-view="asistente">Asistente</button>
     <button data-view="comida">Comida</button>
   </nav>
 </header>
@@ -366,6 +415,37 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
   </section>
 
+  <!-- ================= ASISTENTE ================= -->
+  <section class="view" id="view-asistente">
+    <div class="eyebrow">Parte 4 y 7 · Asistente de sesión de estudio</div>
+    <div class="card pad">
+      <div class="asistente-grid">
+        <div class="asistente-form">
+          <label class="field-label">Ramo</label>
+          <select id="as-subject"></select>
+          <label class="field-label">Tema (los débiles o sin ver, y los que entran en la próxima prueba, aparecen primero)</label>
+          <div class="asistente-topic-list" id="as-topics"></div>
+          <label class="field-label">Duración de la sesión</label>
+          <select id="as-duration">
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
+            <option value="90" selected>90 min</option>
+            <option value="120">120 min</option>
+          </select>
+          <label class="field-label">Día</label>
+          <input type="date" id="as-date">
+          <label class="field-label">Hora de inicio</label>
+          <input type="time" id="as-start" value="18:00">
+          <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión de estudio</button>
+          <div class="msg" id="as-msg"></div>
+        </div>
+        <div class="asistente-preview" id="as-preview">
+          <p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver aquí la estructura de la sesión antes de agregarla a tu semana.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= COMIDA ================= -->
   <section class="view" id="view-comida">
     <div class="eyebrow">Parte 6 · Minuta editable</div>
@@ -375,6 +455,15 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 </main>
 
 <footer class="foot">Tus datos se guardan localmente en este navegador, y si inicias sesión, también en la nube para verlos desde otros dispositivos.</footer>
+
+<div class="modal-overlay" id="plan-overlay">
+  <div class="modal-box wide">
+    <button class="close-x" id="btn-close-plan">✕</button>
+    <h3 id="plan-title">Plan de sesión</h3>
+    <p class="sub" id="plan-sub"></p>
+    <div id="plan-steps"></div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="login-overlay">
   <div class="modal-box">
@@ -430,6 +519,13 @@ const defaultSubjects = [
   {id:uid(), name:'Ramo 5', color:'#6a5a8c', credits:'', schedule:'', content:'', tests:[]},
 ];
 let subjects = loadJSON('subjects', defaultSubjects);
+// migración: convertir el campo "content" viejo en una lista de temas, y agregar temario a las pruebas
+subjects.forEach(s=>{
+  if(!s.topics){
+    s.topics = (s.content && s.content.trim()) ? [{id:uid(), name:s.content.trim().slice(0,120), status:'sinver'}] : [];
+  }
+  (s.tests||[]).forEach(t=>{ if(!t.temario) t.temario = []; });
+});
 
 /* --- Bloques puntuales (fecha específica) --- */
 let blocks = loadJSON('blocks', []); // {id, date:'YYYY-MM-DD', type, subjectId, label, start:'HH:MM', end:'HH:MM', done}
@@ -442,8 +538,17 @@ const defaultClassTemplate = [];
 let classTemplate = loadJSON('classTemplate', defaultClassTemplate);
 
 /* --- Comida --- */
-const MEAL_SLOTS = ['Colación pre-gym','Almuerzo','Cena'];
-let meals = loadJSON('meals', Object.fromEntries(DAYS.map(d=>[d, Object.fromEntries(MEAL_SLOTS.map(s=>[s,'']))])));
+const legacyMealSlots = ['Colación pre-gym','Almuerzo','Cena'];
+let meals = loadJSON('meals', Object.fromEntries(DAYS.map(d=>[d, []])));
+// migración: del formato viejo {dia: {slot: texto}} al nuevo {dia: [{id,name,value}]}
+DAYS.forEach(d=>{
+  const val = meals[d];
+  if(val && !Array.isArray(val)){
+    meals[d] = legacyMealSlots.filter(slot=>val[slot] && val[slot].trim()).map(slot=>({id:uid(), name:slot, value:val[slot]}));
+  }else if(!val){
+    meals[d] = [];
+  }
+});
 
 /* --- fecha ancla: lunes de la primera semana visible --- */
 function mondayOf(d){
@@ -526,6 +631,7 @@ function renderAll(){
   renderSubjects();
   renderWeeks();
   renderMeals();
+  renderAsistente();
 }
 
 function scheduleCloudSync(){
@@ -633,12 +739,9 @@ renderPhilosophy();
 /* ============================================================
    RAMOS
    ============================================================ */
-function daysUntil(dateStr){
-  if(!dateStr) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const target = new Date(dateStr+'T00:00:00');
-  return Math.round((target-today)/86400000);
-}
+const HOURS_PER_CREDIT = 1; // convención SCT: ~1 crédito ≈ 1 hora de trabajo semanal fuera de clases
+const STATUS_CYCLE = ['sinver','debil','dominado'];
+const STATUS_LABEL = {sinver:'sin ver', debil:'débil', dominado:'dominado'};
 
 function renderSubjects(){
   const grid = document.getElementById('subjects-grid');
@@ -647,6 +750,8 @@ function renderSubjects(){
     const card = document.createElement('div');
     card.className = 'card pad subject-card';
     card.style.setProperty('--sub-color', sub.color);
+    const creditsNum = parseFloat(sub.credits);
+    const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
     card.innerHTML = `
       <div class="head">
         <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
@@ -654,11 +759,14 @@ function renderSubjects(){
       </div>
       <div class="chip-row">
         <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
+        <span class="hours-hint" data-hours-hint>${hoursHint}</span>
       </div>
-      <label class="field-label">Horario</label>
-      <input type="text" value="${escapeAttr(sub.schedule)}" data-field="schedule">
-      <label class="field-label">Contenidos vistos / por ver</label>
-      <textarea data-field="content" placeholder="Ej: unidad 1 — límites y continuidad...">${escapeAttr(sub.content)}</textarea>
+      <label class="field-label">Temas del ramo</label>
+      <div class="topics-list" data-topiclist></div>
+      <div class="add-topic-row">
+        <input type="text" placeholder="Agregar tema (ej: unidad 2 — recursión)" data-newtopic>
+        <button class="btn ghost small" data-action="add-topic">+</button>
+      </div>
       <label class="field-label">Fechas de pruebas</label>
       <div class="test-list" data-testlist></div>
       <button class="btn ghost small" style="margin-top:8px" data-action="add-test">+ agregar prueba</button>
@@ -670,6 +778,10 @@ function renderSubjects(){
       inp.addEventListener('input', ()=>{
         sub[inp.dataset.field] = inp.value;
         saveJSON('subjects', subjects);
+        if(inp.dataset.field==='credits'){
+          const c = parseFloat(sub.credits);
+          card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+        }
       });
     });
     card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
@@ -677,13 +789,26 @@ function renderSubjects(){
         subjects = subjects.filter(s=>s.id!==sub.id);
         saveJSON('subjects', subjects);
         renderSubjects();
+        renderAsistente();
       }
     });
     card.querySelector('[data-action="add-test"]').addEventListener('click', ()=>{
-      sub.tests.push({id:uid(), name:'', date:''});
+      sub.tests.push({id:uid(), name:'', date:'', temario:[]});
       saveJSON('subjects', subjects);
       renderTests(card, sub);
     });
+    card.querySelector('[data-action="add-topic"]').addEventListener('click', ()=>{
+      const inp = card.querySelector('[data-newtopic]');
+      const name = inp.value.trim();
+      if(!name) return;
+      sub.topics.push({id:uid(), name, status:'sinver'});
+      saveJSON('subjects', subjects);
+      inp.value='';
+      renderTopics(card, sub);
+      renderTests(card, sub); // por si algún temario referencia temas nuevos
+      renderAsistente();
+    });
+    renderTopics(card, sub);
     renderTests(card, sub);
   });
 
@@ -692,11 +817,54 @@ function renderSubjects(){
   addTile.className = 'add-subject-btn';
   addTile.textContent = '+ agregar ramo';
   addTile.addEventListener('click', ()=>{
-    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', schedule:'', content:'', tests:[]});
+    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', schedule:'', topics:[], tests:[]});
     saveJSON('subjects', subjects);
     renderSubjects();
+    renderAsistente();
   });
   grid.appendChild(addTile);
+}
+
+function renderTopics(card, sub){
+  const list = card.querySelector('[data-topiclist]');
+  list.innerHTML = '';
+  sub.topics.forEach(topic=>{
+    const row = document.createElement('div');
+    row.className = 'topic-row';
+    row.innerHTML = `
+      <input type="text" value="${escapeAttr(topic.name)}" data-tpf="name">
+      <button class="status-btn ${topic.status}" data-taction="cycle">${STATUS_LABEL[topic.status]}</button>
+      <span class="icon-btn" data-taction="delete">✕</span>
+    `;
+    list.appendChild(row);
+    row.querySelector('[data-tpf]').addEventListener('input', e=>{
+      topic.name = e.target.value;
+      saveJSON('subjects', subjects);
+      renderAsistente();
+    });
+    row.querySelector('[data-taction="cycle"]').addEventListener('click', ()=>{
+      const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(topic.status)+1) % STATUS_CYCLE.length];
+      topic.status = next;
+      saveJSON('subjects', subjects);
+      renderTopics(card, sub);
+      renderAsistente();
+    });
+    row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
+      sub.topics = sub.topics.filter(t=>t.id!==topic.id);
+      sub.tests.forEach(t=>{ t.temario = t.temario.filter(id=>id!==topic.id); });
+      saveJSON('subjects', subjects);
+      renderTopics(card, sub);
+      renderTests(card, sub);
+      renderAsistente();
+    });
+  });
+}
+
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(dateStr+'T00:00:00');
+  return Math.round((target-today)/86400000);
 }
 
 function renderTests(card, sub){
@@ -723,13 +891,42 @@ function renderTests(card, sub){
         test[inp.dataset.tf] = inp.value;
         saveJSON('subjects', subjects);
         renderTests(card, sub);
+        renderAsistente();
       });
     });
     row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
       sub.tests = sub.tests.filter(t=>t.id!==test.id);
       saveJSON('subjects', subjects);
       renderTests(card, sub);
+      renderAsistente();
     });
+
+    if(sub.topics.length){
+      const toggle = document.createElement('button');
+      toggle.className = 'link-btn';
+      toggle.textContent = `Temario (${test.temario.length}/${sub.topics.length} temas) ▾`;
+      list.appendChild(toggle);
+      const box = document.createElement('div');
+      box.className = 'temario-box';
+      box.innerHTML = `<label class="field-label">Temas que entran en esta prueba</label><div class="temario-chip-row"></div>`;
+      const chipRow = box.querySelector('.temario-chip-row');
+      sub.topics.forEach(topic=>{
+        const chip = document.createElement('span');
+        chip.className = 'temario-chip' + (test.temario.includes(topic.id) ? ' selected':'');
+        chip.textContent = topic.name;
+        chip.addEventListener('click', ()=>{
+          if(test.temario.includes(topic.id)) test.temario = test.temario.filter(id=>id!==topic.id);
+          else test.temario.push(topic.id);
+          saveJSON('subjects', subjects);
+          chip.classList.toggle('selected');
+          toggle.textContent = `Temario (${test.temario.length}/${sub.topics.length} temas) ▾`;
+          renderAsistente();
+        });
+        chipRow.appendChild(chip);
+      });
+      list.appendChild(box);
+      toggle.addEventListener('click', ()=> box.classList.toggle('open'));
+    }
   });
 }
 
@@ -970,11 +1167,12 @@ function renderClassBlock(it){
 function renderMovableBlock(it){
   const b = it.ref;
   const el = document.createElement('div');
-  el.className = `block-abs type-${b.type}` + (b.done?' done':'');
+  el.className = `block-abs type-${b.type}` + (b.done?' done':'') + (b.plan?' has-plan':'');
   el.draggable = true;
   el.dataset.id = b.id;
   el.innerHTML = `
     <div class="b-actions">
+      ${b.plan ? '<span data-baction="plan" title="Ver plan de estudio">📋</span>' : ''}
       <span data-baction="edit" title="Editar">✎</span>
       <span data-baction="toggle" title="Marcar cumplido">✓</span>
       <span data-baction="delete" title="Eliminar">✕</span>
@@ -986,13 +1184,20 @@ function renderMovableBlock(it){
     setTimeout(()=>el.style.opacity='0.3',0);
   });
   el.addEventListener('dragend', ()=> el.style.opacity='1');
-  el.querySelector('[data-baction="toggle"]').addEventListener('click', ()=>{
+  if(b.plan){
+    el.addEventListener('click', ()=> openPlanModal(b));
+    el.querySelector('[data-baction="plan"]').addEventListener('click', e=>{ e.stopPropagation(); openPlanModal(b); });
+  }
+  el.querySelector('[data-baction="toggle"]').addEventListener('click', e=>{
+    e.stopPropagation();
     b.done = !b.done; saveJSON('blocks', blocks); renderWeeks();
   });
-  el.querySelector('[data-baction="delete"]').addEventListener('click', ()=>{
+  el.querySelector('[data-baction="delete"]').addEventListener('click', e=>{
+    e.stopPropagation();
     blocks = blocks.filter(x=>x.id!==b.id); saveJSON('blocks', blocks); renderWeeks();
   });
-  el.querySelector('[data-baction="edit"]').addEventListener('click', ()=>{
+  el.querySelector('[data-baction="edit"]').addEventListener('click', e=>{
+    e.stopPropagation();
     const newLabel = prompt('Descripción', b.label); if(newLabel===null) return;
     const newStart = prompt('Hora de inicio (HH:MM)', b.start); if(newStart===null) return;
     const newEnd = prompt('Hora de término (HH:MM)', b.end); if(newEnd===null) return;
@@ -1001,6 +1206,22 @@ function renderMovableBlock(it){
   });
   return el;
 }
+
+function openPlanModal(b){
+  document.getElementById('plan-title').textContent = b.label;
+  document.getElementById('plan-sub').textContent = `${b.start}–${b.end} · estructura sugerida de la sesión`;
+  const wrap = document.getElementById('plan-steps');
+  wrap.innerHTML = (b.plan||[]).map(step=>`
+    <div class="plan-step">
+      <div class="p-title">${escapeAttr(step.label)} <span class="mins">${step.minutes} min</span></div>
+      <p>${escapeAttr(step.desc)}</p>
+    </div>
+  `).join('');
+  document.getElementById('plan-overlay').classList.add('open');
+}
+document.getElementById('btn-close-plan').addEventListener('click', ()=>{
+  document.getElementById('plan-overlay').classList.remove('open');
+});
 
 function setupDropZone(col){
   col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('drag-over'); });
@@ -1071,40 +1292,66 @@ function spreadDayIndices(count){
   return [...new Set(idxs)];
 }
 
+function buildStudyPlan(durationMin, topicName){
+  const parts = [
+    {label:'Recuperación activa', pct:0.15, desc:`Sin mirar apuntes, escribe o explica en voz alta todo lo que recuerdes de "${topicName}".`},
+    {label:'Revisar y corregir', pct:0.15, desc:'Compara con tus apuntes o tu banco de errores; anota lo que te faltó o entendiste mal.'},
+    {label:'Ejercicios / certámenes antiguos', pct:0.40, desc:'Resuelve ejercicios, guías o preguntas de certámenes anteriores sobre este tema.'},
+    {label:'Banco de errores', pct:0.15, desc:'Anota los errores que cometiste y por qué, para revisarlos en tu próximo repaso.'},
+    {label:'Autoevaluación', pct:0.15, desc:'Explica el tema completo en voz alta como si se lo enseñaras a alguien más.'}
+  ];
+  return parts.map(p=>({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
+}
+
+function pickTopicForSession(sub, test, rotateIdx){
+  let candidates = sub.topics.filter(t=> t.status!=='dominado');
+  if(test && test.temario && test.temario.length){
+    const inTemario = candidates.filter(t=>test.temario.includes(t.id));
+    if(inTemario.length) candidates = inTemario;
+  }
+  if(!candidates.length) candidates = sub.topics;
+  if(!candidates.length) return null;
+  const order = {debil:0, sinver:1, dominado:2};
+  candidates = [...candidates].sort((a,b)=> order[a.status]-order[b.status]);
+  return candidates[(rotateIdx||0) % candidates.length];
+}
+
 document.getElementById('btn-predict').addEventListener('click', ()=>{
   blocks = blocks.filter(b=>b.type!=='sugerido');
 
   const horizon = 14;
-  const weighted = subjects.map(sub=>{
+  const info = subjects.map(sub=>{
+    const creditsNum = parseFloat(sub.credits) || 3; // sin créditos definidos, se asume una carga media
+    const baseSessions = Math.min(4, Math.max(1, Math.round((creditsNum*HOURS_PER_CREDIT*2)/1.5))); // sesiones de 90 min para cubrir 2 semanas de carga
     const upcoming = sub.tests
       .map(t=>({...t, d: daysUntil(t.date)}))
       .filter(t=>t.d!==null && t.d>=0 && t.d<=horizon)
       .sort((a,b)=>a.d-b.d);
-    if(upcoming.length===0) return null;
-    const nearest = upcoming[0];
+    const nearest = upcoming[0] || null;
     const priorityBoost = /matemática/i.test(sub.name) ? 1.6 : 1;
-    const urgency = priorityBoost / Math.max(nearest.d, 1);
-    return {sub, nearest, urgency};
-  }).filter(Boolean);
+    const urgency = nearest ? priorityBoost/Math.max(nearest.d,1) : 0;
+    return {sub, nearest, baseSessions, urgency};
+  });
 
-  if(weighted.length===0){
-    alert('Agrega al menos una fecha de prueba en "Ramos" (dentro de los próximos 14 días) para generar sugerencias.');
+  const totalUrgency = info.reduce((s,w)=>s+w.urgency,0);
+  const bonusPool = Math.round(info.length*1.5);
+  info.forEach(w=>{
+    const bonus = totalUrgency>0 ? Math.round((w.urgency/totalUrgency)*bonusPool) : 0;
+    w.totalSessions = w.baseSessions + bonus;
+  });
+
+  if(info.every(w=>w.totalSessions===0)){
+    alert('Agrega créditos a tus ramos, o fechas de prueba próximas, para poder generar sugerencias.');
     return;
   }
 
-  const totalUrgency = weighted.reduce((s,w)=>s+w.urgency,0);
-  const totalBlocksToPlace = Math.round(weighted.length*2.5);
-  weighted.sort((a,b)=>b.urgency-a.urgency);
-  const usedDayIdx = new Set(); // evita amontonar dos ramos exactamente el mismo día si hay espacio en otros
-
-  weighted.forEach(w=>{
-    const share = Math.max(1, Math.round((w.urgency/totalUrgency)*totalBlocksToPlace));
-    const desired = spreadDayIndices(share); // índices 0-13 repartidos parejo en toda la quincena
+  info.forEach(w=>{
+    if(w.totalSessions<=0) return;
+    const desired = spreadDayIndices(w.totalSessions);
     let placed = 0;
     desired.forEach(centerIdx=>{
-      if(placed>=share) return;
-      // busca el día libre más cercano al índice deseado, expandiéndose hacia ambos lados
-      for(let offset=0; offset<14 && placed<share; offset++){
+      if(placed>=w.totalSessions) return;
+      for(let offset=0; offset<14 && placed<w.totalSessions; offset++){
         for(const cand of [centerIdx-offset, centerIdx+offset]){
           if(cand<0 || cand>13) continue;
           const d = new Date(fortnightStart); d.setDate(d.getDate()+cand);
@@ -1114,13 +1361,15 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
           if(alreadyThisSubject) continue;
           const slot = findFreeSlot(dateStr, dow, 90);
           if(!slot) continue;
+          const topic = pickTopicForSession(w.sub, w.nearest, placed);
+          const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : '';
+          const label = topic ? `Estudiar ${w.sub.name} — ${topic.name}${testNote}` : `Estudiar ${w.sub.name}${testNote}`;
           blocks.push({
             id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
-            label:`Estudiar ${w.sub.name} (${w.nearest.name||'prueba'} en ${w.nearest.d}d)`,
-            start:slot[0], end:slot[1], done:false
+            label, start:slot[0], end:slot[1], done:false,
+            plan: buildStudyPlan(90, topic ? topic.name : w.sub.name)
           });
           placed++;
-          usedDayIdx.add(cand);
           break;
         }
       }
@@ -1132,6 +1381,107 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
 });
 
 /* ============================================================
+   ASISTENTE DE SESIÓN DE ESTUDIO
+   ============================================================ */
+function renderAsistente(){
+  const subSel = document.getElementById('as-subject');
+  const currentSubId = subSel.value;
+  subSel.innerHTML = subjects.map(s=>`<option value="${s.id}">${escapeAttr(s.name)}</option>`).join('');
+  if(currentSubId && subjects.some(s=>s.id===currentSubId)) subSel.value = currentSubId;
+  if(!document.getElementById('as-date').value){
+    document.getElementById('as-date').value = fmt(new Date());
+  }
+  renderAsistenteTopics();
+}
+
+function renderAsistenteTopics(){
+  const subId = document.getElementById('as-subject').value;
+  const sub = subjects.find(s=>s.id===subId);
+  const list = document.getElementById('as-topics');
+  list.innerHTML = '';
+  if(!sub || !sub.topics.length){
+    list.innerHTML = `<p style="font-size:12px; color:var(--ink-soft);">Este ramo todavía no tiene temas cargados. Agrégalos en la pestaña "Ramos".</p>`;
+    updateAsistentePreview(null, null);
+    return;
+  }
+  const nearestTest = sub.tests.map(t=>({...t, d:daysUntil(t.date)})).filter(t=>t.d!==null && t.d>=0).sort((a,b)=>a.d-b.d)[0];
+  const order = {debil:0, sinver:1, dominado:2};
+  const sorted = [...sub.topics].sort((a,b)=>{
+    const aIn = nearestTest && nearestTest.temario.includes(a.id) ? 0:1;
+    const bIn = nearestTest && nearestTest.temario.includes(b.id) ? 0:1;
+    if(aIn!==bIn) return aIn-bIn;
+    return order[a.status]-order[b.status];
+  });
+  sorted.forEach((topic, idx)=>{
+    const inTemario = nearestTest && nearestTest.temario.includes(topic.id);
+    const opt = document.createElement('div');
+    opt.className = 'asistente-topic-opt' + (idx===0 ? ' selected':'');
+    opt.dataset.topicId = topic.id;
+    opt.innerHTML = `
+      <span class="status-btn ${topic.status}" style="pointer-events:none;">${STATUS_LABEL[topic.status]}</span>
+      <span style="flex:1;">${escapeAttr(topic.name)}</span>
+      ${inTemario ? `<span class="badge temario">temario</span>` : ''}
+    `;
+    opt.addEventListener('click', ()=>{
+      list.querySelectorAll('.asistente-topic-opt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+      updateAsistentePreview(sub, topic);
+    });
+    list.appendChild(opt);
+  });
+  updateAsistentePreview(sub, sorted[0]);
+}
+document.getElementById('as-subject').addEventListener('change', renderAsistenteTopics);
+document.getElementById('as-duration').addEventListener('change', ()=>{
+  const subId = document.getElementById('as-subject').value;
+  const sub = subjects.find(s=>s.id===subId);
+  const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
+  const topic = sub && selectedOpt ? sub.topics.find(t=>t.id===selectedOpt.dataset.topicId) : null;
+  updateAsistentePreview(sub, topic);
+});
+
+function updateAsistentePreview(sub, topic){
+  const box = document.getElementById('as-preview');
+  if(!sub || !topic){
+    box.innerHTML = `<p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver aquí la estructura de la sesión antes de agregarla a tu semana.</p>`;
+    return;
+  }
+  const duration = Number(document.getElementById('as-duration').value);
+  const plan = buildStudyPlan(duration, topic.name);
+  box.innerHTML = `<h3 style="font-size:15px; margin-bottom:10px;">${escapeAttr(sub.name)} — ${escapeAttr(topic.name)}</h3>` +
+    plan.map(step=>`
+      <div class="plan-step">
+        <div class="p-title">${escapeAttr(step.label)} <span class="mins">${step.minutes} min</span></div>
+        <p>${escapeAttr(step.desc)}</p>
+      </div>
+    `).join('');
+}
+
+document.getElementById('btn-generate-session').addEventListener('click', ()=>{
+  const subId = document.getElementById('as-subject').value;
+  const sub = subjects.find(s=>s.id===subId);
+  const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
+  const msg = document.getElementById('as-msg');
+  if(!sub || !selectedOpt){ msg.className='msg error'; msg.textContent='Elige un ramo y un tema primero.'; return; }
+  const topic = sub.topics.find(t=>t.id===selectedOpt.dataset.topicId);
+  const duration = Number(document.getElementById('as-duration').value);
+  const date = document.getElementById('as-date').value;
+  const start = document.getElementById('as-start').value;
+  if(!date || !start){ msg.className='msg error'; msg.textContent='Elige un día y una hora de inicio.'; return; }
+  const end = addMin(start, duration);
+  blocks.push({
+    id:uid(), date, type:'estudio', subjectId:sub.id,
+    label:`Estudiar ${sub.name} — ${topic.name}`,
+    start, end, done:false,
+    plan: buildStudyPlan(duration, topic.name)
+  });
+  saveJSON('blocks', blocks);
+  renderWeeks();
+  msg.className='msg ok';
+  msg.textContent = 'Sesión agregada a tu semana. Ábrela desde la grilla para ver el plan.';
+});
+
+/* ============================================================
    COMIDA
    ============================================================ */
 function renderMeals(){
@@ -1140,19 +1490,48 @@ function renderMeals(){
   DAYS.slice(0,7).forEach(day=>{
     const div = document.createElement('div');
     div.className = 'card pad meal-day';
-    div.innerHTML = `<h4>${day}</h4>`;
-    MEAL_SLOTS.forEach(slot=>{
-      const wrap = document.createElement('div');
-      wrap.className = 'meal-slot';
-      wrap.innerHTML = `<label class="field-label">${slot}</label><input type="text" value="${escapeAttr(meals[day][slot])}">`;
-      const input = wrap.querySelector('input');
-      input.addEventListener('input', ()=>{
-        meals[day][slot] = input.value;
+    div.innerHTML = `<h4>${day}</h4><div class="meal-entries" data-entries></div>
+      <div class="add-meal-row">
+        <input type="text" placeholder="Ej: Desayuno" data-newmealname>
+        <button class="btn ghost small" data-add-meal>+</button>
+      </div>`;
+    grid.appendChild(div);
+    renderMealEntries(div, day);
+    div.querySelector('[data-add-meal]').addEventListener('click', ()=>{
+      const inp = div.querySelector('[data-newmealname]');
+      const name = inp.value.trim();
+      if(!name) return;
+      meals[day].push({id:uid(), name, value:''});
+      saveJSON('meals', meals);
+      inp.value='';
+      renderMealEntries(div, day);
+    });
+  });
+}
+
+function renderMealEntries(div, day){
+  const wrap = div.querySelector('[data-entries]');
+  wrap.innerHTML = '';
+  meals[day].forEach(entry=>{
+    const row = document.createElement('div');
+    row.className = 'meal-entry';
+    row.innerHTML = `
+      <input type="text" class="meal-name" value="${escapeAttr(entry.name)}" data-mf="name">
+      <input type="text" class="meal-value" placeholder="qué vas a comer" value="${escapeAttr(entry.value)}" data-mf="value">
+      <span class="icon-btn" data-maction="delete">✕</span>
+    `;
+    wrap.appendChild(row);
+    row.querySelectorAll('[data-mf]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        entry[inp.dataset.mf] = inp.value;
         saveJSON('meals', meals);
       });
-      div.appendChild(wrap);
     });
-    grid.appendChild(div);
+    row.querySelector('[data-maction="delete"]').addEventListener('click', ()=>{
+      meals[day] = meals[day].filter(e=>e.id!==entry.id);
+      saveJSON('meals', meals);
+      renderMealEntries(div, day);
+    });
   });
 }
 
