@@ -264,7 +264,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
       <span class="mark">OS</span>
       <div>
         <h1>Sistema Operativo Personal</h1>
-        <div class="sub">Ingeniería Civil Informática · 2do semestre</div>
+        <div class="sub">Tu semestre, en un solo lugar</div>
       </div>
     </div>
     <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
@@ -307,8 +307,8 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
     <div class="pillars">
       <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos por sobre relectura y resúmenes gigantes.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>Gimnasio lunes/miércoles/viernes y psicólogo semanal no son extras: son pilares con el mismo peso que la universidad.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien, ver amigas y llegar al final del semestre sin destruirse mentalmente es parte de "me fue bien".</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>El entrenamiento y la salud mental no son extras: tienen el mismo peso que los ramos.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien, mantener tu vida social y llegar al final del semestre sin agotarte mentalmente también es "me fue bien".</p></div>
     </div>
   </section>
 
@@ -415,19 +415,19 @@ function uid(){ return Math.random().toString(36).slice(2,9); }
 
 /* --- Filosofía --- */
 const defaultPhilo = {
-  objetivos: "Aprobar los 5 ramos (Matemática II es prioridad máxima, no se puede reprobar). Terminar el semestre pudiendo decir: me fue bien, aprendí, dormí bien la mayoría del tiempo, fui constante, entrené y no me destruí mentalmente.",
-  prioridades: "1) Matemática II. 2) El resto de los ramos, repartidos según carga de pruebas. 3) Gimnasio lunes/miércoles/viernes. 4) Psicólogo, sin saltarlo. 5) Vida social con amigas.",
-  reglas: "No estudiar más, estudiar mejor: active recall, repetición espaciada, ejercicios y certámenes antiguos por sobre releer o hacer resúmenes gigantes. Las sesiones de estudio con compañeras siempre tienen un objetivo concreto, nunca son solo para conversar. El psicólogo no es un recurso de emergencia, es parte fija del sistema."
+  objetivos: "Escribe aquí tus objetivos del semestre: qué ramos son prioridad, qué quieres lograr y qué significa para ti que 'te haya ido bien' al final.",
+  prioridades: "Escribe aquí el orden de tus prioridades (ej: el ramo más exigente primero, luego el resto según carga, entrenamiento, salud mental, vida social).",
+  reglas: "Escribe aquí tus reglas de estudio: qué técnicas quieres usar, qué NO quieres volver a hacer, y qué compromisos tienes contigo mismo/a este semestre."
 };
 const philo = loadJSON('philosophy', defaultPhilo);
 
 /* --- Ramos --- */
 const defaultSubjects = [
-  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', schedule:'Lunes, martes, miércoles y jueves (bloques por confirmar) + ayudantía jueves', content:'', tests:[]},
-  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
-  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
-  {id:uid(), name:'Análisis y Diseño de Software', color:'#5c7b6c', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
-  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', schedule:'Martes y jueves (bloques por confirmar)', content:'', tests:[]},
+  {id:uid(), name:'Ramo 1', color:'#a9503b', credits:'', schedule:'', content:'', tests:[]},
+  {id:uid(), name:'Ramo 2', color:'#3b6e8f', credits:'', schedule:'', content:'', tests:[]},
+  {id:uid(), name:'Ramo 3', color:'#c67a2f', credits:'', schedule:'', content:'', tests:[]},
+  {id:uid(), name:'Ramo 4', color:'#5c7b6c', credits:'', schedule:'', content:'', tests:[]},
+  {id:uid(), name:'Ramo 5', color:'#6a5a8c', credits:'', schedule:'', content:'', tests:[]},
 ];
 let subjects = loadJSON('subjects', defaultSubjects);
 
@@ -437,20 +437,8 @@ let blocks = loadJSON('blocks', []); // {id, date:'YYYY-MM-DD', type, subjectId,
 blocks.forEach(b=>{ if(!b.start){ b.start='18:00'; b.end='19:00'; } });
 
 /* --- Horario de clases fijo, se repite cada semana --- */
-// day: 0=Lunes ... 6=Domingo
-const defaultClassTemplate = [
-  {id:uid(), day:0, subjectId:null, subjectName:'Matemática II', start:'09:40', end:'10:50'},
-  {id:uid(), day:1, subjectId:null, subjectName:'Arquitectura y Organización de Computadores', start:'08:15', end:'09:25'},
-  {id:uid(), day:1, subjectId:null, subjectName:'Inglés 6', start:'09:40', end:'10:50'},
-  {id:uid(), day:1, subjectId:null, subjectName:'Análisis y Diseño de Software', start:'11:05', end:'12:15'},
-  {id:uid(), day:1, subjectId:null, subjectName:'Algoritmos y Complejidad', start:'14:40', end:'15:50'},
-  {id:uid(), day:2, subjectId:null, subjectName:'Matemática II', start:'08:15', end:'09:25'},
-  {id:uid(), day:3, subjectId:null, subjectName:'Análisis y Diseño de Software', start:'08:15', end:'09:25'},
-  {id:uid(), day:3, subjectId:null, subjectName:'Algoritmos y Complejidad', start:'09:40', end:'10:50'},
-  {id:uid(), day:3, subjectId:null, subjectName:'Matemática II', start:'11:05', end:'12:15'},
-  {id:uid(), day:3, subjectId:null, subjectName:'Inglés 6', start:'14:40', end:'15:15'},
-  {id:uid(), day:3, subjectId:null, subjectName:'Ayudantía Matemática II', start:'16:05', end:'17:15'},
-];
+// day: 0=Lunes ... 6=Domingo. Vacío por defecto: cada quien agrega el suyo desde la sección Semana.
+const defaultClassTemplate = [];
 let classTemplate = loadJSON('classTemplate', defaultClassTemplate);
 
 /* --- Comida --- */
@@ -510,7 +498,8 @@ function setSyncStatus(state, text){
 function getFullState(){
   return {
     philosophy: philo, subjects, blocks, classTemplate, meals,
-    fortnightStart: fortnightStart.toISOString()
+    fortnightStart: fortnightStart.toISOString(),
+    gymSeededDates: [...gymSeededDates]
   };
 }
 function applyFullState(state){
@@ -521,12 +510,14 @@ function applyFullState(state){
   if(state.classTemplate) classTemplate = state.classTemplate;
   if(state.meals) meals = state.meals;
   if(state.fortnightStart) fortnightStart = new Date(state.fortnightStart);
+  if(state.gymSeededDates) gymSeededDates = new Set(state.gymSeededDates);
   localStorage.setItem('philosophy', JSON.stringify(philo));
   localStorage.setItem('subjects', JSON.stringify(subjects));
   localStorage.setItem('blocks', JSON.stringify(blocks));
   localStorage.setItem('classTemplate', JSON.stringify(classTemplate));
   localStorage.setItem('meals', JSON.stringify(meals));
   localStorage.setItem('fortnightStart', JSON.stringify(fortnightStart.toISOString()));
+  localStorage.setItem('gymSeededDates', JSON.stringify([...gymSeededDates]));
   renderAll();
   suppressCloudSync = false;
 }
@@ -834,19 +825,24 @@ document.getElementById('btn-add-block').addEventListener('click', ()=>{
   renderWeeks();
 });
 
+let gymSeededDates = new Set(loadJSON('gymSeededDates', []));
 function ensureDefaultGymBlocks(){
+  let changed = false;
+  blocks.forEach(b=>{ if(b.type==='gym') gymSeededDates.add(b.date); }); // no duplicar los que ya existían
   for(let i=0;i<14;i++){
     const d = new Date(fortnightStart); d.setDate(d.getDate()+i);
     const dow = (d.getDay()+6)%7;
-    if([0,2,4].includes(dow)){
-      const dateStr = fmt(d);
-      const exists = blocks.some(b=>b.date===dateStr && b.type==='gym');
-      if(!exists){
-        blocks.push({id:uid(), date:dateStr, type:'gym', label:'Gimnasio · Full Body', start:'18:00', end:'19:15', done:false});
-      }
+    const dateStr = fmt(d);
+    if([0,2,4].includes(dow) && !gymSeededDates.has(dateStr)){
+      blocks.push({id:uid(), date:dateStr, type:'gym', label:'Gimnasio · Full Body', start:'18:00', end:'19:15', done:false});
+      gymSeededDates.add(dateStr);
+      changed = true;
     }
   }
-  saveJSON('blocks', blocks);
+  if(changed){
+    saveJSON('blocks', blocks);
+    saveJSON('gymSeededDates', [...gymSeededDates]);
+  }
 }
 
 function renderWeekRange(){
@@ -1068,6 +1064,13 @@ function findFreeSlot(dateStr, dayIdx, durationMin){
   return null;
 }
 
+function spreadDayIndices(count){
+  if(count<=1) return [0];
+  const idxs = [];
+  for(let k=0;k<count;k++) idxs.push(Math.round(k*(13/(count-1))));
+  return [...new Set(idxs)];
+}
+
 document.getElementById('btn-predict').addEventListener('click', ()=>{
   blocks = blocks.filter(b=>b.type!=='sugerido');
 
@@ -1092,25 +1095,36 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
   const totalUrgency = weighted.reduce((s,w)=>s+w.urgency,0);
   const totalBlocksToPlace = Math.round(weighted.length*2.5);
   weighted.sort((a,b)=>b.urgency-a.urgency);
+  const usedDayIdx = new Set(); // evita amontonar dos ramos exactamente el mismo día si hay espacio en otros
 
   weighted.forEach(w=>{
     const share = Math.max(1, Math.round((w.urgency/totalUrgency)*totalBlocksToPlace));
+    const desired = spreadDayIndices(share); // índices 0-13 repartidos parejo en toda la quincena
     let placed = 0;
-    for(let i=0;i<14 && placed<share;i++){
-      const d = new Date(fortnightStart); d.setDate(d.getDate()+i);
-      const dow = (d.getDay()+6)%7;
-      const dateStr = fmt(d);
-      const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
-      if(alreadyThisSubject) continue;
-      const slot = findFreeSlot(dateStr, dow, 90);
-      if(!slot) continue;
-      blocks.push({
-        id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
-        label:`Estudiar ${w.sub.name} (${w.nearest.name||'prueba'} en ${w.nearest.d}d)`,
-        start:slot[0], end:slot[1], done:false
-      });
-      placed++;
-    }
+    desired.forEach(centerIdx=>{
+      if(placed>=share) return;
+      // busca el día libre más cercano al índice deseado, expandiéndose hacia ambos lados
+      for(let offset=0; offset<14 && placed<share; offset++){
+        for(const cand of [centerIdx-offset, centerIdx+offset]){
+          if(cand<0 || cand>13) continue;
+          const d = new Date(fortnightStart); d.setDate(d.getDate()+cand);
+          const dow = (d.getDay()+6)%7;
+          const dateStr = fmt(d);
+          const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
+          if(alreadyThisSubject) continue;
+          const slot = findFreeSlot(dateStr, dow, 90);
+          if(!slot) continue;
+          blocks.push({
+            id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
+            label:`Estudiar ${w.sub.name} (${w.nearest.name||'prueba'} en ${w.nearest.d}d)`,
+            start:slot[0], end:slot[1], done:false
+          });
+          placed++;
+          usedDayIdx.add(cand);
+          break;
+        }
+      }
+    });
   });
 
   saveJSON('blocks', blocks);
