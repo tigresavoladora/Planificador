@@ -6,6 +6,9 @@
 <title>Sistema Operativo Personal — Semestre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --ink:#12181c;
@@ -213,6 +216,37 @@ label.field-label:first-child{margin-top:0;}
 
 footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
 
+/* ---------- Cuenta / sincronización ---------- */
+.account-widget{display:flex; align-items:center; gap:8px; font-size:12px; font-family:'IBM Plex Mono'; color:var(--ink-soft);}
+.account-widget .sync-dot{width:7px; height:7px; border-radius:50%; background:#c9c9c9; display:inline-block;}
+.account-widget .sync-dot.on{background:var(--pine);}
+.account-widget .sync-dot.busy{background:var(--amber); animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.account-widget button{
+  appearance:none; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink);
+  padding:6px 12px; border-radius:7px; font-family:'IBM Plex Sans'; font-size:12.5px; cursor:pointer;
+}
+.account-widget button:hover{border-color:var(--ink);}
+
+.modal-overlay{
+  display:none; position:fixed; inset:0; background:rgba(18,24,28,0.45); z-index:100;
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--paper-raised); border-radius:12px; padding:26px 26px 22px 26px; width:100%; max-width:360px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+}
+.modal-box h3{font-size:19px; margin-bottom:4px;}
+.modal-box p.sub{font-size:12.5px; color:var(--ink-soft); margin:0 0 16px 0;}
+.modal-box .msg{font-size:12px; margin-top:10px; min-height:16px;}
+.modal-box .msg.error{color:var(--clay);}
+.modal-box .msg.ok{color:var(--pine);}
+.modal-box .row-btns{display:flex; gap:8px; margin-top:16px;}
+.modal-box .row-btns button{flex:1;}
+.modal-box .close-x{position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft); font-size:16px; background:none; border:none;}
+.modal-box{position:relative;}
+
 @media (max-width:900px){
   .time-grid{overflow-x:auto;}
   .time-grid-header, .time-grid-body{min-width:760px;}
@@ -233,7 +267,14 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div class="sub">Ingeniería Civil Informática · 2do semestre</div>
       </div>
     </div>
-    <div class="mono" style="font-size:12px; color:var(--ink-soft);" id="today-label"></div>
+    <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
+  </div>
+  <div class="top-inner" style="margin-top:8px;">
+    <div class="account-widget" id="account-widget">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="account-status">Sin sincronizar</span>
+      <button id="btn-open-login">Iniciar sesión</button>
+    </div>
   </div>
   <nav class="tabs">
     <button data-view="filosofia" class="active">Filosofía</button>
@@ -333,7 +374,24 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
 </main>
 
-<footer class="foot">Todo se guarda localmente en este navegador (localStorage). Sin servidor, sin cuentas.</footer>
+<footer class="foot">Tus datos se guardan localmente en este navegador, y si inicias sesión, también en la nube para verlos desde otros dispositivos.</footer>
+
+<div class="modal-overlay" id="login-overlay">
+  <div class="modal-box">
+    <button class="close-x" id="btn-close-login">✕</button>
+    <h3>Sincronizar entre dispositivos</h3>
+    <p class="sub">Con tu correo y contraseña, tus datos viajan contigo.</p>
+    <label class="field-label">Correo</label>
+    <input type="text" id="login-email" placeholder="tu@correo.com">
+    <label class="field-label">Contraseña</label>
+    <input type="password" id="login-password" placeholder="mínimo 6 caracteres">
+    <div class="row-btns">
+      <button class="btn ghost" id="btn-signup">Crear cuenta</button>
+      <button class="btn pine" id="btn-signin">Iniciar sesión</button>
+    </div>
+    <div class="msg" id="login-msg"></div>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -348,7 +406,10 @@ function loadJSON(key, fallback){
     return raw ? JSON.parse(raw) : fallback;
   }catch(e){ return fallback; }
 }
-function saveJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+function saveJSON(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+  if(typeof scheduleCloudSync === 'function') scheduleCloudSync();
+}
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
@@ -413,6 +474,143 @@ function fmtLong(d){ return d.toLocaleDateString('es-CL', {day:'numeric', month:
 document.getElementById('today-label').textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
 
 /* ============================================================
+   SINCRONIZACIÓN ENTRE DISPOSITIVOS (Firebase)
+   ============================================================ */
+// Pega aquí la configuración que te da Firebase al crear tu proyecto (Project settings → General → tu app web).
+const firebaseConfig = {
+  apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
+  authDomain: "planificador-b4f8a.firebaseapp.com",
+  projectId: "planificador-b4f8a",
+  storageBucket: "planificador-b4f8a.firebasestorage.app",
+  messagingSenderId: "335729353878",
+  appId: "1:335729353878:web:43900782feca9063f0ceb7"
+};
+let cloudEnabled = false;
+let auth = null, db = null;
+try{
+  if(firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('PEGA_AQUI')===-1){
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    cloudEnabled = true;
+  }
+}catch(e){ console.warn('Firebase no está configurado todavía.', e); }
+
+let currentUser = null;
+let suppressCloudSync = false; // true mientras se cargan datos de la nube, para no reescribirla de inmediato
+let cloudSyncTimer = null;
+
+function setSyncStatus(state, text){
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('account-status');
+  if(dot) dot.className = 'sync-dot' + (state ? ' '+state : '');
+  if(label) label.textContent = text;
+}
+
+function getFullState(){
+  return {
+    philosophy: philo, subjects, blocks, classTemplate, meals,
+    fortnightStart: fortnightStart.toISOString()
+  };
+}
+function applyFullState(state){
+  suppressCloudSync = true;
+  if(state.philosophy) Object.assign(philo, state.philosophy);
+  if(state.subjects) subjects = state.subjects;
+  if(state.blocks) blocks = state.blocks;
+  if(state.classTemplate) classTemplate = state.classTemplate;
+  if(state.meals) meals = state.meals;
+  if(state.fortnightStart) fortnightStart = new Date(state.fortnightStart);
+  localStorage.setItem('philosophy', JSON.stringify(philo));
+  localStorage.setItem('subjects', JSON.stringify(subjects));
+  localStorage.setItem('blocks', JSON.stringify(blocks));
+  localStorage.setItem('classTemplate', JSON.stringify(classTemplate));
+  localStorage.setItem('meals', JSON.stringify(meals));
+  localStorage.setItem('fortnightStart', JSON.stringify(fortnightStart.toISOString()));
+  renderAll();
+  suppressCloudSync = false;
+}
+function renderAll(){
+  renderPhilosophy();
+  renderSubjects();
+  renderWeeks();
+  renderMeals();
+}
+
+function scheduleCloudSync(){
+  if(!cloudEnabled || !currentUser || suppressCloudSync) return;
+  setSyncStatus('busy', 'Sincronizando…');
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(()=>{
+    db.collection('users').doc(currentUser.uid).set(getFullState())
+      .then(()=> setSyncStatus('on', currentUser.email))
+      .catch(()=> setSyncStatus('', 'Error al sincronizar, se guardó solo localmente'));
+  }, 900);
+}
+
+function traduceError(err){
+  const map = {
+    'auth/email-already-in-use':'Ese correo ya tiene una cuenta. Prueba iniciar sesión.',
+    'auth/invalid-email':'Correo inválido.',
+    'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
+    'auth/wrong-password':'Contraseña incorrecta.',
+    'auth/user-not-found':'No existe una cuenta con ese correo.',
+    'auth/invalid-credential':'Correo o contraseña incorrectos.'
+  };
+  return map[err.code] || err.message;
+}
+
+function openLoginModal(){ document.getElementById('login-msg').textContent=''; document.getElementById('login-overlay').classList.add('open'); }
+function closeLoginModal(){ document.getElementById('login-overlay').classList.remove('open'); }
+document.getElementById('btn-close-login').addEventListener('click', closeLoginModal);
+document.getElementById('btn-signin').addEventListener('click', ()=>{
+  if(!cloudEnabled){ alert('La sincronización todavía no está configurada.'); return; }
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const msg = document.getElementById('login-msg');
+  msg.className='msg'; msg.textContent='Ingresando…';
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(()=>{ msg.className='msg ok'; msg.textContent='¡Listo!'; setTimeout(closeLoginModal, 500); })
+    .catch(err=>{ msg.className='msg error'; msg.textContent=traduceError(err); });
+});
+document.getElementById('btn-signup').addEventListener('click', ()=>{
+  if(!cloudEnabled){ alert('La sincronización todavía no está configurada.'); return; }
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const msg = document.getElementById('login-msg');
+  msg.className='msg'; msg.textContent='Creando cuenta…';
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(()=>{ msg.className='msg ok'; msg.textContent='¡Cuenta creada!'; setTimeout(closeLoginModal, 500); })
+    .catch(err=>{ msg.className='msg error'; msg.textContent=traduceError(err); });
+});
+
+if(cloudEnabled){
+  auth.onAuthStateChanged(user=>{
+    currentUser = user;
+    const widget = document.getElementById('account-widget');
+    if(user){
+      widget.innerHTML = `<span class="sync-dot on" id="sync-dot"></span><span id="account-status">${escapeAttr(user.email)}</span><button id="btn-logout">Cerrar sesión</button>`;
+      document.getElementById('btn-logout').addEventListener('click', ()=> auth.signOut());
+      db.collection('users').doc(user.uid).get().then(doc=>{
+        if(doc.exists){
+          applyFullState(doc.data());
+          setSyncStatus('on', user.email);
+        }else{
+          db.collection('users').doc(user.uid).set(getFullState()).then(()=> setSyncStatus('on', user.email));
+        }
+      });
+    }else{
+      widget.innerHTML = `<span class="sync-dot" id="sync-dot"></span><span id="account-status">Sin sincronizar</span><button id="btn-open-login">Iniciar sesión</button>`;
+      document.getElementById('btn-open-login').addEventListener('click', openLoginModal);
+    }
+  });
+}else{
+  document.getElementById('btn-open-login').addEventListener('click', ()=>{
+    alert('La sincronización con la nube todavía no está configurada en este archivo. Sigue las instrucciones para conectar Firebase y pega tus datos de configuración en firebaseConfig.');
+  });
+}
+
+/* ============================================================
    NAV
    ============================================================ */
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
@@ -429,12 +627,17 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
    ============================================================ */
 ['objetivos','prioridades','reglas'].forEach(k=>{
   const el = document.getElementById('philo-'+k);
-  el.textContent = philo[k];
   el.addEventListener('input', ()=>{
     philo[k] = el.textContent;
     saveJSON('philosophy', philo);
   });
 });
+function renderPhilosophy(){
+  ['objetivos','prioridades','reglas'].forEach(k=>{
+    document.getElementById('philo-'+k).textContent = philo[k];
+  });
+}
+renderPhilosophy();
 
 /* ============================================================
    RAMOS
