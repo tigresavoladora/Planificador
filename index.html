@@ -131,6 +131,7 @@ label.field-label:first-child{margin-top:0;}
   font-family:'IBM Plex Mono'; font-size:11px; background:var(--paper); border:1px solid var(--line);
   border-radius:20px; padding:3px 10px; color:var(--ink-soft);
 }
+.chip select{border:none; background:transparent; padding:0; font-family:inherit; font-size:inherit; color:inherit; width:auto;}
 .hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
 
 /* --- temas / topics --- */
@@ -161,6 +162,12 @@ label.field-label:first-child{margin-top:0;}
 /* ---------- Asistente ---------- */
 .asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
 .asistente-form label.field-label{margin-top:12px;}
+.purpose-toggle{display:flex; gap:6px;}
+.purpose-toggle button{
+  flex:1; appearance:none; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink-soft);
+  padding:8px 6px; border-radius:7px; font-family:'IBM Plex Sans'; font-size:12px; cursor:pointer;
+}
+.purpose-toggle button.active{border-color:var(--pine); background:#eef3ef; color:var(--pine); font-weight:600;}
 .asistente-topic-list{display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:260px; overflow-y:auto;}
 .asistente-topic-opt{
   display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:8px;
@@ -172,6 +179,10 @@ label.field-label:first-child{margin-top:0;}
 }
 .asistente-topic-opt .badge.temario{background:var(--amber-soft); color:#7a4d18;}
 .asistente-preview{border-left:3px solid var(--pine); padding-left:16px;}
+.asistente-preview .type-tag{
+  display:inline-block; font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase;
+  background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:2px 8px; margin-bottom:8px; color:var(--ink-soft);
+}
 .plan-step{margin-bottom:12px;}
 .plan-step .p-title{font-weight:600; font-size:13.5px; display:flex; justify-content:space-between;}
 .plan-step .p-title span.mins{font-family:'IBM Plex Mono'; font-size:11px; color:var(--pine-soft); font-weight:400;}
@@ -202,7 +213,7 @@ label.field-label:first-child{margin-top:0;}
 
 .horario-panel{margin-bottom:18px;}
 .horario-panel h3{font-size:15px; margin-bottom:10px;}
-.class-row{display:grid; grid-template-columns:1.1fr 1.4fr 0.8fr 0.8fr 28px; gap:6px; align-items:center; margin-bottom:6px;}
+.class-row{display:grid; grid-template-columns:0.85fr 0.85fr 1.3fr 0.65fr 0.65fr 24px; gap:6px; align-items:center; margin-bottom:6px;}
 
 .add-block-panel{margin-bottom:18px;}
 .add-block-panel h3{font-size:15px; margin-bottom:10px;}
@@ -327,6 +338,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 <header class="top">
   <div class="top-inner">
     <div class="brand">
+      <span class="mark">OS</span>
       <div>
         <h1>Planificador Semanal</h1>
         <div class="sub">Tu semestre, en un solo lugar</div>
@@ -335,11 +347,16 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
   </div>
   <div class="top-inner" style="margin-top:8px;">
-    <div style="display:flex; align-items:center; gap:14px;">
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
       <div class="account-widget" id="account-widget">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="account-status">Sin sincronizar</span>
         <button id="btn-open-login">Iniciar sesión</button>
+      </div>
+      <div class="account-widget">
+        <button id="btn-export" title="Descarga un archivo con todos tus datos">Descargar respaldo</button>
+        <button id="btn-import" title="Restaura un archivo de respaldo">Restaurar respaldo</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none;">
       </div>
       <div class="theme-picker">
         <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">🎨</button>
@@ -406,8 +423,8 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
             <option value="otro">Otro</option>
           </select>
         </div>
-        <div><label class="field-label">Inicio</label><input type="time" id="nb-start" value="18:00"></div>
-        <div><label class="field-label">Fin</label><input type="time" id="nb-end" value="19:00"></div>
+        <div><label class="field-label">Inicio</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="nb-start" value="18:00"></div>
+        <div><label class="field-label">Fin</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="nb-end" value="19:00"></div>
         <div><label class="field-label">Descripción</label><input type="text" id="nb-label" placeholder="Ej: repasar unidad 2"></div>
         <button class="btn small" id="btn-add-block">+ agregar</button>
       </div>
@@ -432,9 +449,10 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
 
     <div class="card pad horario-panel" style="margin-top:26px;">
-      <h3>Horario de clases (se repite todas las semanas)</h3>
-      <div id="class-template-list"></div>
-      <button class="btn ghost small" id="btn-add-class">+ agregar clase al horario</button>
+      <h3>Bloques que se repiten todas las semanas</h3>
+      <p class="sub" style="margin-bottom:10px;">Clases, gimnasio, o cualquier cosa fija. El ✕ de cada bloque en la grilla lo salta solo esa semana, sin borrar la regla.</p>
+      <div id="recurring-list"></div>
+      <button class="btn ghost small" id="btn-add-recurring">+ agregar bloque recurrente</button>
     </div>
   </section>
 
@@ -446,6 +464,18 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div class="asistente-form">
           <label class="field-label">Ramo</label>
           <select id="as-subject"></select>
+
+          <label class="field-label">Propósito de esta sesión</label>
+          <div class="purpose-toggle">
+            <button type="button" data-purpose="mantenimiento" class="active">Mantener fresco</button>
+            <button type="button" data-purpose="prueba">Preparar prueba</button>
+          </div>
+
+          <div id="as-test-wrap" style="display:none;">
+            <label class="field-label">¿Para cuál prueba?</label>
+            <select id="as-test"></select>
+          </div>
+
           <label class="field-label">Tema (los débiles o sin ver, y los que entran en la próxima prueba, aparecen primero)</label>
           <div class="asistente-topic-list" id="as-topics"></div>
           <label class="field-label">Duración de la sesión</label>
@@ -458,7 +488,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
           <label class="field-label">Día</label>
           <input type="date" id="as-date">
           <label class="field-label">Hora de inicio</label>
-          <input type="time" id="as-start" value="18:00">
+          <input type="text" inputmode="numeric" placeholder="HH:MM" id="as-start" value="18:00">
           <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión de estudio</button>
           <div class="msg" id="as-msg"></div>
         </div>
@@ -520,6 +550,7 @@ function loadJSON(key, fallback){
 }
 function saveJSON(key, value){
   localStorage.setItem(key, JSON.stringify(value));
+  if(key!=='lastUpdated') localStorage.setItem('lastUpdated', String(Date.now()));
   if(typeof scheduleCloudSync === 'function') scheduleCloudSync();
 }
 
@@ -596,13 +627,28 @@ const defaultPhilo = {
 };
 const philo = loadJSON('philosophy', defaultPhilo);
 
+/* ============================================================
+   TIPOS DE RAMO (para que el Asistente estudie cada uno distinto)
+   ============================================================ */
+const STUDY_TYPES = {
+  practico: 'Práctico (ejercicios)',
+  teorico: 'Teórico (conceptos)',
+  idioma: 'Idioma (oral / lectura)'
+};
+function guessStudyType(name){
+  const n = (name||'').toLowerCase();
+  if(/ingl[eé]s|idioma|franc[eé]s|alem[aá]n|portugu[eé]s|italiano/.test(n)) return 'idioma';
+  if(/matem[aá]tica|c[aá]lculo|[aá]lgebra|estad[ií]stica|algoritmo|complejidad|f[ií]sica|arquitectura|programaci[oó]n|estructura de datos/.test(n)) return 'practico';
+  return 'teorico';
+}
+
 /* --- Ramos --- */
 const defaultSubjects = [
-  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Análisis y Diseño de Software', color:'#2f4d3f', credits:'', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Análisis y Diseño de Software', color:'#2f4d3f', credits:'', studyType:'teorico', schedule:'', topics:[], tests:[]},
+  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', studyType:'idioma', schedule:'', topics:[], tests:[]},
 ];
 
 /* Normaliza un arreglo de ramos para que siempre tenga la forma correcta,
@@ -615,6 +661,7 @@ function normalizeSubjects(arr){
     if(!s.name) s.name = 'Ramo sin nombre';
     if(!s.color) s.color = randomColor();
     if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
+    if(!s.studyType || !STUDY_TYPES[s.studyType]) s.studyType = guessStudyType(s.name);
     if(!Array.isArray(s.topics)){
       s.topics = (s.content && String(s.content).trim()) ? [{id:uid(), name:String(s.content).trim().slice(0,120), status:'sinver'}] : [];
     }
@@ -648,39 +695,28 @@ function normalizeBlocks(arr){
 }
 let blocks = normalizeBlocks(loadJSON('blocks', []));
 
-/* --- Horario de clases fijo, se repite cada semana --- */
-// day: 0=Lunes ... 4=Viernes.
-// Los bloques marcados como "tope: true" son horarios que se cruzan (aún no resueltos);
-// se dibujan uno al lado del otro para que se note el conflicto de horario.
-const defaultClassTemplate = [
-  {id:uid(), day:0, subjectName:'Matemática II', start:'09:40', end:'10:50'},
-
-  {id:uid(), day:1, subjectName:'Arquitectura y Organización de Computadores', start:'08:15', end:'09:25'},
-  {id:uid(), day:1, subjectName:'Inglés 6', start:'09:40', end:'10:50'},
-  {id:uid(), day:1, subjectName:'Análisis y Diseño de Software', start:'11:05', end:'12:15', tope:true},
-  {id:uid(), day:1, subjectName:'Matemática II', start:'11:05', end:'12:15', tope:true},
-  {id:uid(), day:1, subjectName:'Algoritmos y Complejidad', start:'14:40', end:'15:50'},
-
-  {id:uid(), day:2, subjectName:'Matemática II', start:'08:15', end:'09:25'},
-
-  {id:uid(), day:3, subjectName:'Análisis y Diseño de Software', start:'08:15', end:'09:25'},
-  {id:uid(), day:3, subjectName:'Algoritmos y Complejidad', start:'09:40', end:'10:50', tope:true},
-  {id:uid(), day:3, subjectName:'Arquitectura y Organización de Computadores', start:'09:40', end:'10:50', tope:true},
-  {id:uid(), day:3, subjectName:'Matemática II', start:'11:05', end:'12:15'},
-  {id:uid(), day:3, subjectName:'Inglés 6', start:'14:40', end:'15:50'},
-  {id:uid(), day:3, subjectName:'Matemática II', start:'16:05', end:'17:15', label:'Ayudantía'},
-];
-function normalizeClassTemplate(arr){
+/* --- Bloques recurrentes (se repiten cada semana): clases, gimnasio, o cualquier cosa fija --- */
+// day: 0=Lunes ... 6=Domingo. Vacío por defecto: cada quien agrega los suyos desde la sección Semana.
+function normalizeRecurring(arr){
   if(!Array.isArray(arr)) return [];
   arr.forEach(c=>{
     if(!c.id) c.id = uid();
     if(typeof c.day !== 'number') c.day = 0;
     if(!c.start) c.start = '09:00';
     if(!c.end) c.end = '10:00';
+    if(!c.type) c.type = 'clase';
   });
   return arr;
 }
-let classTemplate = normalizeClassTemplate(loadJSON('classTemplate', JSON.parse(JSON.stringify(defaultClassTemplate))));
+let recurring = normalizeRecurring(loadJSON('recurring', loadJSON('classTemplate', [])));
+let recurringExceptions = new Set(loadJSON('recurringExceptions', []));
+// migración: si ya tenía gimnasio sembrado automáticamente (versión anterior) y no tiene aún una regla
+// recurrente de gimnasio, se la creamos una sola vez para no perder esa función.
+if(!recurring.some(c=>c.type==='gym') && blocks.some(b=>b.type==='gym')){
+  [0,2,4].forEach(day=>{
+    recurring.push({id:uid(), day, type:'gym', subjectId:null, subjectName:'', label:'Gimnasio · Full Body', start:'18:00', end:'19:15'});
+  });
+}
 
 /* --- Comida --- */
 const legacyMealSlots = ['Colación pre-gym','Almuerzo','Cena'];
@@ -692,7 +728,6 @@ function normalizeMeals(obj){
       if(Array.isArray(val)){
         result[d] = val.map(e=>({id:e.id||uid(), name:e.name||'', value:e.value||''}));
       }else if(val && typeof val === 'object'){
-        // formato viejo: {dia: {slot: texto}}
         result[d] = legacyMealSlots.filter(slot=>val[slot] && String(val[slot]).trim()).map(slot=>({id:uid(), name:slot, value:val[slot]}));
       }
     });
@@ -720,7 +755,6 @@ document.getElementById('today-label').textContent = new Date().toLocaleDateStri
 /* ============================================================
    SINCRONIZACIÓN ENTRE DISPOSITIVOS (Firebase)
    ============================================================ */
-// Pega aquí la configuración que te da Firebase al crear tu proyecto (Project settings → General → tu app web).
 const firebaseConfig = {
   apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
   authDomain: "planificador-b4f8a.firebaseapp.com",
@@ -741,7 +775,7 @@ try{
 }catch(e){ console.warn('Firebase no está configurado todavía.', e); }
 
 let currentUser = null;
-let suppressCloudSync = false; // true mientras se cargan datos de la nube, para no reescribirla de inmediato
+let suppressCloudSync = false;
 let cloudSyncTimer = null;
 
 function setSyncStatus(state, text){
@@ -753,9 +787,10 @@ function setSyncStatus(state, text){
 
 function getFullState(){
   return {
-    philosophy: philo, subjects, blocks, classTemplate, meals,
+    philosophy: philo, subjects, blocks, recurring, meals,
     fortnightStart: fortnightStart.toISOString(),
-    gymSeededDates: [...gymSeededDates]
+    recurringExceptions: [...recurringExceptions],
+    updatedAt: Number(localStorage.getItem('lastUpdated')||Date.now())
   };
 }
 function applyFullState(state){
@@ -763,17 +798,19 @@ function applyFullState(state){
   if(state.philosophy) Object.assign(philo, state.philosophy);
   if(state.subjects) subjects = normalizeSubjects(state.subjects);
   if(state.blocks) blocks = normalizeBlocks(state.blocks);
-  if(state.classTemplate) classTemplate = normalizeClassTemplate(state.classTemplate);
+  if(state.recurring) recurring = normalizeRecurring(state.recurring);
+  else if(state.classTemplate) recurring = normalizeRecurring(state.classTemplate.map(c=>({...c, type:c.type||'clase'})));
   if(state.meals) meals = normalizeMeals(state.meals);
   if(state.fortnightStart) fortnightStart = new Date(state.fortnightStart);
-  if(state.gymSeededDates) gymSeededDates = new Set(state.gymSeededDates);
+  if(state.recurringExceptions) recurringExceptions = new Set(state.recurringExceptions);
   localStorage.setItem('philosophy', JSON.stringify(philo));
   localStorage.setItem('subjects', JSON.stringify(subjects));
   localStorage.setItem('blocks', JSON.stringify(blocks));
-  localStorage.setItem('classTemplate', JSON.stringify(classTemplate));
+  localStorage.setItem('recurring', JSON.stringify(recurring));
   localStorage.setItem('meals', JSON.stringify(meals));
   localStorage.setItem('fortnightStart', JSON.stringify(fortnightStart.toISOString()));
-  localStorage.setItem('gymSeededDates', JSON.stringify([...gymSeededDates]));
+  localStorage.setItem('recurringExceptions', JSON.stringify([...recurringExceptions]));
+  localStorage.setItem('lastUpdated', String(state.updatedAt || Date.now()));
   renderAll();
   suppressCloudSync = false;
 }
@@ -793,15 +830,17 @@ function scheduleCloudSync(){
   if(!cloudEnabled || !currentUser || suppressCloudSync) return;
   setSyncStatus('busy', 'Sincronizando…');
   clearTimeout(cloudSyncTimer);
-  cloudSyncTimer = setTimeout(()=>{
-    db.collection('users').doc(currentUser.uid).set(getFullState())
-      .then(()=> setSyncStatus('on', currentUser.email))
-      .catch((err)=>{
-        console.error('Error al sincronizar con Firestore:', err);
-        setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)');
-      });
-  }, 900);
+  cloudSyncTimer = setTimeout(flushCloudSyncNow, 900);
 }
+function flushCloudSyncNow(){
+  if(!cloudEnabled || !currentUser) return;
+  clearTimeout(cloudSyncTimer);
+  db.collection('users').doc(currentUser.uid).set(getFullState())
+    .then(()=> setSyncStatus('on', currentUser.email))
+    .catch(()=> setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)'));
+}
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushCloudSyncNow(); });
+window.addEventListener('pagehide', flushCloudSyncNow);
 
 function traduceError(err){
   const map = {
@@ -817,6 +856,40 @@ function traduceError(err){
 
 function openLoginModal(){ document.getElementById('login-msg').textContent=''; document.getElementById('login-overlay').classList.add('open'); }
 function closeLoginModal(){ document.getElementById('login-overlay').classList.remove('open'); }
+
+document.getElementById('btn-export').addEventListener('click', ()=>{
+  const data = JSON.stringify(getFullState(), null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `respaldo-planificador-${fmt(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('btn-import').addEventListener('click', ()=>{
+  document.getElementById('import-file').click();
+});
+document.getElementById('import-file').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const state = JSON.parse(reader.result);
+      if(!confirm('Esto va a reemplazar todos tus datos actuales por los del respaldo. ¿Continuar?')) return;
+      state.updatedAt = Date.now();
+      applyFullState(state);
+      if(cloudEnabled && currentUser) flushCloudSyncNow();
+      alert('Respaldo restaurado.');
+    }catch(err){
+      alert('El archivo no parece un respaldo válido.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
 document.getElementById('btn-close-login').addEventListener('click', closeLoginModal);
 document.getElementById('btn-signin').addEventListener('click', ()=>{
   if(!cloudEnabled){ alert('La sincronización todavía no está configurada.'); return; }
@@ -848,12 +921,17 @@ if(cloudEnabled){
       document.getElementById('btn-logout').addEventListener('click', ()=> auth.signOut());
       db.collection('users').doc(user.uid).get().then(doc=>{
         if(doc.exists){
-          applyFullState(doc.data());
+          const cloudData = doc.data();
+          const cloudUpdated = cloudData.updatedAt || 0;
+          const localUpdated = Number(localStorage.getItem('lastUpdated')||0);
+          if(cloudUpdated > localUpdated){
+            applyFullState(cloudData);
+          }else{
+            db.collection('users').doc(user.uid).set(getFullState());
+          }
           setSyncStatus('on', user.email);
         }else{
-          db.collection('users').doc(user.uid).set(getFullState())
-            .then(()=> setSyncStatus('on', user.email))
-            .catch(()=> setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)'));
+          db.collection('users').doc(user.uid).set(getFullState()).then(()=> setSyncStatus('on', user.email));
         }
       }).catch(()=> setSyncStatus('', 'Error al leer desde Firestore (revisa las reglas)'));
     }else{
@@ -863,7 +941,7 @@ if(cloudEnabled){
   });
 }else{
   document.getElementById('btn-open-login').addEventListener('click', ()=>{
-    alert('La sincronización con la nube todavía no está configurada en este archivo. Sigue las instrucciones para conectar Firebase y pega tus datos de configuración en firebaseConfig.');
+    alert('La sincronización con la nube todavía no está configurada en este archivo.');
   });
 }
 
@@ -899,7 +977,7 @@ renderPhilosophy();
 /* ============================================================
    RAMOS
    ============================================================ */
-const HOURS_PER_CREDIT = 1; // convención SCT: ~1 crédito ≈ 1 hora de trabajo semanal fuera de clases
+const HOURS_PER_CREDIT = 1;
 const STATUS_CYCLE = ['sinver','debil','dominado'];
 const STATUS_LABEL = {sinver:'sin ver', debil:'débil', dominado:'dominado'};
 
@@ -920,6 +998,11 @@ function renderSubjects(){
         </div>
         <div class="chip-row">
           <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
+          <span class="chip mono">tipo:
+            <select data-field="studyType">
+              ${Object.entries(STUDY_TYPES).map(([val,label])=>`<option value="${val}" ${sub.studyType===val?'selected':''}>${label}</option>`).join('')}
+            </select>
+          </span>
           <span class="hours-hint" data-hours-hint>${hoursHint}</span>
         </div>
         <label class="field-label">Temas del ramo</label>
@@ -934,15 +1017,16 @@ function renderSubjects(){
       `;
       grid.appendChild(card);
 
-      // field bindings
       card.querySelectorAll('[data-field]').forEach(inp=>{
-        inp.addEventListener('input', ()=>{
+        const evt = inp.tagName==='SELECT' ? 'change' : 'input';
+        inp.addEventListener(evt, ()=>{
           sub[inp.dataset.field] = inp.value;
           saveJSON('subjects', subjects);
           if(inp.dataset.field==='credits'){
             const c = parseFloat(sub.credits);
             card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
           }
+          if(inp.dataset.field==='studyType') renderAsistente();
         });
       });
       card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
@@ -966,7 +1050,7 @@ function renderSubjects(){
         saveJSON('subjects', subjects);
         inp.value='';
         renderTopics(card, sub);
-        renderTests(card, sub); // por si algún temario referencia temas nuevos
+        renderTests(card, sub);
         renderAsistente();
       });
       renderTopics(card, sub);
@@ -976,12 +1060,11 @@ function renderSubjects(){
     }
   });
 
-  // add-subject tile
   const addTile = document.createElement('div');
   addTile.className = 'add-subject-btn';
   addTile.textContent = '+ agregar ramo';
   addTile.addEventListener('click', ()=>{
-    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', schedule:'', topics:[], tests:[]});
+    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', studyType:'teorico', schedule:'', topics:[], tests:[]});
     saveJSON('subjects', subjects);
     renderSubjects();
     renderAsistente();
@@ -1106,14 +1189,26 @@ function escapeAttr(str){
    SEMANA (2 semanas, drag & drop)
    ============================================================ */
 const HOUR_START = 5, HOUR_END = 23; // grilla visible 05:00–23:00
+const SUGGEST_MIN_HOUR = 8; // las sugerencias automáticas nunca proponen antes de esta hora
 const PX_PER_HOUR = 48;
 const GRID_HEIGHT = (HOUR_END-HOUR_START)*PX_PER_HOUR;
 
 function timeToMin(t){ const [h,m] = t.split(':').map(Number); return h*60+m; }
+function normalizeTime(str){
+  if(!str) return null;
+  str = str.trim();
+  let m = str.match(/^(\d{1,2}):(\d{2})$/);
+  if(!m) m = str.match(/^(\d{1,2})(\d{2})$/);
+  if(!m) m = str.match(/^(\d{1,2})$/);
+  if(!m) return null;
+  let h = Number(m[1]), min = Number(m[2]||0);
+  if(h>23 || min>59) return null;
+  return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0');
+}
 function minToY(min){ return (min - HOUR_START*60) * (PX_PER_HOUR/60); }
 function yToTime(y){
   let min = HOUR_START*60 + y/(PX_PER_HOUR/60);
-  min = Math.round(min/15)*15; // snap a 15 min
+  min = Math.round(min/15)*15;
   min = Math.max(HOUR_START*60, Math.min(HOUR_END*60-15, min));
   const h = Math.floor(min/60), m = min%60;
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
@@ -1124,51 +1219,66 @@ function addMin(t, delta){
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
 }
 
-/* --- Horario fijo de clases: panel editor --- */
+/* --- Bloques recurrentes: panel editor --- */
 function linkClassSubjects(){
-  classTemplate.forEach(c=>{
-    if(!c.subjectId){
+  recurring.forEach(c=>{
+    if(c.type==='clase' && !c.subjectId){
       const match = subjects.find(s=>s.name===c.subjectName);
       if(match) c.subjectId = match.id;
     }
   });
 }
-function renderClassTemplate(){
+const RECURRING_TYPES = [
+  {value:'clase', label:'Clase'},
+  {value:'estudio', label:'Estudio'},
+  {value:'gym', label:'Gimnasio'},
+  {value:'social', label:'Vida social'},
+  {value:'otro', label:'Otro'}
+];
+function renderRecurringPanel(){
   linkClassSubjects();
-  const list = document.getElementById('class-template-list');
+  const list = document.getElementById('recurring-list');
   list.innerHTML = '';
-  classTemplate.forEach(c=>{
+  recurring.forEach(c=>{
     const row = document.createElement('div');
     row.className = 'class-row';
+    const secondaryField = c.type==='clase'
+      ? `<select data-cf="subjectId">${subjects.map(s=>`<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${escapeAttr(s.name)}</option>`).join('')}</select>`
+      : `<input type="text" data-cf="label" placeholder="Descripción" value="${escapeAttr(c.label||'')}">`;
     row.innerHTML = `
-      <select data-cf="day">${DAYS.slice(0,5).map((d,i)=>`<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('')}</select>
-      <select data-cf="subjectId">${subjects.map(s=>`<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${escapeAttr(s.name)}</option>`).join('')}</select>
-      <input type="time" data-cf="start" value="${c.start}">
-      <input type="time" data-cf="end" value="${c.end}">
-      <span class="icon-btn" data-caction="delete" title="Eliminar">✕</span>
+      <select data-cf="type">${RECURRING_TYPES.map(t=>`<option value="${t.value}" ${c.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select>
+      <select data-cf="day">${DAYS.slice(0,7).map((d,i)=>`<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('')}</select>
+      ${secondaryField}
+      <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="start" value="${c.start}">
+      <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="end" value="${c.end}">
+      <span class="icon-btn" data-caction="delete" title="Eliminar regla">✕</span>
     `;
     list.appendChild(row);
     row.querySelectorAll('[data-cf]').forEach(inp=>{
-      inp.addEventListener('change', ()=>{
+      const evt = inp.tagName==='SELECT' ? 'change' : 'input';
+      inp.addEventListener(evt, ()=>{
         const f = inp.dataset.cf;
-        c[f] = f==='day' ? Number(inp.value) : inp.value;
+        if(f==='day') c.day = Number(inp.value);
+        else if(f==='start' || f==='end'){ const t = normalizeTime(inp.value); if(t) c[f] = t; }
+        else c[f] = inp.value;
         if(f==='subjectId'){ const s = subjects.find(x=>x.id===inp.value); c.subjectName = s ? s.name : ''; }
-        saveJSON('classTemplate', classTemplate);
+        saveJSON('recurring', recurring);
+        if(f==='type') renderRecurringPanel();
         renderWeeks();
       });
     });
     row.querySelector('[data-caction="delete"]').addEventListener('click', ()=>{
-      classTemplate = classTemplate.filter(x=>x.id!==c.id);
-      saveJSON('classTemplate', classTemplate);
-      renderClassTemplate();
+      recurring = recurring.filter(x=>x.id!==c.id);
+      saveJSON('recurring', recurring);
+      renderRecurringPanel();
       renderWeeks();
     });
   });
 }
-document.getElementById('btn-add-class').addEventListener('click', ()=>{
-  classTemplate.push({id:uid(), day:0, subjectId:subjects[0]?.id||null, subjectName:subjects[0]?.name||'', start:'09:00', end:'10:00'});
-  saveJSON('classTemplate', classTemplate);
-  renderClassTemplate();
+document.getElementById('btn-add-recurring').addEventListener('click', ()=>{
+  recurring.push({id:uid(), day:0, type:'estudio', subjectId:null, subjectName:'', label:'', start:'18:00', end:'19:00'});
+  saveJSON('recurring', recurring);
+  renderRecurringPanel();
   renderWeeks();
 });
 
@@ -1176,35 +1286,16 @@ document.getElementById('btn-add-class').addEventListener('click', ()=>{
 document.getElementById('btn-add-block').addEventListener('click', ()=>{
   const date = document.getElementById('nb-date').value;
   const type = document.getElementById('nb-type').value;
-  const start = document.getElementById('nb-start').value;
-  const end = document.getElementById('nb-end').value;
+  const start = normalizeTime(document.getElementById('nb-start').value);
+  const end = normalizeTime(document.getElementById('nb-end').value);
   const label = document.getElementById('nb-label').value.trim();
   if(!date || !label){ alert('Falta el día o la descripción.'); return; }
+  if(!start || !end){ alert('La hora debe ser tipo 18:00 o 1800.'); return; }
   blocks.push({id:uid(), date, type, label, start, end, done:false});
   saveJSON('blocks', blocks);
   document.getElementById('nb-label').value='';
   renderWeeks();
 });
-
-let gymSeededDates = new Set(loadJSON('gymSeededDates', []));
-function ensureDefaultGymBlocks(){
-  let changed = false;
-  blocks.forEach(b=>{ if(b.type==='gym') gymSeededDates.add(b.date); }); // no duplicar los que ya existían
-  for(let i=0;i<14;i++){
-    const d = new Date(fortnightStart); d.setDate(d.getDate()+i);
-    const dow = (d.getDay()+6)%7;
-    const dateStr = fmt(d);
-    if([0,2,4].includes(dow) && !gymSeededDates.has(dateStr)){
-      blocks.push({id:uid(), date:dateStr, type:'gym', label:'Gimnasio · Full Body', start:'18:00', end:'19:15', done:false});
-      gymSeededDates.add(dateStr);
-      changed = true;
-    }
-  }
-  if(changed){
-    saveJSON('blocks', blocks);
-    saveJSON('gymSeededDates', [...gymSeededDates]);
-  }
-}
 
 function renderWeekRange(){
   const end = new Date(fortnightStart); end.setDate(end.getDate()+13);
@@ -1215,8 +1306,7 @@ function renderWeekRange(){
 }
 
 function renderWeeks(){
-  ensureDefaultGymBlocks();
-  renderClassTemplate();
+  renderRecurringPanel();
   renderWeekRange();
   const wrap = document.getElementById('weeks-wrap');
   wrap.innerHTML = '';
@@ -1229,7 +1319,6 @@ function renderWeeks(){
     const grid = document.createElement('div');
     grid.className = 'time-grid';
 
-    // header
     const header = document.createElement('div');
     header.className = 'time-grid-header';
     header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d=>{
@@ -1238,7 +1327,6 @@ function renderWeeks(){
     }).join('');
     grid.appendChild(header);
 
-    // body
     const body = document.createElement('div');
     body.className = 'time-grid-body';
     body.style.height = GRID_HEIGHT+'px';
@@ -1280,7 +1368,6 @@ function renderWeeks(){
 }
 
 function layoutOverlaps(items){
-  // items: [{start,end,...}] en minutos -> asigna col/cols para dibujarlos lado a lado si se topan
   items.sort((a,b)=>a.start-b.start);
   items.forEach(it=>{ it.col=0; it.cols=1; });
   for(let i=0;i<items.length;i++){
@@ -1298,15 +1385,15 @@ function layoutOverlaps(items){
 }
 
 function renderDayColumnBlocks(col, dateStr, dayIdx){
-  const fixed = classTemplate.filter(c=>c.day===dayIdx).map(c=>({
-    start:timeToMin(c.start), end:timeToMin(c.end), kind:'clase', ref:c
-  }));
+  const fixed = recurring
+    .filter(c=>c.day===dayIdx && !recurringExceptions.has(c.id+'|'+dateStr))
+    .map(c=>({ start:timeToMin(c.start), end:timeToMin(c.end), kind:'recurring', ref:c }));
   const movable = blocks.filter(b=>b.date===dateStr).map(b=>({
     start:timeToMin(b.start), end:timeToMin(b.end), kind:'movable', ref:b
   }));
   const items = layoutOverlaps([...fixed, ...movable]);
   items.forEach(it=>{
-    const el = it.kind==='clase' ? renderClassBlock(it) : renderMovableBlock(it);
+    const el = it.kind==='recurring' ? renderRecurringBlock(it, dateStr) : renderMovableBlock(it);
     const top = minToY(it.start);
     const height = Math.max(18, minToY(it.end)-top);
     const widthPct = 100/it.cols;
@@ -1318,15 +1405,23 @@ function renderDayColumnBlocks(col, dateStr, dayIdx){
   });
 }
 
-function renderClassBlock(it){
+function renderRecurringBlock(it, dateStr){
   const c = it.ref;
-  const sub = subjects.find(s=>s.id===c.subjectId);
+  const sub = c.type==='clase' ? subjects.find(s=>s.id===c.subjectId) : null;
+  const labelText = c.type==='clase' ? (sub?sub.name:c.subjectName) : (c.label||'');
   const el = document.createElement('div');
-  el.className = 'block-abs type-clase fixed';
+  el.className = `block-abs type-${c.type} fixed`;
   if(sub) el.style.borderColor = sub.color;
-  if(c.tope) el.style.borderStyle = 'dashed';
-  const name = (sub?sub.name:c.subjectName) + (c.tope ? ' (tope)' : '') + (c.label ? ' · '+c.label : '');
-  el.innerHTML = `<span class="b-range">${c.start}–${c.end}</span>${escapeAttr(name)}`;
+  el.innerHTML = `
+    <div class="b-actions"><span data-raction="skip" title="Quitar solo esta semana">✕</span></div>
+    <span class="b-range">${c.start}–${c.end}</span>${escapeAttr(labelText)}
+  `;
+  el.querySelector('[data-raction="skip"]').addEventListener('click', e=>{
+    e.stopPropagation();
+    recurringExceptions.add(c.id+'|'+dateStr);
+    saveJSON('recurringExceptions', [...recurringExceptions]);
+    renderWeeks();
+  });
   return el;
 }
 
@@ -1405,7 +1500,7 @@ function setupDropZone(col){
       b.date = col.dataset.date;
       b.start = newStart;
       b.end = addMin(newStart, duration);
-      if(b.type==='sugerido') b.type='estudio'; // al moverla manualmente, la confirmamos
+      if(b.type==='sugerido') b.type='estudio';
       saveJSON('blocks', blocks);
       renderWeeks();
     }
@@ -1423,22 +1518,76 @@ document.getElementById('btn-next-fortnight').addEventListener('click', ()=>{
   renderWeeks();
 });
 
-/* ---------- Predicción ---------- */
-// Regla simple y transparente:
-// - Para cada ramo con prueba dentro de los próximos 14 días, urgencia = peso_ramo / max(días_hasta_prueba, 1)
-// - Mate II tiene peso extra por ser prioridad máxima
-// - Para cada bloque sugerido busca un hueco real (90 min) en la grilla horaria de ese día,
-//   revisando las clases fijas y los bloques ya puestos para no chocar con nada.
+/* ============================================================
+   PLAN DE ESTUDIO — distinto según tipo de ramo y propósito
+   ============================================================ */
+// studyType: 'practico' | 'teorico' | 'idioma'
+// purpose:   'prueba' (temario acotado, urgencia) | 'mantenimiento' (repaso espaciado, sin apuro)
+function buildStudyPlan(durationMin, topicName, studyType, purpose){
+  const forExam = purpose === 'prueba';
+  let parts;
+
+  if(studyType === 'idioma'){
+    parts = [
+      {label:'Vocabulario y gramática', pct:0.20, desc:`Recuperación activa: recuerda en voz alta o por escrito el vocabulario y las reglas de "${topicName}", sin mirar apuntes.`},
+      {label:'Comprensión (lectura o audio)', pct:0.25, desc: forExam
+        ? `Lee o escucha un material similar al que podría aparecer en la prueba sobre "${topicName}", y responde preguntas sobre él.`
+        : `Lee o escucha algo breve relacionado a "${topicName}" para mantener el oído y la lectura entrenados.`},
+      {label:'Producción oral', pct:0.30, desc:`Habla en voz alta (o grábate) usando "${topicName}": arma 3-5 oraciones o un mini-monólogo. Esto es lo que más rinde y lo que menos se practica solo/a.`},
+      {label:'Producción escrita', pct:0.15, desc:`Escribe un párrafo corto usando el vocabulario o la estructura de "${topicName}".`},
+      {label:'Autoevaluación', pct:0.10, desc:'Revisa tus propios errores de pronunciación, gramática u ortografía y anótalos en tu banco de errores.'}
+    ];
+  }else if(studyType === 'practico'){
+    parts = [
+      {label:'Recuperación activa', pct:0.15, desc:`Sin mirar apuntes, recuerda o escribe las fórmulas, métodos o pasos clave de "${topicName}".`},
+      {label:'Ejercicios nuevos', pct:0.30, desc:`Resuelve ejercicios de "${topicName}" que no hayas hecho antes.`},
+      {label: forExam ? 'Ejercicios de certámenes antiguos' : 'Ejercicios variados / intercalados', pct:0.30, desc: forExam
+        ? `Resuelve preguntas de certámenes anteriores sobre "${topicName}", en condiciones similares a la prueba (tiempo limitado, sin apuntes).`
+        : `Mezcla ejercicios de "${topicName}" con otro tema ya visto, para practicar identificar qué método usar (esto es lo que de verdad mantiene la materia fresca).`},
+      {label:'Banco de errores', pct:0.15, desc:'Anota cada error que cometiste y por qué, para repasarlo después.'},
+      {label:'Autoevaluación', pct:0.10, desc:'Explica en voz alta, paso a paso, cómo resolverías un ejercicio nuevo de este tema.'}
+    ];
+  }else{
+    parts = [
+      {label:'Recuperación activa', pct:0.20, desc:`Sin mirar apuntes, escribe o explica en voz alta todo lo que recuerdes de "${topicName}".`},
+      {label:'Mapa conceptual / esquema', pct:0.20, desc:`Dibuja o escribe cómo se conecta "${topicName}" con otros conceptos del ramo.`},
+      {label: forExam ? 'Casos o preguntas de certámenes antiguos' : 'Aplicación a un caso o ejemplo nuevo', pct:0.30, desc: forExam
+        ? `Responde preguntas de desarrollo o casos de certámenes anteriores sobre "${topicName}".`
+        : `Aplica "${topicName}" a un ejemplo o caso que no hayas visto antes, para comprobar que lo entiendes y no solo lo memorizaste.`},
+      {label:'Banco de errores', pct:0.15, desc:'Anota qué conceptos confundiste o te costó explicar.'},
+      {label:'Autoevaluación', pct:0.15, desc:'Explica el concepto completo en voz alta, como si le enseñaras a alguien que no sabe nada del tema.'}
+    ];
+  }
+  return parts.map(p=>({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
+}
+
+function pickTopicForSession(sub, test, rotateIdx){
+  let candidates = sub.topics.filter(t=> t.status!=='dominado');
+  if(test && test.temario && test.temario.length){
+    const inTemario = candidates.filter(t=>test.temario.includes(t.id));
+    if(inTemario.length) candidates = inTemario;
+  }
+  if(!candidates.length) candidates = sub.topics;
+  if(!candidates.length) return null;
+  const order = {debil:0, sinver:1, dominado:2};
+  candidates = [...candidates].sort((a,b)=> order[a.status]-order[b.status]);
+  return candidates[(rotateIdx||0) % candidates.length];
+}
+
+/* ---------- Predicción semanal (automática) ---------- */
 function getOccupiedRanges(dateStr, dayIdx){
-  const fixed = classTemplate.filter(c=>c.day===dayIdx).map(c=>[timeToMin(c.start), timeToMin(c.end)]);
+  const fixed = recurring
+    .filter(c=>c.day===dayIdx && !recurringExceptions.has(c.id+'|'+dateStr))
+    .map(c=>[timeToMin(c.start), timeToMin(c.end)]);
   const movable = blocks.filter(b=>b.date===dateStr).map(b=>[timeToMin(b.start), timeToMin(b.end)]);
   return [...fixed, ...movable];
 }
-function findFreeSlot(dateStr, dayIdx, durationMin){
+function findFreeSlot(dateStr, dayIdx, durationMin, minStartHour){
+  const minStart = (minStartHour!=null ? minStartHour : HOUR_START) * 60;
   const occupied = getOccupiedRanges(dateStr, dayIdx);
   const searchStarts = [];
   for(let m=17*60; m<=HOUR_END*60-durationMin; m+=30) searchStarts.push(m); // prioriza tarde/noche
-  for(let m=HOUR_START*60; m<17*60; m+=30) searchStarts.push(m); // luego el resto del día
+  for(let m=minStart; m<17*60; m+=30) searchStarts.push(m); // luego el resto del día razonable
   for(const start of searchStarts){
     const end = start+durationMin;
     const overlaps = occupied.some(([os,oe])=> start<oe && end>os);
@@ -1458,37 +1607,13 @@ function spreadDayIndices(count){
   return [...new Set(idxs)];
 }
 
-function buildStudyPlan(durationMin, topicName){
-  const parts = [
-    {label:'Recuperación activa', pct:0.15, desc:`Sin mirar apuntes, escribe o explica en voz alta todo lo que recuerdes de "${topicName}".`},
-    {label:'Revisar y corregir', pct:0.15, desc:'Compara con tus apuntes o tu banco de errores; anota lo que te faltó o entendiste mal.'},
-    {label:'Ejercicios / certámenes antiguos', pct:0.40, desc:'Resuelve ejercicios, guías o preguntas de certámenes anteriores sobre este tema.'},
-    {label:'Banco de errores', pct:0.15, desc:'Anota los errores que cometiste y por qué, para revisarlos en tu próximo repaso.'},
-    {label:'Autoevaluación', pct:0.15, desc:'Explica el tema completo en voz alta como si se lo enseñaras a alguien más.'}
-  ];
-  return parts.map(p=>({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
-}
-
-function pickTopicForSession(sub, test, rotateIdx){
-  let candidates = sub.topics.filter(t=> t.status!=='dominado');
-  if(test && test.temario && test.temario.length){
-    const inTemario = candidates.filter(t=>test.temario.includes(t.id));
-    if(inTemario.length) candidates = inTemario;
-  }
-  if(!candidates.length) candidates = sub.topics;
-  if(!candidates.length) return null;
-  const order = {debil:0, sinver:1, dominado:2};
-  candidates = [...candidates].sort((a,b)=> order[a.status]-order[b.status]);
-  return candidates[(rotateIdx||0) % candidates.length];
-}
-
 document.getElementById('btn-predict').addEventListener('click', ()=>{
   blocks = blocks.filter(b=>b.type!=='sugerido');
 
   const horizon = 14;
   const info = subjects.map(sub=>{
-    const creditsNum = parseFloat(sub.credits) || 3; // sin créditos definidos, se asume una carga media
-    const baseSessions = Math.min(4, Math.max(1, Math.round((creditsNum*HOURS_PER_CREDIT*2)/1.5))); // sesiones de 90 min para cubrir 2 semanas de carga
+    const creditsNum = parseFloat(sub.credits) || 3;
+    const baseSessions = Math.min(4, Math.max(1, Math.round((creditsNum*HOURS_PER_CREDIT*2)/1.5)));
     const upcoming = sub.tests
       .map(t=>({...t, d: daysUntil(t.date)}))
       .filter(t=>t.d!==null && t.d>=0 && t.d<=horizon)
@@ -1513,6 +1638,7 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
 
   info.forEach(w=>{
     if(w.totalSessions<=0) return;
+    const purpose = w.nearest ? 'prueba' : 'mantenimiento';
     const desired = spreadDayIndices(w.totalSessions);
     let placed = 0;
     desired.forEach(centerIdx=>{
@@ -1525,15 +1651,15 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
           const dateStr = fmt(d);
           const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
           if(alreadyThisSubject) continue;
-          const slot = findFreeSlot(dateStr, dow, 90);
+          const slot = findFreeSlot(dateStr, dow, 90, SUGGEST_MIN_HOUR);
           if(!slot) continue;
           const topic = pickTopicForSession(w.sub, w.nearest, placed);
-          const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : '';
+          const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : ' (mantenimiento)';
           const label = topic ? `Estudiar ${w.sub.name} — ${topic.name}${testNote}` : `Estudiar ${w.sub.name}${testNote}`;
           blocks.push({
             id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
             label, start:slot[0], end:slot[1], done:false,
-            plan: buildStudyPlan(90, topic ? topic.name : w.sub.name)
+            plan: buildStudyPlan(90, topic ? topic.name : w.sub.name, w.sub.studyType, purpose)
           });
           placed++;
           break;
@@ -1549,6 +1675,19 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
 /* ============================================================
    ASISTENTE DE SESIÓN DE ESTUDIO
    ============================================================ */
+let asPurpose = 'mantenimiento';
+
+document.querySelectorAll('.purpose-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.purpose-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    asPurpose = btn.dataset.purpose;
+    document.getElementById('as-test-wrap').style.display = asPurpose==='prueba' ? 'block' : 'none';
+    renderAsistenteTestSelect();
+    renderAsistenteTopics();
+  });
+});
+
 function renderAsistente(){
   const subSel = document.getElementById('as-subject');
   const currentSubId = subSel.value;
@@ -1557,7 +1696,32 @@ function renderAsistente(){
   if(!document.getElementById('as-date').value){
     document.getElementById('as-date').value = fmt(new Date());
   }
+  renderAsistenteTestSelect();
   renderAsistenteTopics();
+}
+document.getElementById('as-subject').addEventListener('change', ()=>{
+  renderAsistenteTestSelect();
+  renderAsistenteTopics();
+});
+
+function renderAsistenteTestSelect(){
+  const subId = document.getElementById('as-subject').value;
+  const sub = subjects.find(s=>s.id===subId);
+  const sel = document.getElementById('as-test');
+  if(!sub){ sel.innerHTML=''; return; }
+  const upcoming = sub.tests.map(t=>({...t, d:daysUntil(t.date)})).filter(t=>t.d!==null && t.d>=0).sort((a,b)=>a.d-b.d);
+  if(!upcoming.length){
+    sel.innerHTML = `<option value="">(sin pruebas próximas — se usará el temario completo)</option>`;
+    return;
+  }
+  sel.innerHTML = upcoming.map(t=>`<option value="${t.id}">${escapeAttr(t.name||'Prueba')} · en ${t.d}d</option>`).join('');
+}
+document.getElementById('as-test').addEventListener('change', renderAsistenteTopics);
+
+function getSelectedTest(sub){
+  if(asPurpose!=='prueba' || !sub) return null;
+  const testId = document.getElementById('as-test').value;
+  return sub.tests.find(t=>t.id===testId) || null;
 }
 
 function renderAsistenteTopics(){
@@ -1570,16 +1734,16 @@ function renderAsistenteTopics(){
     updateAsistentePreview(null, null);
     return;
   }
-  const nearestTest = sub.tests.map(t=>({...t, d:daysUntil(t.date)})).filter(t=>t.d!==null && t.d>=0).sort((a,b)=>a.d-b.d)[0];
+  const selectedTest = getSelectedTest(sub);
   const order = {debil:0, sinver:1, dominado:2};
   const sorted = [...sub.topics].sort((a,b)=>{
-    const aIn = nearestTest && nearestTest.temario.includes(a.id) ? 0:1;
-    const bIn = nearestTest && nearestTest.temario.includes(b.id) ? 0:1;
+    const aIn = selectedTest && selectedTest.temario.includes(a.id) ? 0:1;
+    const bIn = selectedTest && selectedTest.temario.includes(b.id) ? 0:1;
     if(aIn!==bIn) return aIn-bIn;
     return order[a.status]-order[b.status];
   });
   sorted.forEach((topic, idx)=>{
-    const inTemario = nearestTest && nearestTest.temario.includes(topic.id);
+    const inTemario = selectedTest && selectedTest.temario.includes(topic.id);
     const opt = document.createElement('div');
     opt.className = 'asistente-topic-opt' + (idx===0 ? ' selected':'');
     opt.dataset.topicId = topic.id;
@@ -1597,7 +1761,6 @@ function renderAsistenteTopics(){
   });
   updateAsistentePreview(sub, sorted[0]);
 }
-document.getElementById('as-subject').addEventListener('change', renderAsistenteTopics);
 document.getElementById('as-duration').addEventListener('change', ()=>{
   const subId = document.getElementById('as-subject').value;
   const sub = subjects.find(s=>s.id===subId);
@@ -1613,8 +1776,9 @@ function updateAsistentePreview(sub, topic){
     return;
   }
   const duration = Number(document.getElementById('as-duration').value);
-  const plan = buildStudyPlan(duration, topic.name);
-  box.innerHTML = `<h3 style="font-size:15px; margin-bottom:10px;">${escapeAttr(sub.name)} — ${escapeAttr(topic.name)}</h3>` +
+  const plan = buildStudyPlan(duration, topic.name, sub.studyType, asPurpose);
+  box.innerHTML = `<span class="type-tag">${STUDY_TYPES[sub.studyType]} · ${asPurpose==='prueba'?'preparando prueba':'manteniendo fresco'}</span>` +
+    `<h3 style="font-size:15px; margin-bottom:10px;">${escapeAttr(sub.name)} — ${escapeAttr(topic.name)}</h3>` +
     plan.map(step=>`
       <div class="plan-step">
         <div class="p-title">${escapeAttr(step.label)} <span class="mins">${step.minutes} min</span></div>
@@ -1632,14 +1796,16 @@ document.getElementById('btn-generate-session').addEventListener('click', ()=>{
   const topic = sub.topics.find(t=>t.id===selectedOpt.dataset.topicId);
   const duration = Number(document.getElementById('as-duration').value);
   const date = document.getElementById('as-date').value;
-  const start = document.getElementById('as-start').value;
-  if(!date || !start){ msg.className='msg error'; msg.textContent='Elige un día y una hora de inicio.'; return; }
+  const start = normalizeTime(document.getElementById('as-start').value);
+  if(!date || !start){ msg.className='msg error'; msg.textContent='Elige un día y una hora de inicio válida (ej: 18:00).'; return; }
   const end = addMin(start, duration);
+  const selectedTest = getSelectedTest(sub);
+  const testNote = selectedTest ? ` (${selectedTest.name||'prueba'})` : '';
   blocks.push({
     id:uid(), date, type:'estudio', subjectId:sub.id,
-    label:`Estudiar ${sub.name} — ${topic.name}`,
+    label:`Estudiar ${sub.name} — ${topic.name}${testNote}`,
     start, end, done:false,
-    plan: buildStudyPlan(duration, topic.name)
+    plan: buildStudyPlan(duration, topic.name, sub.studyType, asPurpose)
   });
   saveJSON('blocks', blocks);
   renderWeeks();
@@ -1707,7 +1873,7 @@ function renderMealEntries(div, day){
    ============================================================ */
 saveJSON('subjects', subjects);
 linkClassSubjects();
-saveJSON('classTemplate', classTemplate);
+saveJSON('recurring', recurring);
 renderAll();
 </script>
 </body>
