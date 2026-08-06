@@ -4,16 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="descargar.png">
-<title>Planificador Semanal v2.0</title>
+<title>Planificador Semanal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-/* ============================================================
-   CONFIG - Estilos globales (igual que antes, pero optimizado)
-   ============================================================ */
 :root{
   --ink:#12181c;
   --ink-soft:#3a444a;
@@ -43,7 +40,6 @@ body{
 h1,h2,h3{font-family:'Newsreader', serif; font-weight:600; margin:0;}
 .mono{font-family:'IBM Plex Mono', monospace;}
 
-/* Layout - igual que antes pero con clases más limpias */
 header.top{
   position:sticky; top:0; z-index:50;
   background:var(--paper); border-bottom:1px solid var(--line);
@@ -75,10 +71,6 @@ main{max-width:1180px; margin:0 auto; padding:28px;}
 .view.active{display:block; animation:fade .25s ease;}
 @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
 
-.eyebrow{
-  font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
-  color:var(--pine-soft); margin-bottom:6px;
-}
 .card{
   background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
   box-shadow:var(--shadow);
@@ -86,7 +78,6 @@ main{max-width:1180px; margin:0 auto; padding:28px;}
 }
 .pad{padding:20px 22px;}
 
-/* Botones optimizados */
 button.btn{
   appearance:none; border:1px solid var(--ink); background:var(--ink); color:var(--paper);
   padding:9px 16px; border-radius:7px; font-family:'IBM Plex Sans'; font-weight:500;
@@ -101,7 +92,6 @@ button.btn.danger{background:transparent; color:var(--clay); border:1px solid va
 button.btn.danger:hover{background:var(--clay); color:#fff;}
 button.btn.small{padding:5px 10px; font-size:12px; border-radius:6px;}
 
-/* Formularios */
 textarea, input[type=text], input[type=date], input[type=number], select{
   font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--ink);
   border:1px solid var(--line); border-radius:6px; padding:8px 10px; background:#fff;
@@ -118,7 +108,6 @@ label.field-label{
 }
 label.field-label:first-child{margin-top:0;}
 
-/* Cards de filosofía - igual */
 .philo-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
 .philo-card{border-top:3px solid var(--pine);}
 .philo-card:nth-child(2){border-top-color:var(--amber);}
@@ -138,7 +127,6 @@ label.field-label:first-child{margin-top:0;}
 .pillar h4{font-family:'IBM Plex Sans'; font-weight:600; font-size:13.5px; margin:0 0 4px 0;}
 .pillar p{font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
 
-/* Subjects grid - optimizado */
 .subjects-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px;}
 .subject-card{border-left:5px solid var(--sub-color, var(--pine));}
 .subject-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
@@ -152,7 +140,6 @@ label.field-label:first-child{margin-top:0;}
 .chip select{border:none; background:transparent; padding:0; font-family:inherit; font-size:inherit; color:inherit; width:auto;}
 .hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
 
-/* Topics - igual */
 .topics-list{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
 .topic-row{display:flex; align-items:center; gap:6px;}
 .topic-row input[type=text]{flex:1; font-size:12.5px; padding:5px 8px;}
@@ -169,6 +156,7 @@ label.field-label:first-child{margin-top:0;}
 
 .temario-box{margin-top:6px; padding:8px 10px; background:var(--paper); border-radius:7px; display:none;}
 .temario-box.open{display:block;}
+.temario-box label.field-label{margin-top:0; margin-bottom:6px;}
 .temario-chip-row{display:flex; flex-wrap:wrap; gap:6px;}
 .temario-chip{
   font-family:'IBM Plex Sans'; font-size:11.5px; border:1px solid var(--line); border-radius:16px;
@@ -178,7 +166,6 @@ label.field-label:first-child{margin-top:0;}
 .temario-chip.selected{background:var(--pine); border-color:var(--pine); color:#fff;}
 .link-btn{background:none; border:none; color:var(--pine-soft); font-family:'IBM Plex Mono'; font-size:10.5px; cursor:pointer; padding:0; margin-top:4px;}
 
-/* Asistente - optimizado */
 .asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
 .purpose-toggle{display:flex; gap:6px;}
 .purpose-toggle button{
@@ -204,7 +191,6 @@ label.field-label:first-child{margin-top:0;}
 .plan-step .p-title span.mins{font-family:'IBM Plex Mono'; font-size:11px; color:var(--pine-soft); font-weight:400;}
 .plan-step p{margin:4px 0 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
 
-/* Tests - con el bug arreglado */
 .test-row{display:flex; gap:6px; align-items:center;}
 .test-row input[type=text]{flex:2;}
 .test-row input[type=date]{flex:1.3;}
@@ -227,7 +213,6 @@ label.field-label:first-child{margin-top:0;}
 }
 .add-subject-btn:hover{border-color:var(--pine); color:var(--pine);}
 
-/* Semana - optimizado */
 .week-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
 .week-toolbar .range{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--ink-soft);}
 .week-toolbar .actions{display:flex; gap:8px; flex-wrap:wrap;}
@@ -289,7 +274,6 @@ label.field-label:first-child{margin-top:0;}
 .legend span{display:inline-flex; align-items:center; gap:5px;}
 .legend i{width:10px;height:10px;border-radius:3px; display:inline-block;}
 
-/* Comidas - optimizado */
 .meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
 .meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
 .meal-entry{display:flex; gap:5px; margin-bottom:6px; align-items:center;}
@@ -309,10 +293,8 @@ label.field-label:first-child{margin-top:0;}
 .meal-suggestion-card .meta{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono';}
 .meal-suggestion-card .ingredients{font-size:12px; color:var(--ink-soft); margin-top:4px;}
 
-/* Footer */
 footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
 
-/* Account widget */
 .account-widget{display:flex; align-items:center; gap:8px; font-size:12px; font-family:'IBM Plex Mono'; color:var(--ink-soft);}
 .account-widget .sync-dot{width:7px; height:7px; border-radius:50%; background:#c9c9c9; display:inline-block; transition: var(--transition);}
 .account-widget .sync-dot.on{background:var(--pine);}
@@ -325,7 +307,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 }
 .account-widget button:hover{border-color:var(--ink);}
 
-/* Theme picker */
 .theme-picker{display:flex; align-items:center; gap:8px; position:relative;}
 .theme-picker .theme-toggle{
   appearance:none; border:1px solid var(--line); background:var(--paper-raised); cursor:pointer;
@@ -344,7 +325,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .theme-opt.active{font-weight:600;}
 .theme-swatch{width:16px; height:16px; border-radius:50%; border:1px solid rgba(0,0,0,0.15); flex-shrink:0;}
 
-/* Modales - mejorados */
 .modal-overlay{
   display:none; position:fixed; inset:0; background:rgba(18,24,28,0.45); z-index:100;
   align-items:center; justify-content:center; padding:20px;
@@ -373,17 +353,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
 .chat-response{background:var(--paper); border-radius:8px; padding:14px; margin-top:10px; white-space:pre-wrap; font-size:13px; line-height:1.6;}
 
-/* Responsive */
-@media (max-width:900px){
-  .time-grid{overflow-x:auto;}
-  .time-grid-header, .time-grid-body{min-width:760px;}
-  .philo-grid{grid-template-columns:1fr;}
-  .pillars{grid-template-columns:1fr;}
-  .add-block-grid{grid-template-columns:1fr 1fr;}
-  .asistente-grid{grid-template-columns:1fr;}
-  .inventory-section{grid-template-columns:1fr;}
-}
-   /* Diet buttons */
 .diet-btn {
   font-size: 11px !important;
   padding: 4px 10px !important;
@@ -401,20 +370,27 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .diet-btn:hover:not(.active) {
   border-color: var(--pine);
 }
+
+@media (max-width:900px){
+  .time-grid{overflow-x:auto;}
+  .time-grid-header, .time-grid-body{min-width:760px;}
+  .philo-grid{grid-template-columns:1fr;}
+  .pillars{grid-template-columns:1fr;}
+  .add-block-grid{grid-template-columns:1fr 1fr;}
+  .asistente-grid{grid-template-columns:1fr;}
+  .inventory-section{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-   HEADER
-   ============================================================ -->
 <header class="top">
   <div class="top-inner">
     <div class="brand">
       <span class="mark">OS</span>
       <div>
         <h1>Planificador Semanal</h1>
-        <div class="sub">v2.0 · Arquitectura limpia</div>
+        <div class="sub">Tu semestre, en un solo lugar</div>
       </div>
     </div>
     <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
@@ -446,14 +422,10 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   </nav>
 </header>
 
-<!-- ============================================================
-   MAIN
-   ============================================================ -->
 <main id="app">
 
   <!-- FILOSOFIA -->
   <section class="view active" id="view-filosofia">
-    <div class="eyebrow">Parte 1 · Siempre a la vista</div>
     <div class="philo-grid">
       <div class="card pad philo-card">
         <h3>Objetivos</h3>
@@ -468,7 +440,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div contenteditable="true" id="philo-reglas" data-key="reglas"></div>
       </div>
     </div>
-    <div class="philo-hint">Haz clic en cualquier texto para editarlo. Se guarda automáticamente.</div>
+    <div class="philo-hint">Haz clic en cualquier texto para editarlo.</div>
     <div class="pillars">
       <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos.</p></div>
       <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>Entrenamiento y salud mental tienen el mismo peso que los ramos.</p></div>
@@ -478,16 +450,13 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
   <!-- RAMOS -->
   <section class="view" id="view-ramos">
-    <div class="eyebrow">Parte 3 · Ficha por ramo</div>
     <div class="subjects-grid" id="subjects-grid"></div>
   </section>
 
   <!-- SEMANA -->
   <section class="view" id="view-semana">
-    <div class="eyebrow">Parte 2 · Semana</div>
-
     <div class="card pad add-block-panel">
-      <h3>Agregar bloque a un día puntual</h3>
+      <h3>Agregar bloque</h3>
       <div class="add-block-grid">
         <div><label class="field-label">Día</label><input type="date" id="nb-date"></div>
         <div><label class="field-label">Tipo</label>
@@ -516,7 +485,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
     <div class="weeks-wrap" id="weeks-wrap"></div>
     <div class="legend">
-      <span><i style="background:#dfe6e2"></i>Clase (fija)</span>
+      <span><i style="background:#dfe6e2"></i>Clase</span>
       <span><i style="background:#e4ecf3"></i>Estudio</span>
       <span><i style="background:#f3e9d3"></i>Sugerido</span>
       <span><i style="background:#f0dcc0"></i>Gimnasio</span>
@@ -526,7 +495,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
     <div class="card pad horario-panel" style="margin-top:26px;">
       <h3>Bloques recurrentes</h3>
-      <p class="sub" style="margin-bottom:10px;">Se repiten todas las semanas. El ✕ en la grilla lo salta solo esa semana.</p>
       <div id="recurring-list"></div>
       <button class="btn ghost small" id="btn-add-recurring">+ agregar bloque recurrente</button>
     </div>
@@ -534,7 +502,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
   <!-- ASISTENTE -->
   <section class="view" id="view-asistente">
-    <div class="eyebrow">Parte 4 · Asistente de estudio</div>
     <div class="card pad">
       <div class="asistente-grid">
         <div class="asistente-form">
@@ -571,12 +538,11 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
           
           <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión</button>
           
-          <!-- Asistente conversacional -->
           <div style="margin-top:20px; border-top:1px solid var(--line); padding-top:16px;">
             <label class="field-label">Cuéntame qué necesitas</label>
             <textarea id="as-chat-input" rows="3" placeholder="Ej: Mañana tengo prueba y no entiendo QuickSort..."></textarea>
             <div style="display:flex; gap:8px; margin-top:8px;">
-              <button class="btn pine small" id="btn-chat-plan">Generar guía personalizada</button>
+              <button class="btn pine small" id="btn-chat-plan">Generar guía</button>
               <button class="btn ghost small" id="btn-chat-save">Guardar como bloque</button>
             </div>
             <div id="as-chat-response" style="display:none;" class="chat-response"></div>
@@ -591,50 +557,46 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
   </section>
 
-  <!-- ================= COMIDA ================= -->
-<section class="view" id="view-comida">
-  <div class="eyebrow"> Minuta</div>
-  <div class="meals-grid" id="meals-grid"></div>
-  
-  <div class="card pad" style="margin-top:20px;">
-    <h3>📦 Inventario y sugerencias</h3>
-    <div class="inventory-section">
-      <div>
-        <label class="field-label">Ingredientes disponibles</label>
-        <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
-        <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
-      </div>
-      <div>
-        <!-- NUEVO: Restricciones alimentarias -->
-        <label class="field-label">Restricciones alimentarias</label>
-        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
-          <button class="btn ghost small diet-btn" data-diet="vegetariano" style="padding:4px 10px;">🌱 Vegetariano</button>
-          <button class="btn ghost small diet-btn" data-diet="vegano" style="padding:4px 10px;">🌿 Vegano</button>
-          <button class="btn ghost small diet-btn" data-diet="celiaco" style="padding:4px 10px;">🌾 Celíaco</button>
-          <button class="btn ghost small diet-btn" data-diet="keto" style="padding:4px 10px;">🥑 Keto</button>
-          <button class="btn ghost small diet-btn" data-diet="sin-lactosa" style="padding:4px 10px;">🥛 Sin lactosa</button>
+  <!-- COMIDA -->
+  <section class="view" id="view-comida">
+    <div class="meals-grid" id="meals-grid"></div>
+    
+    <div class="card pad" style="margin-top:20px;">
+      <h3>📦 Inventario y sugerencias</h3>
+      <div class="inventory-section">
+        <div>
+          <label class="field-label">Ingredientes disponibles</label>
+          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
+          <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
         </div>
-        
-        <label class="field-label">Tiempo para cocinar</label>
-        <select id="cook-time">
-          <option value="15">15 min</option>
-          <option value="30" selected>30 min</option>
-          <option value="60">60 min</option>
-        </select>
-        <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
-        <div id="meal-suggestions" style="margin-top:12px;"></div>
+        <div>
+          <label class="field-label">Restricciones alimentarias</label>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+            <button class="btn ghost small diet-btn" data-diet="vegetariano" style="padding:4px 10px;">🌱 Vegetariano</button>
+            <button class="btn ghost small diet-btn" data-diet="vegano" style="padding:4px 10px;">🌿 Vegano</button>
+            <button class="btn ghost small diet-btn" data-diet="celiaco" style="padding:4px 10px;">🌾 Celíaco</button>
+            <button class="btn ghost small diet-btn" data-diet="keto" style="padding:4px 10px;">🥑 Keto</button>
+            <button class="btn ghost small diet-btn" data-diet="sin-lactosa" style="padding:4px 10px;">🥛 Sin lactosa</button>
+          </div>
+          
+          <label class="field-label">Tiempo para cocinar</label>
+          <select id="cook-time">
+            <option value="15">15 min</option>
+            <option value="30" selected>30 min</option>
+            <option value="60">60 min</option>
+          </select>
+          <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
+          <div id="meal-suggestions" style="margin-top:12px;"></div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 </main>
 
 <footer class="foot">Datos locales · Sincronización con Firebase disponible</footer>
 
-<!-- ============================================================
-   MODALES
-   ============================================================ -->
+<!-- MODALES -->
 <div class="modal-overlay" id="plan-overlay">
   <div class="modal-box wide">
     <button class="close-x" id="btn-close-plan">✕</button>
@@ -672,9 +634,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   </div>
 </div>
 
-<!-- ============================================================
-   JAVASCRIPT - ARQUITECTURA LIMPIA
-   ============================================================ -->
 <script>
 // ============================================================
 // CONFIG
@@ -735,155 +694,36 @@ const CONFIG = {
   },
   RECIPES: {
     'rapido': [
-    { 
-      name: 'Huevos revueltos', 
-      ingredients: ['huevos', 'pan', 'sal'], 
-      time: 10,
-      diets: ['vegetariano', 'keto']
-    },
-    { 
-      name: 'Sándwich de pollo', 
-      ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], 
-      time: 15,
-      diets: ['sin-lactosa']
-    },
-    { 
-      name: 'Tortilla de verduras', 
-      ingredients: ['huevos', 'cebolla', 'pimentón'], 
-      time: 15,
-      diets: ['vegetariano', 'celiaco', 'keto']
-    },
-    { 
-      name: 'Ensalada rápida', 
-      ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], 
-      time: 10,
-      diets: ['vegetariano', 'vegano', 'celiaco', 'keto', 'sin-lactosa']
-    },
-    { 
-      name: 'Palta con pan', 
-      ingredients: ['pan', 'palta', 'sal'], 
-      time: 5,
-      diets: ['vegetariano', 'vegano']
-    },
-    { 
-      name: 'Tostadas con hummus', 
-      ingredients: ['pan', 'garbanzos', 'aceite', 'ajo'], 
-      time: 10,
-      diets: ['vegetariano', 'vegano']
-    },
-    { 
-      name: 'Batido de proteínas', 
-      ingredients: ['proteína', 'leche', 'fruta'], 
-      time: 5,
-      diets: ['vegetariano']
-    },
-    { 
-      name: 'Quesadilla rápida', 
-      ingredients: ['tortillas', 'queso', 'salsa'], 
-      time: 10,
-      diets: ['vegetariano']
-    },
-  ],
-  'medio': [
-    { 
-      name: 'Arroz con pollo', 
-      ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], 
-      time: 30,
-      diets: ['celiaco', 'sin-lactosa']
-    },
-    { 
-      name: 'Pasta con salsa', 
-      ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], 
-      time: 25,
-      diets: ['vegetariano', 'vegano', 'sin-lactosa']
-    },
-    { 
-      name: 'Hamburguesas caseras', 
-      ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], 
-      time: 30,
-      diets: ['sin-lactosa']
-    },
-    { 
-      name: 'Tortilla de papas', 
-      ingredients: ['huevos', 'papas', 'cebolla', 'aceite'], 
-      time: 35,
-      diets: ['vegetariano', 'celiaco']
-    },
-    { 
-      name: 'Fajitas de pollo', 
-      ingredients: ['pollo', 'cebolla', 'pimentón', 'tortillas'], 
-      time: 30,
-      diets: ['sin-lactosa', 'celiaco']
-    },
-    { 
-      name: 'Pollo al curry', 
-      ingredients: ['pollo', 'cebolla', 'curry', 'leche de coco'], 
-      time: 30,
-      diets: ['celiaco', 'sin-lactosa', 'keto']
-    },
-    { 
-      name: 'Ensalada de quinoa', 
-      ingredients: ['quinoa', 'tomate', 'pepino', 'limón'], 
-      time: 25,
-      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
-    },
-    { 
-      name: 'Revuelto de tofu', 
-      ingredients: ['tofu', 'cebolla', 'pimentón', 'especias'], 
-      time: 25,
-      diets: ['vegetariano', 'vegano', 'celiaco', 'keto']
-    },
-  ],
-  'largo': [
-    { 
-      name: 'Cazuela de pollo', 
-      ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], 
-      time: 60,
-      diets: ['celiaco', 'sin-lactosa']
-    },
-    { 
-      name: 'Lasagna', 
-      ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], 
-      time: 55,
-      diets: ['sin-lactosa']
-    },
-    { 
-      name: 'Estofado de carne', 
-      ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], 
-      time: 50,
-      diets: ['celiaco', 'sin-lactosa', 'keto']
-    },
-    { 
-      name: 'Pollo al horno', 
-      ingredients: ['pollo', 'papas', 'cebolla', 'ajo'], 
-      time: 60,
-      diets: ['celiaco', 'sin-lactosa', 'keto']
-    },
-    { 
-      name: 'Pastel de choclo', 
-      ingredients: ['choclo', 'carne', 'cebolla', 'huevos'], 
-      time: 55,
-      diets: ['celiaco', 'sin-lactosa']
-    },
-    { 
-      name: 'Curry de garbanzos', 
-      ingredients: ['garbanzos', 'cebolla', 'curry', 'leche de coco'], 
-      time: 50,
-      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
-    },
-    { 
-      name: 'Lasaña de berenjenas', 
-      ingredients: ['berenjena', 'carne', 'tomate', 'queso'], 
-      time: 60,
-      diets: ['vegetariano', 'celiaco', 'keto']
-    },
-    { 
-      name: 'Sopa de lentejas', 
-      ingredients: ['lentejas', 'cebolla', 'zanahoria', 'apio'], 
-      time: 50,
-      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
-    },
-  ]
+      { name: 'Huevos revueltos', ingredients: ['huevos', 'pan', 'sal'], time: 10, diets: ['vegetariano', 'keto'] },
+      { name: 'Sándwich de pollo', ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], time: 15, diets: ['sin-lactosa'] },
+      { name: 'Tortilla de verduras', ingredients: ['huevos', 'cebolla', 'pimentón'], time: 15, diets: ['vegetariano', 'celiaco', 'keto'] },
+      { name: 'Ensalada rápida', ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], time: 10, diets: ['vegetariano', 'vegano', 'celiaco', 'keto', 'sin-lactosa'] },
+      { name: 'Palta con pan', ingredients: ['pan', 'palta', 'sal'], time: 5, diets: ['vegetariano', 'vegano'] },
+      { name: 'Tostadas con hummus', ingredients: ['pan', 'garbanzos', 'aceite', 'ajo'], time: 10, diets: ['vegetariano', 'vegano'] },
+      { name: 'Batido de proteínas', ingredients: ['proteína', 'leche', 'fruta'], time: 5, diets: ['vegetariano'] },
+      { name: 'Quesadilla rápida', ingredients: ['tortillas', 'queso', 'salsa'], time: 10, diets: ['vegetariano'] },
+    ],
+    'medio': [
+      { name: 'Arroz con pollo', ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], time: 30, diets: ['celiaco', 'sin-lactosa'] },
+      { name: 'Pasta con salsa', ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], time: 25, diets: ['vegetariano', 'vegano', 'sin-lactosa'] },
+      { name: 'Hamburguesas caseras', ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], time: 30, diets: ['sin-lactosa'] },
+      { name: 'Tortilla de papas', ingredients: ['huevos', 'papas', 'cebolla', 'aceite'], time: 35, diets: ['vegetariano', 'celiaco'] },
+      { name: 'Fajitas de pollo', ingredients: ['pollo', 'cebolla', 'pimentón', 'tortillas'], time: 30, diets: ['sin-lactosa', 'celiaco'] },
+      { name: 'Pollo al curry', ingredients: ['pollo', 'cebolla', 'curry', 'leche de coco'], time: 30, diets: ['celiaco', 'sin-lactosa', 'keto'] },
+      { name: 'Ensalada de quinoa', ingredients: ['quinoa', 'tomate', 'pepino', 'limón'], time: 25, diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa'] },
+      { name: 'Revuelto de tofu', ingredients: ['tofu', 'cebolla', 'pimentón', 'especias'], time: 25, diets: ['vegetariano', 'vegano', 'celiaco', 'keto'] },
+    ],
+    'largo': [
+      { name: 'Cazuela de pollo', ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], time: 60, diets: ['celiaco', 'sin-lactosa'] },
+      { name: 'Lasagna', ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], time: 55, diets: ['sin-lactosa'] },
+      { name: 'Estofado de carne', ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], time: 50, diets: ['celiaco', 'sin-lactosa', 'keto'] },
+      { name: 'Pollo al horno', ingredients: ['pollo', 'papas', 'cebolla', 'ajo'], time: 60, diets: ['celiaco', 'sin-lactosa', 'keto'] },
+      { name: 'Pastel de choclo', ingredients: ['choclo', 'carne', 'cebolla', 'huevos'], time: 55, diets: ['celiaco', 'sin-lactosa'] },
+      { name: 'Curry de garbanzos', ingredients: ['garbanzos', 'cebolla', 'curry', 'leche de coco'], time: 50, diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa'] },
+      { name: 'Lasaña de berenjenas', ingredients: ['berenjena', 'carne', 'tomate', 'queso'], time: 60, diets: ['vegetariano', 'celiaco', 'keto'] },
+      { name: 'Sopa de lentejas', ingredients: ['lentejas', 'cebolla', 'zanahoria', 'apio'], time: 50, diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa'] },
+    ]
+  }
 };
 
 // ============================================================
@@ -952,12 +792,16 @@ const Utils = {
 };
 
 // ============================================================
-// ESTADO - Único punto de verdad
+// ESTADO
 // ============================================================
 const App = {
   state: {
     profileKey: 'guest',
-    philo: { ... },
+    philo: {
+      objetivos: "Escribe aquí tus objetivos del semestre.",
+      prioridades: "Escribe aquí el orden de tus prioridades.",
+      reglas: "Escribe aquí tus reglas de estudio."
+    },
     subjects: [],
     blocks: [],
     recurring: [],
@@ -965,14 +809,13 @@ const App = {
     meals: {},
     weekStart: null,
     inventory: [],
-    dietRestrictions: [], // 🔥 NUEVO
+    dietRestrictions: [],
     asPurpose: 'mantenimiento',
     _lastChatPlan: null,
     currentUser: null,
     cloudEnabled: false
   },
 
-  // --- Persistencia ---
   storageKey(base) {
     return base + '::' + this.state.profileKey;
   },
@@ -992,18 +835,14 @@ const App = {
     this.scheduleSync();
   },
 
-  // --- Sincronización con Firebase ---
   scheduleSync: Utils.debounce(() => {
     if(App.state.currentUser && App.state.cloudEnabled) {
       App.syncToCloud();
     }
   }, 500),
 
-  syncToCloud: () => {
-    // Implementado en la sección Firebase
-  },
+  syncToCloud: () => {},
 
-  // --- Inicialización ---
   loadState() {
     const defaultSubjects = [
       {id:'demo1', name:'Matemática II', color:'#a9503b', credits:'5', studyType:'practico', topics:[], tests:[]},
@@ -1022,14 +861,11 @@ const App = {
     this.state.philo = {...this.state.philo, ...this.loadJSON('philosophy', {})};
     this.state.weekStart = new Date(this.loadJSON('weekStart', Utils.mondayOf(new Date()).toISOString()));
     this.state.inventory = this.loadJSON('inventory', []);
+    this.state.dietRestrictions = this.loadJSON('dietRestrictions', []);
     if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
+    if(!Array.isArray(this.state.dietRestrictions)) this.state.dietRestrictions = [];
     document.getElementById('inventory-input').value = this.state.inventory.join(', ');
   },
-   this.state.inventory = this.loadJSON('inventory', []);
-  this.state.dietRestrictions = this.loadJSON('dietRestrictions', []); // 🔥 NUEVO
-  if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
-  document.getElementById('inventory-input').value = this.state.inventory.join(', ');
-   },
 
   normalizeSubjects(arr) {
     if(!Array.isArray(arr)) return [];
@@ -1092,19 +928,19 @@ const App = {
   },
 
   getFullState() {
-  return {
-    philosophy: this.state.philo,
-    subjects: this.state.subjects,
-    blocks: this.state.blocks,
-    recurring: this.state.recurring,
-    meals: this.state.meals,
-    weekStart: this.state.weekStart.toISOString(),
-    recurringExceptions: [...this.state.recurringExceptions],
-    inventory: this.state.inventory,
-    dietRestrictions: this.state.dietRestrictions, // 🔥 NUEVO
-    updatedAt: Number(localStorage.getItem(this.storageKey('lastUpdated')) || Date.now())
-  };
-},
+    return {
+      philosophy: this.state.philo,
+      subjects: this.state.subjects,
+      blocks: this.state.blocks,
+      recurring: this.state.recurring,
+      meals: this.state.meals,
+      weekStart: this.state.weekStart.toISOString(),
+      recurringExceptions: [...this.state.recurringExceptions],
+      inventory: this.state.inventory,
+      dietRestrictions: this.state.dietRestrictions,
+      updatedAt: Number(localStorage.getItem(this.storageKey('lastUpdated')) || Date.now())
+    };
+  },
 
   applyFullState(state) {
     if(state.philosophy) this.state.philo = {...this.state.philo, ...state.philosophy};
@@ -1115,7 +951,6 @@ const App = {
     if(state.weekStart) this.state.weekStart = new Date(state.weekStart);
     this.state.recurringExceptions = new Set(state.recurringExceptions || []);
     this.state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
-    this.state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
     this.state.dietRestrictions = Array.isArray(state.dietRestrictions) ? state.dietRestrictions : [];
     this.saveJSON('philosophy', this.state.philo);
     this.saveJSON('subjects', this.state.subjects);
@@ -1125,12 +960,11 @@ const App = {
     this.saveJSON('weekStart', this.state.weekStart.toISOString());
     this.saveJSON('recurringExceptions', [...this.state.recurringExceptions]);
     this.saveJSON('inventory', this.state.inventory);
+    this.saveJSON('dietRestrictions', this.state.dietRestrictions);
     this.saveJSON('lastUpdated', String(state.updatedAt || Date.now()));
-    this.saveJSON('philosophy', this.state.philo);
     this.renderAll();
   },
 
-  // --- Render ---
   renderAll() {
     try {
       this.renderPhilosophy();
@@ -1141,19 +975,26 @@ const App = {
       document.getElementById('inventory-input').value = this.state.inventory.join(', ');
       this.renderWeekRange();
       this.renderRecurringPanel();
+      
+      document.querySelectorAll('.diet-btn').forEach(btn => {
+        const diet = btn.dataset.diet;
+        if(this.state.dietRestrictions.includes(diet)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
     } catch(err) {
       console.error('Error en render:', err);
     }
   },
 
-  // --- Filosofía ---
   renderPhilosophy() {
     ['objetivos','prioridades','reglas'].forEach(k => {
       document.getElementById('philo-'+k).textContent = this.state.philo[k];
     });
   },
 
-  // --- Subjects ---
   renderSubjects() {
     const grid = document.getElementById('subjects-grid');
     grid.innerHTML = '';
@@ -1270,7 +1111,6 @@ const App = {
     });
   },
 
-  // --- Semana ---
   renderWeekRange() {
     const end = new Date(this.state.weekStart);
     end.setDate(end.getDate() + 6);
@@ -1438,7 +1278,6 @@ const App = {
     });
   },
 
-  // --- Comidas ---
   renderMeals() {
     const grid = document.getElementById('meals-grid');
     grid.innerHTML = '';
@@ -1470,7 +1309,6 @@ const App = {
     });
   },
 
-  // --- Asistente ---
   renderAsistente() {
     const subSel = document.getElementById('as-subject');
     const currentSubId = subSel.value;
@@ -1556,7 +1394,6 @@ const App = {
       `).join('');
   },
 
-  // --- Plan de estudio ---
   buildStudyPlan(durationMin, topicName, studyType, purpose) {
     const forExam = purpose === 'prueba';
     let parts;
@@ -1591,93 +1428,101 @@ const App = {
 };
 
 // ============================================================
-// EVENTOS - Event Delegation
+// EVENTOS
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-document.querySelectorAll('.diet-btn').forEach(btn => {
-  const diet = btn.dataset.diet;
-  if(App.state.dietRestrictions.includes(diet)) {
-    btn.classList.add('active');
-  }
-});
-  // Inicializar
   App.loadState();
   App.renderAll();
 
-  // ============================================================
-  // EVENT DELEGATION - Un único listener para todo
-  // ============================================================
   document.addEventListener('click', (e) => {
     const target = e.target.closest('[data-action]');
+    
+    // Suggest meals (fuera del data-action)
+    if(e.target.id === 'btn-suggest-meals' || e.target.closest('#btn-suggest-meals')) {
+      const time = parseInt(document.getElementById('cook-time').value);
+      const suggestions = document.getElementById('meal-suggestions');
+      const restrictions = App.state.dietRestrictions;
+      
+      if(!App.state.inventory.length) {
+        suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
+        return;
+      }
+      
+      let timeCategory = 'rapido';
+      if(time >= 45) timeCategory = 'largo';
+      else if(time >= 25) timeCategory = 'medio';
+      
+      let available = CONFIG.RECIPES[timeCategory] || [];
+      
+      if(restrictions.length) {
+        available = available.filter(recipe => {
+          if(recipe.diets && recipe.diets.length) {
+            return restrictions.every(r => recipe.diets.includes(r));
+          }
+          return true;
+        });
+      }
+      
+      if(!available.length) {
+        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que cumplan con tus restricciones (${restrictions.join(', ')}).</p>`;
+        return;
+      }
+      
+      const scored = available.map(recipe => {
+        const match = recipe.ingredients.filter(ing => 
+          App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
+        );
+        return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
+      });
+      scored.sort((a,b) => b.matchCount - a.matchCount);
+      const top = scored.slice(0, 4);
+      
+      if(!top.length || top[0].matchCount === 0) {
+        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario.</p>`;
+        return;
+      }
+      
+      suggestions.innerHTML = top.map(r => {
+        const dietLabels = r.diets?.map(d => {
+          const labels = {
+            'vegetariano': '🌱',
+            'vegano': '🌿',
+            'celiaco': '🌾',
+            'keto': '🥑',
+            'sin-lactosa': '🥛'
+          };
+          return labels[d] || d;
+        }).join(' ') || '🍽️';
+        
+        return `
+          <div class="meal-suggestion-card">
+            <h5>🍳 ${r.name} <span style="font-size:11px; color:var(--pine-soft);">${dietLabels}</span></h5>
+            <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
+            <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
+          </div>
+        `;
+      }).join('');
+      return;
+    }
+    
     if(!target) return;
     const action = target.dataset.action;
-   if(e.target.id === 'btn-suggest-meals' || e.target.closest('#btn-suggest-meals')) {
-    const time = parseInt(document.getElementById('cook-time').value);
-    const suggestions = document.getElementById('meal-suggestions');
-    const restrictions = App.state.dietRestrictions;
-    
-       if(!App.state.inventory.length) {
-         suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
-         return;
-       }
-       
-       let timeCategory = 'rapido';
-       if(time >= 45) timeCategory = 'largo';
-       else if(time >= 25) timeCategory = 'medio';
-       
-       let available = CONFIG.RECIPES[timeCategory] || [];
-       
-       // Filtrar por restricciones dietéticas
-       if(restrictions.length) {
-         available = available.filter(recipe => {
-           if(recipe.diets && recipe.diets.length) {
-             return restrictions.every(r => recipe.diets.includes(r));
-           }
-           return true;
-         });
-       }
-       
-       if(!available.length) {
-         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que cumplan con tus restricciones (${restrictions.join(', ')}).<br>Intenta con menos restricciones o agrega más ingredientes.</p>`;
-         return;
-       }
-       
-       const scored = available.map(recipe => {
-         const match = recipe.ingredients.filter(ing => 
-           App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
-         );
-         return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
-       });
-       scored.sort((a,b) => b.matchCount - a.matchCount);
-       const top = scored.slice(0, 4);
-       
-       if(!top.length || top[0].matchCount === 0) {
-         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario y restricciones.</p>`;
-         return;
-       }
-       
-       suggestions.innerHTML = top.map(r => {
-         const dietLabels = r.diets?.map(d => {
-           const labels = {
-             'vegetariano': '🌱',
-             'vegano': '🌿',
-             'celiaco': '🌾',
-             'keto': '🥑',
-             'sin-lactosa': '🥛'
-           };
-           return labels[d] || d;
-         }).join(' ') || '🍽️';
-         
-         return `
-           <div class="meal-suggestion-card">
-             <h5>🍳 ${r.name} <span style="font-size:11px; color:var(--pine-soft);">${dietLabels}</span></h5>
-             <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
-             <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
-           </div>
-         `;
-       }).join('');
-     }
-   });
+
+    // Diet buttons
+    if(target.classList.contains('diet-btn')) {
+      target.classList.toggle('active');
+      const diet = target.dataset.diet;
+      if(target.classList.contains('active')) {
+        if(!App.state.dietRestrictions.includes(diet)) {
+          App.state.dietRestrictions.push(diet);
+        }
+      } else {
+        App.state.dietRestrictions = App.state.dietRestrictions.filter(d => d !== diet);
+      }
+      App.saveJSON('dietRestrictions', App.state.dietRestrictions);
+      return;
+    }
+
     // --- Subjects ---
     if(action === 'add-subject') {
       App.state.subjects.push({
@@ -1765,7 +1610,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderAsistente();
     }
 
-    // --- Temario chips ---
     if(target.classList.contains('temario-chip')) {
       const topicId = target.dataset.topicId;
       const testId = target.dataset.testId;
@@ -1783,13 +1627,11 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderAsistente();
     }
 
-    // --- Temario toggle ---
     if(target.classList.contains('link-btn')) {
       const box = target.parentElement.querySelector('.temario-box');
       if(box) box.classList.toggle('open');
     }
 
-    // --- Recurring ---
     if(action === 'delete-recurring') {
       const id = target.dataset.id;
       App.state.recurring = App.state.recurring.filter(c => c.id !== id);
@@ -1806,7 +1648,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderWeeks();
     }
 
-    // --- Blocks ---
     if(action === 'delete-block') {
       const id = target.dataset.id;
       App.state.blocks = App.state.blocks.filter(b => b.id !== id);
@@ -1846,7 +1687,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       const block = App.state.blocks.find(b => b.id === id);
       if(block && block.plan) {
         document.getElementById('plan-title').textContent = block.label;
-        document.getElementById('plan-sub').textContent = `${block.start}–${block.end} · estructura sugerida`;
+        document.getElementById('plan-sub').textContent = `${block.start}–${block.end}`;
         const wrap = document.getElementById('plan-steps');
         wrap.innerHTML = block.plan.map(step => `
           <div class="plan-step">
@@ -1858,7 +1699,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       }
     }
 
-    // --- Add block ---
     if(action === 'add-block') {
       const date = document.getElementById('nb-date').value;
       const type = document.getElementById('nb-type').value;
@@ -1873,7 +1713,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderWeeks();
     }
 
-    // --- Add recurring ---
     if(action === 'add-recurring') {
       App.state.recurring.push({
         id: Utils.uid(),
@@ -1890,7 +1729,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderWeeks();
     }
 
-    // --- Meals ---
     if(action === 'add-meal') {
       const day = target.dataset.day;
       const div = target.closest('.meal-day');
@@ -1912,7 +1750,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderMeals();
     }
 
-    // --- Asistente topics ---
     if(target.classList.contains('asistente-topic-opt')) {
       const subId = target.dataset.subjectId;
       const sub = App.state.subjects.find(s => s.id === subId);
@@ -1923,7 +1760,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.updateAsistentePreview(sub, topic);
     }
 
-    // --- Asistente generate session ---
     if(action === 'generate-session') {
       const subId = document.getElementById('as-subject').value;
       const sub = App.state.subjects.find(s => s.id === subId);
@@ -1954,7 +1790,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       msg.textContent = '✅ Sesión agregada a tu semana.';
     }
 
-    // --- Chat plan ---
     if(action === 'chat-plan') {
       const subId = document.getElementById('as-subject').value;
       const sub = App.state.subjects.find(s => s.id === subId);
@@ -1985,7 +1820,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.state._lastChatPlan = { sub, topic, plan, duration };
     }
 
-    // --- Chat save ---
     if(action === 'chat-save') {
       const plan = App.state._lastChatPlan;
       if(!plan) { alert('Primero genera una guía.'); return; }
@@ -2009,13 +1843,10 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       document.getElementById('as-msg').textContent = '✅ Guía guardada como bloque.';
     }
 
-    // --- Predict ---
     if(action === 'predict') {
-      // Llamamos a la función de predicción
       generateSuggestions();
     }
 
-    // --- Clear week ---
     if(action === 'clear-week') {
       const end = new Date(App.state.weekStart);
       end.setDate(end.getDate() + 6);
@@ -2030,7 +1861,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       }
     }
 
-    // --- Inventory ---
     if(action === 'save-inventory') {
       const input = document.getElementById('inventory-input').value;
       App.state.inventory = input.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
@@ -2038,42 +1868,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       alert('✅ Inventario guardado: ' + App.state.inventory.join(', '));
     }
 
-    // --- Suggest meals ---
-    if(action === 'suggest-meals') {
-      const time = parseInt(document.getElementById('cook-time').value);
-      const suggestions = document.getElementById('meal-suggestions');
-      if(!App.state.inventory.length) {
-        suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
-        return;
-      }
-      let timeCategory = 'rapido';
-      if(time >= 45) timeCategory = 'largo';
-      else if(time >= 25) timeCategory = 'medio';
-      
-      const available = CONFIG.RECIPES[timeCategory] || [];
-      const scored = available.map(recipe => {
-        const match = recipe.ingredients.filter(ing => 
-          App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
-        );
-        return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
-      });
-      scored.sort((a,b) => b.matchCount - a.matchCount);
-      const top = scored.slice(0, 4);
-      
-      if(!top.length || top[0].matchCount === 0) {
-        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario.</p>`;
-        return;
-      }
-      suggestions.innerHTML = top.map(r => `
-        <div class="meal-suggestion-card">
-          <h5>🍳 ${r.name}</h5>
-          <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
-          <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
-        </div>
-      `).join('');
-    }
-
-    // --- Modals ---
     if(action === 'close-plan') {
       document.getElementById('plan-overlay').classList.remove('open');
     }
@@ -2082,18 +1876,14 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     }
   });
 
-  // ============================================================
-  // INPUT EVENTS (con debounce para guardado inteligente)
-  // ============================================================
+  // INPUT EVENTS
   const saveSubject = Utils.debounce(() => {
     App.saveJSON('subjects', App.state.subjects);
   }, 500);
 
-  // Subject fields
   document.addEventListener('input', (e) => {
     const target = e.target;
     
-    // Subject name/credits/type
     if(target.dataset.field === 'name' || target.dataset.field === 'credits' || target.dataset.field === 'studyType') {
       const subId = target.dataset.subject;
       const sub = App.state.subjects.find(s => s.id === subId);
@@ -2108,7 +1898,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       if(target.dataset.field === 'studyType') App.renderAsistente();
     }
 
-    // Topic name
     if(target.dataset.tpf === 'name') {
       const subId = target.dataset.subject;
       const topicId = target.dataset.topic;
@@ -2121,8 +1910,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       }
     }
 
-    // Test fields (usando 'change' para evitar el bug)
-    // Pero también escuchamos input para que sea fluido
     if(target.dataset.tf) {
       const subId = target.dataset.subject;
       const testId = target.dataset.test;
@@ -2135,7 +1922,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       }
     }
 
-    // Recurring fields
     if(target.dataset.cf) {
       const id = target.dataset.id;
       const c = App.state.recurring.find(r => r.id === id);
@@ -2155,7 +1941,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       App.renderWeeks();
     }
 
-    // Meal fields
     if(target.dataset.mf) {
       const day = target.dataset.day;
       const id = target.dataset.id;
@@ -2166,7 +1951,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       }
     }
 
-    // Philosophy
     if(target.id && target.id.startsWith('philo-')) {
       const key = target.dataset.key;
       if(key) {
@@ -2176,9 +1960,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     }
   });
 
-  // ============================================================
-  // BOTONES DE NAVEGACIÓN SEMANAL
-  // ============================================================
+  // Navegación semanas
   document.getElementById('btn-prev-week').addEventListener('click', () => {
     App.state.weekStart.setDate(App.state.weekStart.getDate() - 7);
     App.saveJSON('weekStart', App.state.weekStart.toISOString());
@@ -2193,9 +1975,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     App.renderWeekRange();
   });
 
-  // ============================================================
-  // DRAG & DROP
-  // ============================================================
+  // Drag & Drop
   document.addEventListener('dragover', (e) => {
     const col = e.target.closest('.day-col-grid');
     if(col) { e.preventDefault(); col.classList.add('drag-over'); }
@@ -2241,9 +2021,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     App.renderWeeks();
   });
 
-  // ============================================================
-  // TABS
-  // ============================================================
+  // Tabs
   document.querySelectorAll('nav.tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
@@ -2253,9 +2031,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     });
   });
 
-  // ============================================================
-  // PURPOSE TOGGLE
-  // ============================================================
+  // Purpose toggle
   document.querySelectorAll('.purpose-toggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.purpose-toggle button').forEach(b => b.classList.remove('active'));
@@ -2267,9 +2043,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     });
   });
 
-  // ============================================================
-  // ASISTENTE: change events
-  // ============================================================
+  // Asistente changes
   document.getElementById('as-subject').addEventListener('change', () => {
     App.renderAsistenteTestSelect();
     App.renderAsistenteTopics();
@@ -2285,9 +2059,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     App.updateAsistentePreview(sub, topic);
   });
 
-  // ============================================================
-  // THEME
-  // ============================================================
+  // Theme
   function applyTheme(key) {
     const theme = CONFIG.THEMES[key] || CONFIG.THEMES.bosque;
     Object.entries(theme.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
@@ -2318,16 +2090,13 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
   document.addEventListener('click', () => document.getElementById('theme-menu').classList.remove('open'));
   applyTheme(localStorage.getItem('theme') || 'bosque');
 
-  // ============================================================
-  // FUNCIÓN DE PREDICCIÓN (extraída para poder llamarla)
-  // ============================================================
+  // Función de predicción
   function generateSuggestions() {
     const startStr = Utils.fmt(App.state.weekStart);
     const endDate = new Date(App.state.weekStart);
     endDate.setDate(endDate.getDate() + 6);
     const endStr = Utils.fmt(endDate);
     
-    // Solo eliminar sugerencias que colisionan
     const blocksToKeep = [];
     App.state.blocks.forEach(b => {
       if(b.type !== 'sugerido') { blocksToKeep.push(b); return; }
@@ -2392,7 +2161,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
             const already = App.state.blocks.some(b => b.date === dateStr && b.subjectId === w.sub.id);
             if(already) continue;
             
-            // Buscar slot libre
             const occupied = [...App.state.recurring
               .filter(c => c.day === dow && !App.state.recurringExceptions.has(c.id+'|'+dateStr))
               .map(c => [Utils.timeToMin(c.start), Utils.timeToMin(c.end)]),
@@ -2453,9 +2221,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     App.renderWeeks();
   }
 
-  // ============================================================
-  // FIREBASE (sincronización)
-  // ============================================================
+  // Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
     authDomain: "planificador-b4f8a.firebaseapp.com",
@@ -2475,7 +2241,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     }
   } catch(e) { console.warn('Firebase no configurado:', e); }
 
-  // Sobrescribir scheduleSync para usar Firebase
   App.scheduleSync = Utils.debounce(() => {
     if(App.state.currentUser && App.state.cloudEnabled) {
       App.syncToCloud();
@@ -2537,9 +2302,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     });
   }
 
-  // ============================================================
-  // LOGIN MODAL
-  // ============================================================
+  // Login
   document.getElementById('btn-close-login').addEventListener('click', () => {
     document.getElementById('login-overlay').classList.remove('open');
   });
@@ -2566,9 +2329,7 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
       .catch(err => { msg.className='msg error'; msg.textContent=err.message; });
   });
 
-  // ============================================================
-  // EXPORT / IMPORT
-  // ============================================================
+  // Export / Import
   document.getElementById('btn-export').addEventListener('click', () => {
     const data = JSON.stringify(App.getFullState(), null, 2);
     const blob = new Blob([data], {type:'application/json'});
@@ -2604,16 +2365,10 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
     e.target.value = '';
   });
 
-  // ============================================================
-  // PLAN MODAL CLOSE
-  // ============================================================
   document.getElementById('btn-close-plan').addEventListener('click', () => {
     document.getElementById('plan-overlay').classList.remove('open');
   });
 
-  // ============================================================
-  // CIERRE DE MODALES CON CLICK FUERA
-  // ============================================================
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
       if(e.target === overlay) overlay.classList.remove('open');
@@ -2621,7 +2376,6 @@ document.querySelectorAll('.diet-btn').forEach(btn => {
   });
 
   console.log('✅ Planificador v2.0 cargado correctamente');
-  console.log(`📊 ${App.state.subjects.length} ramos, ${App.state.blocks.length} bloques`);
 });
 </script>
 </body>
