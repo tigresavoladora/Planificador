@@ -383,6 +383,24 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   .asistente-grid{grid-template-columns:1fr;}
   .inventory-section{grid-template-columns:1fr;}
 }
+   /* Diet buttons */
+.diet-btn {
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+  border-radius: 20px !important;
+  transition: var(--transition);
+  background: var(--paper-raised) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--ink-soft) !important;
+}
+.diet-btn.active {
+  background: var(--pine) !important;
+  color: var(--paper) !important;
+  border-color: var(--pine) !important;
+}
+.diet-btn:hover:not(.active) {
+  border-color: var(--pine);
+}
 </style>
 </head>
 <body>
@@ -573,32 +591,42 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
   </section>
 
-  <!-- COMIDA -->
-  <section class="view" id="view-comida">
-    <div class="eyebrow">Parte 6 · Minuta</div>
-    <div class="meals-grid" id="meals-grid"></div>
-    
-    <div class="card pad" style="margin-top:20px;">
-      <h3>📦 Inventario y sugerencias</h3>
-      <div class="inventory-section">
-        <div>
-          <label class="field-label">Ingredientes disponibles</label>
-          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
-          <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
+  <!-- ================= COMIDA ================= -->
+<section class="view" id="view-comida">
+  <div class="eyebrow"> Minuta</div>
+  <div class="meals-grid" id="meals-grid"></div>
+  
+  <div class="card pad" style="margin-top:20px;">
+    <h3>📦 Inventario y sugerencias</h3>
+    <div class="inventory-section">
+      <div>
+        <label class="field-label">Ingredientes disponibles</label>
+        <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
+        <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
+      </div>
+      <div>
+        <!-- NUEVO: Restricciones alimentarias -->
+        <label class="field-label">Restricciones alimentarias</label>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+          <button class="btn ghost small diet-btn" data-diet="vegetariano" style="padding:4px 10px;">🌱 Vegetariano</button>
+          <button class="btn ghost small diet-btn" data-diet="vegano" style="padding:4px 10px;">🌿 Vegano</button>
+          <button class="btn ghost small diet-btn" data-diet="celiaco" style="padding:4px 10px;">🌾 Celíaco</button>
+          <button class="btn ghost small diet-btn" data-diet="keto" style="padding:4px 10px;">🥑 Keto</button>
+          <button class="btn ghost small diet-btn" data-diet="sin-lactosa" style="padding:4px 10px;">🥛 Sin lactosa</button>
         </div>
-        <div>
-          <label class="field-label">Tiempo para cocinar</label>
-          <select id="cook-time">
-            <option value="15">15 min</option>
-            <option value="30" selected>30 min</option>
-            <option value="60">60 min</option>
-          </select>
-          <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
-          <div id="meal-suggestions" style="margin-top:12px;"></div>
-        </div>
+        
+        <label class="field-label">Tiempo para cocinar</label>
+        <select id="cook-time">
+          <option value="15">15 min</option>
+          <option value="30" selected>30 min</option>
+          <option value="60">60 min</option>
+        </select>
+        <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
+        <div id="meal-suggestions" style="margin-top:12px;"></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 </main>
 
@@ -707,22 +735,155 @@ const CONFIG = {
   },
   RECIPES: {
     'rapido': [
-      { name: 'Huevos revueltos', ingredients: ['huevos', 'pan', 'sal'], time: 10 },
-      { name: 'Sándwich de pollo', ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], time: 15 },
-      { name: 'Tortilla de verduras', ingredients: ['huevos', 'cebolla', 'pimentón'], time: 15 },
-      { name: 'Ensalada rápida', ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], time: 10 }
-    ],
-    'medio': [
-      { name: 'Arroz con pollo', ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], time: 30 },
-      { name: 'Pasta con salsa', ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], time: 25 },
-      { name: 'Hamburguesas caseras', ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], time: 30 }
-    ],
-    'largo': [
-      { name: 'Cazuela de pollo', ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], time: 60 },
-      { name: 'Lasagna', ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], time: 55 },
-      { name: 'Estofado de carne', ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], time: 50 }
-    ]
-  }
+    { 
+      name: 'Huevos revueltos', 
+      ingredients: ['huevos', 'pan', 'sal'], 
+      time: 10,
+      diets: ['vegetariano', 'keto']
+    },
+    { 
+      name: 'Sándwich de pollo', 
+      ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], 
+      time: 15,
+      diets: ['sin-lactosa']
+    },
+    { 
+      name: 'Tortilla de verduras', 
+      ingredients: ['huevos', 'cebolla', 'pimentón'], 
+      time: 15,
+      diets: ['vegetariano', 'celiaco', 'keto']
+    },
+    { 
+      name: 'Ensalada rápida', 
+      ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], 
+      time: 10,
+      diets: ['vegetariano', 'vegano', 'celiaco', 'keto', 'sin-lactosa']
+    },
+    { 
+      name: 'Palta con pan', 
+      ingredients: ['pan', 'palta', 'sal'], 
+      time: 5,
+      diets: ['vegetariano', 'vegano']
+    },
+    { 
+      name: 'Tostadas con hummus', 
+      ingredients: ['pan', 'garbanzos', 'aceite', 'ajo'], 
+      time: 10,
+      diets: ['vegetariano', 'vegano']
+    },
+    { 
+      name: 'Batido de proteínas', 
+      ingredients: ['proteína', 'leche', 'fruta'], 
+      time: 5,
+      diets: ['vegetariano']
+    },
+    { 
+      name: 'Quesadilla rápida', 
+      ingredients: ['tortillas', 'queso', 'salsa'], 
+      time: 10,
+      diets: ['vegetariano']
+    },
+  ],
+  'medio': [
+    { 
+      name: 'Arroz con pollo', 
+      ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], 
+      time: 30,
+      diets: ['celiaco', 'sin-lactosa']
+    },
+    { 
+      name: 'Pasta con salsa', 
+      ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], 
+      time: 25,
+      diets: ['vegetariano', 'vegano', 'sin-lactosa']
+    },
+    { 
+      name: 'Hamburguesas caseras', 
+      ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], 
+      time: 30,
+      diets: ['sin-lactosa']
+    },
+    { 
+      name: 'Tortilla de papas', 
+      ingredients: ['huevos', 'papas', 'cebolla', 'aceite'], 
+      time: 35,
+      diets: ['vegetariano', 'celiaco']
+    },
+    { 
+      name: 'Fajitas de pollo', 
+      ingredients: ['pollo', 'cebolla', 'pimentón', 'tortillas'], 
+      time: 30,
+      diets: ['sin-lactosa', 'celiaco']
+    },
+    { 
+      name: 'Pollo al curry', 
+      ingredients: ['pollo', 'cebolla', 'curry', 'leche de coco'], 
+      time: 30,
+      diets: ['celiaco', 'sin-lactosa', 'keto']
+    },
+    { 
+      name: 'Ensalada de quinoa', 
+      ingredients: ['quinoa', 'tomate', 'pepino', 'limón'], 
+      time: 25,
+      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
+    },
+    { 
+      name: 'Revuelto de tofu', 
+      ingredients: ['tofu', 'cebolla', 'pimentón', 'especias'], 
+      time: 25,
+      diets: ['vegetariano', 'vegano', 'celiaco', 'keto']
+    },
+  ],
+  'largo': [
+    { 
+      name: 'Cazuela de pollo', 
+      ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], 
+      time: 60,
+      diets: ['celiaco', 'sin-lactosa']
+    },
+    { 
+      name: 'Lasagna', 
+      ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], 
+      time: 55,
+      diets: ['sin-lactosa']
+    },
+    { 
+      name: 'Estofado de carne', 
+      ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], 
+      time: 50,
+      diets: ['celiaco', 'sin-lactosa', 'keto']
+    },
+    { 
+      name: 'Pollo al horno', 
+      ingredients: ['pollo', 'papas', 'cebolla', 'ajo'], 
+      time: 60,
+      diets: ['celiaco', 'sin-lactosa', 'keto']
+    },
+    { 
+      name: 'Pastel de choclo', 
+      ingredients: ['choclo', 'carne', 'cebolla', 'huevos'], 
+      time: 55,
+      diets: ['celiaco', 'sin-lactosa']
+    },
+    { 
+      name: 'Curry de garbanzos', 
+      ingredients: ['garbanzos', 'cebolla', 'curry', 'leche de coco'], 
+      time: 50,
+      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
+    },
+    { 
+      name: 'Lasaña de berenjenas', 
+      ingredients: ['berenjena', 'carne', 'tomate', 'queso'], 
+      time: 60,
+      diets: ['vegetariano', 'celiaco', 'keto']
+    },
+    { 
+      name: 'Sopa de lentejas', 
+      ingredients: ['lentejas', 'cebolla', 'zanahoria', 'apio'], 
+      time: 50,
+      diets: ['vegetariano', 'vegano', 'celiaco', 'sin-lactosa']
+    },
+  ]
 };
 
 // ============================================================
@@ -796,11 +957,7 @@ const Utils = {
 const App = {
   state: {
     profileKey: 'guest',
-    philo: {
-      objetivos: "Escribe aquí tus objetivos del semestre.",
-      prioridades: "Escribe aquí el orden de tus prioridades.",
-      reglas: "Escribe aquí tus reglas de estudio."
-    },
+    philo: { ... },
     subjects: [],
     blocks: [],
     recurring: [],
@@ -808,6 +965,7 @@ const App = {
     meals: {},
     weekStart: null,
     inventory: [],
+    dietRestrictions: [], // 🔥 NUEVO
     asPurpose: 'mantenimiento',
     _lastChatPlan: null,
     currentUser: null,
@@ -867,6 +1025,11 @@ const App = {
     if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
     document.getElementById('inventory-input').value = this.state.inventory.join(', ');
   },
+   this.state.inventory = this.loadJSON('inventory', []);
+  this.state.dietRestrictions = this.loadJSON('dietRestrictions', []); // 🔥 NUEVO
+  if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
+  document.getElementById('inventory-input').value = this.state.inventory.join(', ');
+   },
 
   normalizeSubjects(arr) {
     if(!Array.isArray(arr)) return [];
@@ -929,18 +1092,19 @@ const App = {
   },
 
   getFullState() {
-    return {
-      philosophy: this.state.philo,
-      subjects: this.state.subjects,
-      blocks: this.state.blocks,
-      recurring: this.state.recurring,
-      meals: this.state.meals,
-      weekStart: this.state.weekStart.toISOString(),
-      recurringExceptions: [...this.state.recurringExceptions],
-      inventory: this.state.inventory,
-      updatedAt: Number(localStorage.getItem(this.storageKey('lastUpdated')) || Date.now())
-    };
-  },
+  return {
+    philosophy: this.state.philo,
+    subjects: this.state.subjects,
+    blocks: this.state.blocks,
+    recurring: this.state.recurring,
+    meals: this.state.meals,
+    weekStart: this.state.weekStart.toISOString(),
+    recurringExceptions: [...this.state.recurringExceptions],
+    inventory: this.state.inventory,
+    dietRestrictions: this.state.dietRestrictions, // 🔥 NUEVO
+    updatedAt: Number(localStorage.getItem(this.storageKey('lastUpdated')) || Date.now())
+  };
+},
 
   applyFullState(state) {
     if(state.philosophy) this.state.philo = {...this.state.philo, ...state.philosophy};
@@ -951,6 +1115,8 @@ const App = {
     if(state.weekStart) this.state.weekStart = new Date(state.weekStart);
     this.state.recurringExceptions = new Set(state.recurringExceptions || []);
     this.state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
+    this.state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
+    this.state.dietRestrictions = Array.isArray(state.dietRestrictions) ? state.dietRestrictions : [];
     this.saveJSON('philosophy', this.state.philo);
     this.saveJSON('subjects', this.state.subjects);
     this.saveJSON('blocks', this.state.blocks);
@@ -960,6 +1126,7 @@ const App = {
     this.saveJSON('recurringExceptions', [...this.state.recurringExceptions]);
     this.saveJSON('inventory', this.state.inventory);
     this.saveJSON('lastUpdated', String(state.updatedAt || Date.now()));
+    this.saveJSON('philosophy', this.state.philo);
     this.renderAll();
   },
 
@@ -1427,6 +1594,12 @@ const App = {
 // EVENTOS - Event Delegation
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+document.querySelectorAll('.diet-btn').forEach(btn => {
+  const diet = btn.dataset.diet;
+  if(App.state.dietRestrictions.includes(diet)) {
+    btn.classList.add('active');
+  }
+});
   // Inicializar
   App.loadState();
   App.renderAll();
@@ -1438,7 +1611,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const target = e.target.closest('[data-action]');
     if(!target) return;
     const action = target.dataset.action;
-
+   if(e.target.id === 'btn-suggest-meals' || e.target.closest('#btn-suggest-meals')) {
+    const time = parseInt(document.getElementById('cook-time').value);
+    const suggestions = document.getElementById('meal-suggestions');
+    const restrictions = App.state.dietRestrictions;
+    
+       if(!App.state.inventory.length) {
+         suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
+         return;
+       }
+       
+       let timeCategory = 'rapido';
+       if(time >= 45) timeCategory = 'largo';
+       else if(time >= 25) timeCategory = 'medio';
+       
+       let available = CONFIG.RECIPES[timeCategory] || [];
+       
+       // Filtrar por restricciones dietéticas
+       if(restrictions.length) {
+         available = available.filter(recipe => {
+           if(recipe.diets && recipe.diets.length) {
+             return restrictions.every(r => recipe.diets.includes(r));
+           }
+           return true;
+         });
+       }
+       
+       if(!available.length) {
+         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que cumplan con tus restricciones (${restrictions.join(', ')}).<br>Intenta con menos restricciones o agrega más ingredientes.</p>`;
+         return;
+       }
+       
+       const scored = available.map(recipe => {
+         const match = recipe.ingredients.filter(ing => 
+           App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
+         );
+         return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
+       });
+       scored.sort((a,b) => b.matchCount - a.matchCount);
+       const top = scored.slice(0, 4);
+       
+       if(!top.length || top[0].matchCount === 0) {
+         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario y restricciones.</p>`;
+         return;
+       }
+       
+       suggestions.innerHTML = top.map(r => {
+         const dietLabels = r.diets?.map(d => {
+           const labels = {
+             'vegetariano': '🌱',
+             'vegano': '🌿',
+             'celiaco': '🌾',
+             'keto': '🥑',
+             'sin-lactosa': '🥛'
+           };
+           return labels[d] || d;
+         }).join(' ') || '🍽️';
+         
+         return `
+           <div class="meal-suggestion-card">
+             <h5>🍳 ${r.name} <span style="font-size:11px; color:var(--pine-soft);">${dietLabels}</span></h5>
+             <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
+             <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
+           </div>
+         `;
+       }).join('');
+     }
+   });
     // --- Subjects ---
     if(action === 'add-subject') {
       App.state.subjects.push({
