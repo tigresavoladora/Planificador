@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="descargar.png">
-<title>Planificador Semanal</title>
+<title>Planificador Semanal v2.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
+/* ============================================================
+   CONFIG - Estilos globales (igual que antes, pero optimizado)
+   ============================================================ */
 :root{
   --ink:#12181c;
   --ink-soft:#3a444a;
@@ -26,6 +29,7 @@
   --lilac:#6a5a8c;
   --radius:10px;
   --shadow: 0 1px 2px rgba(18,24,28,0.06), 0 4px 14px rgba(18,24,28,0.05);
+  --transition: 0.2s ease;
 }
 *{box-sizing:border-box;}
 body{
@@ -39,6 +43,7 @@ body{
 h1,h2,h3{font-family:'Newsreader', serif; font-weight:600; margin:0;}
 .mono{font-family:'IBM Plex Mono', monospace;}
 
+/* Layout - igual que antes pero con clases más limpias */
 header.top{
   position:sticky; top:0; z-index:50;
   background:var(--paper); border-bottom:1px solid var(--line);
@@ -54,11 +59,13 @@ header.top{
 }
 .brand h1{font-size:22px; letter-spacing:-0.01em;}
 .brand .sub{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono'; letter-spacing:0.02em;}
+
 nav.tabs{display:flex; gap:2px; margin-top:16px; flex-wrap:wrap;}
 nav.tabs button{
   appearance:none; border:none; background:transparent; cursor:pointer;
   padding:10px 16px; font-family:'IBM Plex Sans'; font-size:13.5px; font-weight:500;
   color:var(--ink-soft); border-bottom:2px solid transparent; letter-spacing:0.01em;
+  transition: var(--transition);
 }
 nav.tabs button.active{color:var(--pine); border-bottom-color:var(--pine); font-weight:600;}
 nav.tabs button:hover{color:var(--ink);}
@@ -75,12 +82,16 @@ main{max-width:1180px; margin:0 auto; padding:28px;}
 .card{
   background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
   box-shadow:var(--shadow);
+  transition: var(--transition);
 }
 .pad{padding:20px 22px;}
+
+/* Botones optimizados */
 button.btn{
   appearance:none; border:1px solid var(--ink); background:var(--ink); color:var(--paper);
   padding:9px 16px; border-radius:7px; font-family:'IBM Plex Sans'; font-weight:500;
   font-size:13px; cursor:pointer; letter-spacing:0.01em;
+  transition: var(--transition);
 }
 button.btn:hover{background:#000;}
 button.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
@@ -89,18 +100,25 @@ button.btn.pine{background:var(--pine); border-color:var(--pine);}
 button.btn.danger{background:transparent; color:var(--clay); border:1px solid var(--clay);}
 button.btn.danger:hover{background:var(--clay); color:#fff;}
 button.btn.small{padding:5px 10px; font-size:12px; border-radius:6px;}
+
+/* Formularios */
 textarea, input[type=text], input[type=date], input[type=number], select{
   font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--ink);
   border:1px solid var(--line); border-radius:6px; padding:8px 10px; background:#fff;
   width:100%;
+  transition: var(--transition);
 }
-textarea{resize:vertical; min-height:70px; line-height:1.5;}
+textarea:focus, input:focus, select:focus{
+  outline:2px solid var(--pine);
+  outline-offset:2px;
+}
 label.field-label{
   display:block; font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase;
   letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:5px; margin-top:12px;
 }
 label.field-label:first-child{margin-top:0;}
 
+/* Cards de filosofía - igual */
 .philo-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
 .philo-card{border-top:3px solid var(--pine);}
 .philo-card:nth-child(2){border-top-color:var(--amber);}
@@ -120,6 +138,7 @@ label.field-label:first-child{margin-top:0;}
 .pillar h4{font-family:'IBM Plex Sans'; font-weight:600; font-size:13.5px; margin:0 0 4px 0;}
 .pillar p{font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
 
+/* Subjects grid - optimizado */
 .subjects-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px;}
 .subject-card{border-left:5px solid var(--sub-color, var(--pine));}
 .subject-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
@@ -133,12 +152,14 @@ label.field-label:first-child{margin-top:0;}
 .chip select{border:none; background:transparent; padding:0; font-family:inherit; font-size:inherit; color:inherit; width:auto;}
 .hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
 
+/* Topics - igual */
 .topics-list{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
 .topic-row{display:flex; align-items:center; gap:6px;}
 .topic-row input[type=text]{flex:1; font-size:12.5px; padding:5px 8px;}
 .status-btn{
   font-family:'IBM Plex Mono'; font-size:9.5px; text-transform:uppercase; letter-spacing:0.03em;
   border:none; border-radius:5px; padding:4px 7px; cursor:pointer; white-space:nowrap;
+  transition: var(--transition);
 }
 .status-btn.sinver{background:#eee; color:#777;}
 .status-btn.debil{background:#f3d3ca; color:#7a2c17;}
@@ -148,33 +169,31 @@ label.field-label:first-child{margin-top:0;}
 
 .temario-box{margin-top:6px; padding:8px 10px; background:var(--paper); border-radius:7px; display:none;}
 .temario-box.open{display:block;}
-.temario-box label.field-label{margin-top:0; margin-bottom:6px;}
 .temario-chip-row{display:flex; flex-wrap:wrap; gap:6px;}
 .temario-chip{
   font-family:'IBM Plex Sans'; font-size:11.5px; border:1px solid var(--line); border-radius:16px;
   padding:3px 10px; cursor:pointer; background:#fff; user-select:none;
+  transition: var(--transition);
 }
 .temario-chip.selected{background:var(--pine); border-color:var(--pine); color:#fff;}
 .link-btn{background:none; border:none; color:var(--pine-soft); font-family:'IBM Plex Mono'; font-size:10.5px; cursor:pointer; padding:0; margin-top:4px;}
 
+/* Asistente - optimizado */
 .asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
-.asistente-form label.field-label{margin-top:12px;}
 .purpose-toggle{display:flex; gap:6px;}
 .purpose-toggle button{
   flex:1; appearance:none; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink-soft);
   padding:8px 6px; border-radius:7px; font-family:'IBM Plex Sans'; font-size:12px; cursor:pointer;
+  transition: var(--transition);
 }
 .purpose-toggle button.active{border-color:var(--pine); background:#eef3ef; color:var(--pine); font-weight:600;}
 .asistente-topic-list{display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:260px; overflow-y:auto;}
 .asistente-topic-opt{
   display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:8px;
   padding:8px 10px; cursor:pointer; font-size:12.5px;
+  transition: var(--transition);
 }
 .asistente-topic-opt.selected{border-color:var(--pine); background:#eef3ef;}
-.asistente-topic-opt .badge{
-  font-family:'IBM Plex Mono'; font-size:9px; text-transform:uppercase; border-radius:5px; padding:2px 6px;
-}
-.asistente-topic-opt .badge.temario{background:var(--amber-soft); color:#7a4d18;}
 .asistente-preview{border-left:3px solid var(--pine); padding-left:16px;}
 .asistente-preview .type-tag{
   display:inline-block; font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase;
@@ -184,25 +203,31 @@ label.field-label:first-child{margin-top:0;}
 .plan-step .p-title{font-weight:600; font-size:13.5px; display:flex; justify-content:space-between;}
 .plan-step .p-title span.mins{font-family:'IBM Plex Mono'; font-size:11px; color:var(--pine-soft); font-weight:400;}
 .plan-step p{margin:4px 0 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+
+/* Tests - con el bug arreglado */
 .test-row{display:flex; gap:6px; align-items:center;}
 .test-row input[type=text]{flex:2;}
 .test-row input[type=date]{flex:1.3;}
 .test-row .days-badge{
   font-family:'IBM Plex Mono'; font-size:10.5px; padding:3px 7px; border-radius:5px; white-space:nowrap;
   background:var(--amber-soft); color:#7a4d18;
+  transition: var(--transition);
 }
 .test-row .days-badge.urgent{background:#f3d3ca; color:#7a2c17;}
 .icon-btn{
   appearance:none; border:none; background:transparent; cursor:pointer; color:var(--ink-soft);
   font-size:15px; padding:2px 6px; border-radius:5px; line-height:1;
+  transition: var(--transition);
 }
 .icon-btn:hover{background:var(--paper); color:var(--clay);}
 .add-subject-btn{
   border:1.5px dashed var(--line); border-radius:var(--radius); display:flex; align-items:center; justify-content:center;
   min-height:120px; color:var(--ink-soft); cursor:pointer; font-size:13px; font-family:'IBM Plex Mono';
+  transition: var(--transition);
 }
 .add-subject-btn:hover{border-color:var(--pine); color:var(--pine);}
 
+/* Semana - optimizado */
 .week-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
 .week-toolbar .range{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--ink-soft);}
 .week-toolbar .actions{display:flex; gap:8px; flex-wrap:wrap;}
@@ -244,6 +269,7 @@ label.field-label:first-child{margin-top:0;}
 .block-abs{
   position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 34px 3px 6px; font-size:10.5px; line-height:1.3;
   overflow:hidden; cursor:grab; border:1px solid transparent; box-shadow:0 1px 2px rgba(0,0,0,0.06);
+  transition: var(--transition);
 }
 .block-abs.fixed{cursor:default; border-style:solid; border-width:1px;}
 .block-abs.has-plan{box-shadow:0 0 0 1px rgba(47,77,63,0.3), 0 1px 2px rgba(0,0,0,0.06);}
@@ -263,6 +289,7 @@ label.field-label:first-child{margin-top:0;}
 .legend span{display:inline-flex; align-items:center; gap:5px;}
 .legend i{width:10px;height:10px;border-radius:3px; display:inline-block;}
 
+/* Comidas - optimizado */
 .meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
 .meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
 .meal-entry{display:flex; gap:5px; margin-bottom:6px; align-items:center;}
@@ -282,23 +309,28 @@ label.field-label:first-child{margin-top:0;}
 .meal-suggestion-card .meta{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono';}
 .meal-suggestion-card .ingredients{font-size:12px; color:var(--ink-soft); margin-top:4px;}
 
+/* Footer */
 footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
 
+/* Account widget */
 .account-widget{display:flex; align-items:center; gap:8px; font-size:12px; font-family:'IBM Plex Mono'; color:var(--ink-soft);}
-.account-widget .sync-dot{width:7px; height:7px; border-radius:50%; background:#c9c9c9; display:inline-block;}
+.account-widget .sync-dot{width:7px; height:7px; border-radius:50%; background:#c9c9c9; display:inline-block; transition: var(--transition);}
 .account-widget .sync-dot.on{background:var(--pine);}
 .account-widget .sync-dot.busy{background:var(--amber); animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 .account-widget button{
   appearance:none; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink);
   padding:6px 12px; border-radius:7px; font-family:'IBM Plex Sans'; font-size:12.5px; cursor:pointer;
+  transition: var(--transition);
 }
 .account-widget button:hover{border-color:var(--ink);}
 
+/* Theme picker */
 .theme-picker{display:flex; align-items:center; gap:8px; position:relative;}
 .theme-picker .theme-toggle{
   appearance:none; border:1px solid var(--line); background:var(--paper-raised); cursor:pointer;
   width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px;
+  transition: var(--transition);
 }
 .theme-picker .theme-toggle:hover{border-color:var(--ink);}
 .theme-menu{
@@ -312,6 +344,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .theme-opt.active{font-weight:600;}
 .theme-swatch{width:16px; height:16px; border-radius:50%; border:1px solid rgba(0,0,0,0.15); flex-shrink:0;}
 
+/* Modales - mejorados */
 .modal-overlay{
   display:none; position:fixed; inset:0; background:rgba(18,24,28,0.45); z-index:100;
   align-items:center; justify-content:center; padding:20px;
@@ -320,6 +353,8 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .modal-box{
   background:var(--paper-raised); border-radius:12px; padding:26px 26px 22px 26px; width:100%; max-width:360px;
   box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  position:relative;
+  animation:fade .25s ease;
 }
 .modal-box.wide{max-width:520px; max-height:80vh; overflow-y:auto;}
 .modal-box h3{font-size:19px; margin-bottom:4px;}
@@ -329,12 +364,16 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .modal-box .msg.ok{color:var(--pine);}
 .modal-box .row-btns{display:flex; gap:8px; margin-top:16px;}
 .modal-box .row-btns button{flex:1;}
-.modal-box .close-x{position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft); font-size:16px; background:none; border:none;}
-.modal-box{position:relative;}
+.modal-box .close-x{
+  position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft); 
+  font-size:16px; background:none; border:none;
+  transition: var(--transition);
+}
+.modal-box .close-x:hover{color:var(--clay);}
 
 .chat-response{background:var(--paper); border-radius:8px; padding:14px; margin-top:10px; white-space:pre-wrap; font-size:13px; line-height:1.6;}
-.chat-response h4{margin:0 0 8px 0; font-size:14px;}
 
+/* Responsive */
 @media (max-width:900px){
   .time-grid{overflow-x:auto;}
   .time-grid-header, .time-grid-body{min-width:760px;}
@@ -348,13 +387,16 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 </head>
 <body>
 
+<!-- ============================================================
+   HEADER
+   ============================================================ -->
 <header class="top">
   <div class="top-inner">
     <div class="brand">
       <span class="mark">OS</span>
       <div>
         <h1>Planificador Semanal</h1>
-        <div class="sub">Tu semestre, en un solo lugar</div>
+        <div class="sub">v2.0 · Arquitectura limpia</div>
       </div>
     </div>
     <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
@@ -367,17 +409,17 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <button id="btn-open-login">Iniciar sesión</button>
       </div>
       <div class="account-widget">
-        <button id="btn-export" title="Descarga un archivo con todos tus datos">Descargar respaldo</button>
-        <button id="btn-import" title="Restaura un archivo de respaldo">Restaurar respaldo</button>
+        <button id="btn-export">Descargar respaldo</button>
+        <button id="btn-import">Restaurar respaldo</button>
         <input type="file" id="import-file" accept="application/json" style="display:none;">
       </div>
       <div class="theme-picker">
-        <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">🎨</button>
+        <button class="theme-toggle" id="theme-toggle">🎨</button>
         <div class="theme-menu" id="theme-menu"></div>
       </div>
     </div>
   </div>
-  <nav class="tabs">
+  <nav class="tabs" id="tabs">
     <button data-view="filosofia" class="active">Filosofía</button>
     <button data-view="ramos">Ramos</button>
     <button data-view="semana">Semana</button>
@@ -386,9 +428,12 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   </nav>
 </header>
 
-<main>
+<!-- ============================================================
+   MAIN
+   ============================================================ -->
+<main id="app">
 
-  <!-- ================= FILOSOFIA ================= -->
+  <!-- FILOSOFIA -->
   <section class="view active" id="view-filosofia">
     <div class="eyebrow">Parte 1 · Siempre a la vista</div>
     <div class="philo-grid">
@@ -405,24 +450,23 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div contenteditable="true" id="philo-reglas" data-key="reglas"></div>
       </div>
     </div>
-    <div class="philo-hint">Haz clic en cualquier texto para editarlo. Se guarda automáticamente en este navegador.</div>
-
+    <div class="philo-hint">Haz clic en cualquier texto para editarlo. Se guarda automáticamente.</div>
     <div class="pillars">
-      <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos por sobre relectura y resúmenes gigantes.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>El entrenamiento y la salud mental no son extras: tienen el mismo peso que los ramos.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien, mantener tu vida social y llegar al final del semestre sin agotarte mentalmente también es "me fue bien".</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>Entrenamiento y salud mental tienen el mismo peso que los ramos.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien y mantener vida social también es "me fue bien".</p></div>
     </div>
   </section>
 
-  <!-- ================= RAMOS ================= -->
+  <!-- RAMOS -->
   <section class="view" id="view-ramos">
     <div class="eyebrow">Parte 3 · Ficha por ramo</div>
     <div class="subjects-grid" id="subjects-grid"></div>
   </section>
 
-  <!-- ================= SEMANA ================= -->
+  <!-- SEMANA -->
   <section class="view" id="view-semana">
-    <div class="eyebrow">Parte 2 y 9 · Semana + predicción</div>
+    <div class="eyebrow">Parte 2 · Semana</div>
 
     <div class="card pad add-block-panel">
       <h3>Agregar bloque a un día puntual</h3>
@@ -448,38 +492,38 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
       <div class="actions">
         <button class="btn ghost small" id="btn-prev-week">← Semana anterior</button>
         <button class="btn ghost small" id="btn-next-week">Semana siguiente →</button>
-        <button class="btn pine small" id="btn-predict">Generar sugerencia de estudio</button>
-        <button class="btn danger small" id="btn-clear-week">Borrar todo (esta semana)</button>
+        <button class="btn pine small" id="btn-predict">Generar sugerencias</button>
+        <button class="btn danger small" id="btn-clear-week">Borrar semana</button>
       </div>
     </div>
     <div class="weeks-wrap" id="weeks-wrap"></div>
     <div class="legend">
       <span><i style="background:#dfe6e2"></i>Clase (fija)</span>
       <span><i style="background:#e4ecf3"></i>Estudio</span>
-      <span><i style="background:#f3e9d3"></i>Sugerido (arrástralo para confirmarlo)</span>
+      <span><i style="background:#f3e9d3"></i>Sugerido</span>
       <span><i style="background:#f0dcc0"></i>Gimnasio</span>
       <span><i style="background:#e9e1f0"></i>Vida social</span>
       <span><i style="background:#eee"></i>Otro</span>
     </div>
 
     <div class="card pad horario-panel" style="margin-top:26px;">
-      <h3>Bloques que se repiten todas las semanas</h3>
-      <p class="sub" style="margin-bottom:10px;">Clases, gimnasio, o cualquier cosa fija. El ✕ de cada bloque en la grilla lo salta solo esa semana, sin borrar la regla.</p>
+      <h3>Bloques recurrentes</h3>
+      <p class="sub" style="margin-bottom:10px;">Se repiten todas las semanas. El ✕ en la grilla lo salta solo esa semana.</p>
       <div id="recurring-list"></div>
       <button class="btn ghost small" id="btn-add-recurring">+ agregar bloque recurrente</button>
     </div>
   </section>
 
-  <!-- ================= ASISTENTE ================= -->
+  <!-- ASISTENTE -->
   <section class="view" id="view-asistente">
-    <div class="eyebrow">Parte 4 y 7 · Asistente de sesión de estudio</div>
+    <div class="eyebrow">Parte 4 · Asistente de estudio</div>
     <div class="card pad">
       <div class="asistente-grid">
         <div class="asistente-form">
           <label class="field-label">Ramo</label>
           <select id="as-subject"></select>
 
-          <label class="field-label">Propósito de esta sesión</label>
+          <label class="field-label">Propósito</label>
           <div class="purpose-toggle">
             <button type="button" data-purpose="mantenimiento" class="active">Mantener fresco</button>
             <button type="button" data-purpose="prueba">Preparar prueba</button>
@@ -490,25 +534,29 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
             <select id="as-test"></select>
           </div>
 
-          <label class="field-label">Tema (los débiles o sin ver, y los que entran en la próxima prueba, aparecen primero)</label>
+          <label class="field-label">Tema</label>
           <div class="asistente-topic-list" id="as-topics"></div>
-          <label class="field-label">Duración de la sesión</label>
+          
+          <label class="field-label">Duración</label>
           <select id="as-duration">
             <option value="45">45 min</option>
             <option value="60">60 min</option>
             <option value="90" selected>90 min</option>
             <option value="120">120 min</option>
           </select>
+          
           <label class="field-label">Día</label>
           <input type="date" id="as-date">
+          
           <label class="field-label">Hora de inicio</label>
           <input type="text" inputmode="numeric" placeholder="HH:MM" id="as-start" value="18:00">
-          <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión de estudio</button>
           
-          <!-- NUEVO: Asistente conversacional -->
+          <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión</button>
+          
+          <!-- Asistente conversacional -->
           <div style="margin-top:20px; border-top:1px solid var(--line); padding-top:16px;">
-            <label class="field-label">Cuéntame más sobre lo que necesitas (opcional)</label>
-            <textarea id="as-chat-input" rows="3" placeholder="Ej: Mañana tengo prueba y no entiendo bien los métodos de ordenamiento..."></textarea>
+            <label class="field-label">Cuéntame qué necesitas</label>
+            <textarea id="as-chat-input" rows="3" placeholder="Ej: Mañana tengo prueba y no entiendo QuickSort..."></textarea>
             <div style="display:flex; gap:8px; margin-top:8px;">
               <button class="btn pine small" id="btn-chat-plan">Generar guía personalizada</button>
               <button class="btn ghost small" id="btn-chat-save">Guardar como bloque</button>
@@ -519,30 +567,29 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
           <div class="msg" id="as-msg"></div>
         </div>
         <div class="asistente-preview" id="as-preview">
-          <p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver aquí la estructura de la sesión antes de agregarla a tu semana.</p>
+          <p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver la estructura de la sesión.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= COMIDA ================= -->
+  <!-- COMIDA -->
   <section class="view" id="view-comida">
-    <div class="eyebrow">Parte 6 · Minuta editable</div>
+    <div class="eyebrow">Parte 6 · Minuta</div>
     <div class="meals-grid" id="meals-grid"></div>
     
-    <!-- NUEVO: Inventario y sugerencias de comidas -->
     <div class="card pad" style="margin-top:20px;">
       <h3>📦 Inventario y sugerencias</h3>
       <div class="inventory-section">
         <div>
           <label class="field-label">Ingredientes disponibles</label>
-          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos, pan, lechuga..."></textarea>
+          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
           <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
         </div>
         <div>
           <label class="field-label">Tiempo para cocinar</label>
           <select id="cook-time">
-            <option value="15">15 min (muy rápido)</option>
+            <option value="15">15 min</option>
             <option value="30" selected>30 min</option>
             <option value="60">60 min</option>
           </select>
@@ -555,8 +602,11 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
 </main>
 
-<footer class="foot">Sin sesión iniciada, todo es un ejemplo genérico guardado solo en este navegador. Con tu correo y contraseña, tus datos reales viajan contigo entre dispositivos.</footer>
+<footer class="foot">Datos locales · Sincronización con Firebase disponible</footer>
 
+<!-- ============================================================
+   MODALES
+   ============================================================ -->
 <div class="modal-overlay" id="plan-overlay">
   <div class="modal-box wide">
     <button class="close-x" id="btn-close-plan">✕</button>
@@ -583,1565 +633,1757 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   </div>
 </div>
 
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal-box">
+    <h3 id="confirm-title">¿Estás seguro?</h3>
+    <p class="sub" id="confirm-message"></p>
+    <div class="row-btns">
+      <button class="btn ghost" id="confirm-no">Cancelar</button>
+      <button class="btn danger" id="confirm-yes">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   JAVASCRIPT - ARQUITECTURA LIMPIA
+   ============================================================ -->
 <script>
 // ============================================================
-// PERFIL ACTIVO (invitado vs cuenta)
+// CONFIG
 // ============================================================
-let profileKey = 'guest';
-function storageKey(base){ return base + '::' + profileKey; }
-
-function loadJSON(key, fallback){
-  try{
-    const raw = localStorage.getItem(storageKey(key));
-    return raw ? JSON.parse(raw) : fallback;
-  }catch(e){ return fallback; }
-}
-function saveJSON(key, value){
-  localStorage.setItem(storageKey(key), JSON.stringify(value));
-  if(key!=='lastUpdated') localStorage.setItem(storageKey('lastUpdated'), String(Date.now()));
-  if(typeof scheduleCloudSync === 'function') scheduleCloudSync();
-}
-
-function uid(){ return Math.random().toString(36).slice(2,9); }
-
-// ============================================================
-// TEMAS DE COLOR
-// ============================================================
-const THEMES = {
-  bosque: {
-    label:'Bosque (original)', swatch:'#2f4d3f',
-    vars:{ '--paper':'#eef1ee', '--paper-raised':'#ffffff', '--line':'#c9d0cb', '--ink':'#12181c', '--ink-soft':'#3a444a',
-      '--pine':'#2f4d3f', '--pine-soft':'#5c7b6c', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
-      '--clay':'#a9503b', '--sky':'#3b6e8f', '--lilac':'#6a5a8c' }
+const CONFIG = {
+  HOUR_START: 5,
+  HOUR_END: 23,
+  SUGGEST_MIN_HOUR: 8,
+  PX_PER_HOUR: 48,
+  DAYS: ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
+  WEEKEND: [5,6],
+  HOURS_PER_CREDIT: 1,
+  STATUS_CYCLE: ['sinver','debil','dominado'],
+  STATUS_LABEL: {sinver:'sin ver', debil:'débil', dominado:'dominado'},
+  STUDY_TYPES: {
+    practico: 'Práctico (ejercicios)',
+    teorico: 'Teórico (conceptos)',
+    idioma: 'Idioma (oral / lectura)'
   },
-  rosa: {
-    label:'Rosa pastel', swatch:'#c9748c',
-    vars:{ '--paper':'#fbeef1', '--paper-raised':'#fffbfc', '--line':'#f0d2da', '--ink':'#3a2530', '--ink-soft':'#7d5c66',
-      '--pine':'#c9748c', '--pine-soft':'#e0a9b8', '--amber':'#dc9a58', '--amber-soft':'#f6ddb9',
-      '--clay':'#b3495f', '--sky':'#9caed0', '--lilac':'#b78cc9' }
+  RECURRING_TYPES: [
+    {value:'clase', label:'Clase'},
+    {value:'estudio', label:'Estudio'},
+    {value:'gym', label:'Gimnasio'},
+    {value:'social', label:'Vida social'},
+    {value:'otro', label:'Otro'}
+  ],
+  THEMES: {
+    bosque: {
+      label:'Bosque', swatch:'#2f4d3f',
+      vars:{ '--paper':'#eef1ee', '--paper-raised':'#ffffff', '--line':'#c9d0cb', '--ink':'#12181c', '--ink-soft':'#3a444a',
+        '--pine':'#2f4d3f', '--pine-soft':'#5c7b6c', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
+        '--clay':'#a9503b', '--sky':'#3b6e8f', '--lilac':'#6a5a8c' }
+    },
+    rosa: {
+      label:'Rosa', swatch:'#c9748c',
+      vars:{ '--paper':'#fbeef1', '--paper-raised':'#fffbfc', '--line':'#f0d2da', '--ink':'#3a2530', '--ink-soft':'#7d5c66',
+        '--pine':'#c9748c', '--pine-soft':'#e0a9b8', '--amber':'#dc9a58', '--amber-soft':'#f6ddb9',
+        '--clay':'#b3495f', '--sky':'#9caed0', '--lilac':'#b78cc9' }
+    },
+    morado: {
+      label:'Morado', swatch:'#6a4c93',
+      vars:{ '--paper':'#f2eef7', '--paper-raised':'#ffffff', '--line':'#dcccec', '--ink':'#2b2140', '--ink-soft':'#5d4d75',
+        '--pine':'#6a4c93', '--pine-soft':'#a488c4', '--amber':'#caa0da', '--amber-soft':'#ecdff5',
+        '--clay':'#8e3b6b', '--sky':'#7c6fae', '--lilac':'#9b7cc4' }
+    },
+    azul: {
+      label:'Azul', swatch:'#2f5d8a',
+      vars:{ '--paper':'#e9eef3', '--paper-raised':'#ffffff', '--line':'#c3cfda', '--ink':'#101b26', '--ink-soft':'#3f5265',
+        '--pine':'#2f5d8a', '--pine-soft':'#5f8ab0', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
+        '--clay':'#a9503b', '--sky':'#2f5d8a', '--lilac':'#5a5f9e' }
+    },
+    noche: {
+      label:'Modo noche', swatch:'#5fa8d3',
+      vars:{ '--paper':'#161d26', '--paper-raised':'#212a35', '--line':'#37424f', '--ink':'#e9eef2', '--ink-soft':'#a3b1bd',
+        '--pine':'#5fa8d3', '--pine-soft':'#7fb8dc', '--amber':'#e0a458', '--amber-soft':'#3d3222',
+        '--clay':'#e0725f', '--sky':'#5fa8d3', '--lilac':'#a495d6' }
+    }
   },
-  morado: {
-    label:'Morado', swatch:'#6a4c93',
-    vars:{ '--paper':'#f2eef7', '--paper-raised':'#ffffff', '--line':'#dcccec', '--ink':'#2b2140', '--ink-soft':'#5d4d75',
-      '--pine':'#6a4c93', '--pine-soft':'#a488c4', '--amber':'#caa0da', '--amber-soft':'#ecdff5',
-      '--clay':'#8e3b6b', '--sky':'#7c6fae', '--lilac':'#9b7cc4' }
-  },
-  azul: {
-    label:'Azul oscuro', swatch:'#2f5d8a',
-    vars:{ '--paper':'#e9eef3', '--paper-raised':'#ffffff', '--line':'#c3cfda', '--ink':'#101b26', '--ink-soft':'#3f5265',
-      '--pine':'#2f5d8a', '--pine-soft':'#5f8ab0', '--amber':'#c67a2f', '--amber-soft':'#f0dcc0',
-      '--clay':'#a9503b', '--sky':'#2f5d8a', '--lilac':'#5a5f9e' }
-  },
-  noche: {
-    label:'Modo noche', swatch:'#5fa8d3',
-    vars:{ '--paper':'#161d26', '--paper-raised':'#212a35', '--line':'#37424f', '--ink':'#e9eef2', '--ink-soft':'#a3b1bd',
-      '--pine':'#5fa8d3', '--pine-soft':'#7fb8dc', '--amber':'#e0a458', '--amber-soft':'#3d3222',
-      '--clay':'#e0725f', '--sky':'#5fa8d3', '--lilac':'#a495d6' }
+  RECIPES: {
+    'rapido': [
+      { name: 'Huevos revueltos', ingredients: ['huevos', 'pan', 'sal'], time: 10 },
+      { name: 'Sándwich de pollo', ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], time: 15 },
+      { name: 'Tortilla de verduras', ingredients: ['huevos', 'cebolla', 'pimentón'], time: 15 },
+      { name: 'Ensalada rápida', ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], time: 10 }
+    ],
+    'medio': [
+      { name: 'Arroz con pollo', ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], time: 30 },
+      { name: 'Pasta con salsa', ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], time: 25 },
+      { name: 'Hamburguesas caseras', ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], time: 30 }
+    ],
+    'largo': [
+      { name: 'Cazuela de pollo', ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], time: 60 },
+      { name: 'Lasagna', ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], time: 55 },
+      { name: 'Estofado de carne', ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], time: 50 }
+    ]
   }
 };
 
-function applyTheme(key){
-  const theme = THEMES[key] || THEMES.bosque;
-  Object.entries(theme.vars).forEach(([k,v])=> document.documentElement.style.setProperty(k, v));
-  localStorage.setItem('theme', key);
-  renderThemeMenu(key);
-}
-function renderThemeMenu(activeKey){
-  const menu = document.getElementById('theme-menu');
-  menu.innerHTML = Object.entries(THEMES).map(([key, t])=>`
-    <div class="theme-opt${key===activeKey?' active':''}" data-theme="${key}">
-      <span class="theme-swatch" style="background:${t.swatch}"></span>${t.label}
-    </div>
-  `).join('');
-  menu.querySelectorAll('[data-theme]').forEach(opt=>{
-    opt.addEventListener('click', ()=>{
-      applyTheme(opt.dataset.theme);
-      menu.classList.remove('open');
-    });
-  });
-}
-document.getElementById('theme-toggle').addEventListener('click', (e)=>{
-  e.stopPropagation();
-  document.getElementById('theme-menu').classList.toggle('open');
-});
-document.addEventListener('click', ()=> document.getElementById('theme-menu').classList.remove('open'));
-applyTheme(localStorage.getItem('theme') || 'bosque');
-
 // ============================================================
-// ESTADO
+// UTILIDADES
 // ============================================================
-const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-const WEEKEND = [5,6];
-
-const defaultPhilo = {
-  objetivos: "Escribe aquí tus objetivos del semestre.",
-  prioridades: "Escribe aquí el orden de tus prioridades.",
-  reglas: "Escribe aquí tus reglas de estudio."
+const Utils = {
+  uid: () => Math.random().toString(36).slice(2,9),
+  fmt: (d) => d.toISOString().slice(0,10),
+  fmtLong: (d) => d.toLocaleDateString('es-CL', {day:'numeric', month:'short'}),
+  escape: (str) => (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'),
+  randomColor: () => {
+    const palette = ['#2f4d3f','#c67a2f','#a9503b','#3b6e8f','#6a5a8c','#5c7b6c'];
+    return palette[Math.floor(Math.random()*palette.length)];
+  },
+  mondayOf: (d) => {
+    const date = new Date(d);
+    const day = (date.getDay()+6)%7;
+    date.setDate(date.getDate()-day);
+    date.setHours(0,0,0,0);
+    return date;
+  },
+  timeToMin: (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; },
+  normalizeTime: (str) => {
+    if(!str) return null;
+    str = str.trim();
+    let m = str.match(/^(\d{1,2}):(\d{2})$/);
+    if(!m) m = str.match(/^(\d{1,2})(\d{2})$/);
+    if(!m) m = str.match(/^(\d{1,2})$/);
+    if(!m) return null;
+    let h = Number(m[1]), min = Number(m[2]||0);
+    if(h>23 || min>59) return null;
+    return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0');
+  },
+  minToY: (min, startHour) => (min - startHour*60) * (CONFIG.PX_PER_HOUR/60),
+  yToTime: (y, startHour) => {
+    let min = startHour*60 + y/(CONFIG.PX_PER_HOUR/60);
+    min = Math.round(min/15)*15;
+    min = Math.max(startHour*60, Math.min(CONFIG.HOUR_END*60-15, min));
+    const h = Math.floor(min/60), m = min%60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  },
+  addMin: (t, delta) => {
+    let min = Utils.timeToMin(t)+delta;
+    const h = Math.floor(min/60), m = min%60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  },
+  daysUntil: (dateStr) => {
+    if(!dateStr) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const target = new Date(dateStr+'T00:00:00');
+    return Math.round((target-today)/86400000);
+  },
+  guessStudyType: (name) => {
+    const n = (name||'').toLowerCase();
+    if(/ingl[eé]s|idioma|franc[eé]s|alem[aá]n/.test(n)) return 'idioma';
+    if(/matem[aá]tica|c[aá]lculo|algoritmo|f[ií]sica/.test(n)) return 'practico';
+    return 'teorico';
+  },
+  debounce: (fn, delay) => {
+    let timer = null;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  }
 };
-let philo = {...defaultPhilo};
-
-const STUDY_TYPES = {
-  practico: 'Práctico (ejercicios)',
-  teorico: 'Teórico (conceptos)',
-  idioma: 'Idioma (oral / lectura)'
-};
-function guessStudyType(name){
-  const n = (name||'').toLowerCase();
-  if(/ingl[eé]s|idioma|franc[eé]s|alem[aá]n/.test(n)) return 'idioma';
-  if(/matem[aá]tica|c[aá]lculo|algoritmo|f[ií]sica/.test(n)) return 'practico';
-  return 'teorico';
-}
-
-const defaultSubjects = [
-  {id:'demo1', name:'Matemática II', color:'#a9503b', credits:'5', studyType:'practico', topics:[], tests:[]},
-  {id:'demo2', name:'Algoritmos', color:'#3b6e8f', credits:'5', studyType:'practico', topics:[], tests:[]},
-  {id:'demo3', name:'Arquitectura', color:'#c67a2f', credits:'4', studyType:'teorico', topics:[], tests:[]},
-  {id:'demo4', name:'Inglés 6', color:'#6a5a8c', credits:'3', studyType:'idioma', topics:[], tests:[]},
-];
-
-function normalizeSubjects(arr){
-  if(!Array.isArray(arr)) return JSON.parse(JSON.stringify(defaultSubjects));
-  arr.forEach(s=>{
-    if(!s.id) s.id = uid();
-    if(!s.name) s.name = 'Ramo sin nombre';
-    if(!s.color) s.color = randomColor();
-    if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
-    if(!s.studyType || !STUDY_TYPES[s.studyType]) s.studyType = guessStudyType(s.name);
-    if(!Array.isArray(s.topics)) s.topics = [];
-    s.topics.forEach(t=>{
-      if(!t.id) t.id = uid();
-      if(!t.status || !['sinver','debil','dominado'].includes(t.status)) t.status = 'sinver';
-    });
-    if(!Array.isArray(s.tests)) s.tests = [];
-    s.tests.forEach(t=>{
-      if(!t.id) t.id = uid();
-      if(!Array.isArray(t.temario)) t.temario = [];
-      t.temario = t.temario.filter(tid => s.topics.some(top=>top.id===tid));
-    });
-  });
-  return arr;
-}
-function normalizeBlocks(arr){
-  if(!Array.isArray(arr)) return [];
-  arr.forEach(b=>{
-    if(!b.id) b.id = uid();
-    if(!b.start) b.start = '18:00';
-    if(!b.end) b.end = '19:00';
-    if(typeof b.done !== 'boolean') b.done = false;
-    if(!b.type) b.type = 'otro';
-  });
-  return arr;
-}
-const RECURRING_TYPES = [
-  {value:'clase', label:'Clase'},
-  {value:'estudio', label:'Estudio'},
-  {value:'gym', label:'Gimnasio'},
-  {value:'social', label:'Vida social'},
-  {value:'otro', label:'Otro'}
-];
-function normalizeRecurring(arr){
-  if(!Array.isArray(arr)) return [];
-  arr.forEach(c=>{
-    if(!c.id) c.id = uid();
-    if(typeof c.day !== 'number') c.day = 0;
-    if(!c.start) c.start = '09:00';
-    if(!c.end) c.end = '10:00';
-    if(!c.type) c.type = 'clase';
-  });
-  return arr;
-}
-const legacyMealSlots = ['Colación pre-gym','Almuerzo','Cena'];
-function normalizeMeals(obj){
-  const result = Object.fromEntries(DAYS.map(d=>[d, []]));
-  if(obj && typeof obj === 'object'){
-    DAYS.forEach(d=>{
-      const val = obj[d];
-      if(Array.isArray(val)){
-        result[d] = val.map(e=>({id:e.id||uid(), name:e.name||'', value:e.value||''}));
-      }else if(val && typeof val === 'object'){
-        result[d] = legacyMealSlots.filter(slot=>val[slot] && String(val[slot]).trim()).map(slot=>({id:uid(), name:slot, value:val[slot]}));
-      }
-    });
-  }
-  return result;
-}
-
-function mondayOf(d){
-  const date = new Date(d);
-  const day = (date.getDay()+6)%7;
-  date.setDate(date.getDate()-day);
-  date.setHours(0,0,0,0);
-  return date;
-}
-
-let subjects = [];
-let blocks = [];
-let recurring = [];
-let recurringExceptions = new Set();
-let meals = {};
-let weekStart = mondayOf(new Date());
-let inventory = [];
-
-function loadLocalState(){
-  subjects = normalizeSubjects(loadJSON('subjects', JSON.parse(JSON.stringify(defaultSubjects))));
-  blocks = normalizeBlocks(loadJSON('blocks', []));
-  recurring = normalizeRecurring(loadJSON('recurring', []));
-  recurringExceptions = new Set(loadJSON('recurringExceptions', []));
-  meals = normalizeMeals(loadJSON('meals', null));
-  philo = {...defaultPhilo, ...loadJSON('philosophy', {})};
-  weekStart = new Date(loadJSON('weekStart', mondayOf(new Date()).toISOString()));
-  inventory = loadJSON('inventory', []);
-  if(!Array.isArray(inventory)) inventory = [];
-  document.getElementById('inventory-input').value = inventory.join(', ');
-}
-loadLocalState();
-
-function fmt(d){ return d.toISOString().slice(0,10); }
-function fmtLong(d){ return d.toLocaleDateString('es-CL', {day:'numeric', month:'short'}); }
-
-document.getElementById('today-label').textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
 
 // ============================================================
-// FIREBASE (sincronización)
+// ESTADO - Único punto de verdad
 // ============================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
-  authDomain: "planificador-b4f8a.firebaseapp.com",
-  projectId: "planificador-b4f8a",
-  storageBucket: "planificador-b4f8a.firebasestorage.app",
-  messagingSenderId: "335729353878",
-  appId: "1:335729353878:web:43900782feca9063f0ceb7"
-};
-let cloudEnabled = false;
-let auth = null, db = null;
-try{
-  if(firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('PEGA_AQUI')===-1){
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
-    cloudEnabled = true;
-  }
-}catch(e){ console.warn('Firebase no está configurado todavía.', e); }
+const App = {
+  state: {
+    profileKey: 'guest',
+    philo: {
+      objetivos: "Escribe aquí tus objetivos del semestre.",
+      prioridades: "Escribe aquí el orden de tus prioridades.",
+      reglas: "Escribe aquí tus reglas de estudio."
+    },
+    subjects: [],
+    blocks: [],
+    recurring: [],
+    recurringExceptions: new Set(),
+    meals: {},
+    weekStart: null,
+    inventory: [],
+    asPurpose: 'mantenimiento',
+    _lastChatPlan: null,
+    currentUser: null,
+    cloudEnabled: false
+  },
 
-let currentUser = null;
-let suppressCloudSync = false;
-let cloudSyncTimer = null;
+  // --- Persistencia ---
+  storageKey(base) {
+    return base + '::' + this.state.profileKey;
+  },
 
-function setSyncStatus(state, text){
-  const dot = document.getElementById('sync-dot');
-  const label = document.getElementById('account-status');
-  if(dot) dot.className = 'sync-dot' + (state ? ' '+state : '');
-  if(label) label.textContent = text;
-}
+  loadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(this.storageKey(key));
+      return raw ? JSON.parse(raw) : fallback;
+    } catch(e) { return fallback; }
+  },
 
-function getFullState(){
-  return {
-    philosophy: philo, subjects, blocks, recurring, meals,
-    weekStart: weekStart.toISOString(),
-    recurringExceptions: [...recurringExceptions],
-    inventory: inventory,
-    updatedAt: Number(localStorage.getItem(storageKey('lastUpdated'))||Date.now())
-  };
-}
-function applyFullState(state){
-  suppressCloudSync = true;
-  if(state.philosophy) philo = {...defaultPhilo, ...state.philosophy};
-  subjects = normalizeSubjects(state.subjects || []);
-  blocks = normalizeBlocks(state.blocks || []);
-  recurring = normalizeRecurring(state.recurring || []);
-  meals = normalizeMeals(state.meals);
-  if(state.weekStart) weekStart = new Date(state.weekStart);
-  recurringExceptions = new Set(state.recurringExceptions || []);
-  inventory = Array.isArray(state.inventory) ? state.inventory : [];
-  localStorage.setItem(storageKey('philosophy'), JSON.stringify(philo));
-  localStorage.setItem(storageKey('subjects'), JSON.stringify(subjects));
-  localStorage.setItem(storageKey('blocks'), JSON.stringify(blocks));
-  localStorage.setItem(storageKey('recurring'), JSON.stringify(recurring));
-  localStorage.setItem(storageKey('meals'), JSON.stringify(meals));
-  localStorage.setItem(storageKey('weekStart'), JSON.stringify(weekStart.toISOString()));
-  localStorage.setItem(storageKey('recurringExceptions'), JSON.stringify([...recurringExceptions]));
-  localStorage.setItem(storageKey('inventory'), JSON.stringify(inventory));
-  localStorage.setItem(storageKey('lastUpdated'), String(state.updatedAt || Date.now()));
-  renderAll();
-  suppressCloudSync = false;
-}
-function renderAll(){
-  try{
-    renderPhilosophy();
-    renderSubjects();
-    renderWeeks();
-    renderMeals();
-    renderAsistente();
-    document.getElementById('inventory-input').value = inventory.join(', ');
-  }catch(err){
-    console.error('Error al dibujar la página:', err);
-  }
-}
-
-function scheduleCloudSync(){
-  if(!cloudEnabled || !currentUser || suppressCloudSync) return;
-  setSyncStatus('busy', 'Sincronizando…');
-  clearTimeout(cloudSyncTimer);
-  cloudSyncTimer = setTimeout(flushCloudSyncNow, 900);
-}
-function flushCloudSyncNow(){
-  if(!cloudEnabled || !currentUser) return;
-  clearTimeout(cloudSyncTimer);
-  db.collection('users').doc(currentUser.uid).set(getFullState())
-    .then(()=> setSyncStatus('on', currentUser.email))
-    .catch((err)=>{
-      console.error('Error al sincronizar con Firestore:', err);
-      setSyncStatus('', 'Error al sincronizar');
-    });
-}
-document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushCloudSyncNow(); });
-window.addEventListener('pagehide', flushCloudSyncNow);
-
-function traduceError(err){
-  const map = {
-    'auth/email-already-in-use':'Ese correo ya tiene una cuenta.',
-    'auth/invalid-email':'Correo inválido.',
-    'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
-    'auth/wrong-password':'Contraseña incorrecta.',
-    'auth/user-not-found':'No existe una cuenta con ese correo.',
-    'auth/invalid-credential':'Correo o contraseña incorrectos.'
-  };
-  return map[err.code] || err.message;
-}
-
-function openLoginModal(){ document.getElementById('login-msg').textContent=''; document.getElementById('login-overlay').classList.add('open'); }
-function closeLoginModal(){ document.getElementById('login-overlay').classList.remove('open'); }
-
-document.getElementById('btn-export').addEventListener('click', ()=>{
-  const data = JSON.stringify(getFullState(), null, 2);
-  const blob = new Blob([data], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `respaldo-planificador-${fmt(new Date())}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-document.getElementById('btn-import').addEventListener('click', ()=>{
-  document.getElementById('import-file').click();
-});
-document.getElementById('import-file').addEventListener('change', e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    try{
-      const state = JSON.parse(reader.result);
-      if(!confirm('¿Reemplazar todos los datos actuales por el respaldo?')) return;
-      state.updatedAt = Date.now();
-      applyFullState(state);
-      if(cloudEnabled && currentUser) flushCloudSyncNow();
-      alert('Respaldo restaurado.');
-    }catch(err){
-      alert('El archivo no es un respaldo válido.');
+  saveJSON(key, value) {
+    localStorage.setItem(this.storageKey(key), JSON.stringify(value));
+    if(key !== 'lastUpdated') {
+      localStorage.setItem(this.storageKey('lastUpdated'), String(Date.now()));
     }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
+    this.scheduleSync();
+  },
 
-document.getElementById('btn-close-login').addEventListener('click', closeLoginModal);
-document.getElementById('btn-signin').addEventListener('click', ()=>{
-  if(!cloudEnabled){ alert('La sincronización no está configurada.'); return; }
-  const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-password').value;
-  const msg = document.getElementById('login-msg');
-  msg.className='msg'; msg.textContent='Ingresando…';
-  auth.signInWithEmailAndPassword(email, pass)
-    .then(()=>{ msg.className='msg ok'; msg.textContent='¡Listo!'; setTimeout(closeLoginModal, 500); })
-    .catch(err=>{ msg.className='msg error'; msg.textContent=traduceError(err); });
-});
-document.getElementById('btn-signup').addEventListener('click', ()=>{
-  if(!cloudEnabled){ alert('La sincronización no está configurada.'); return; }
-  const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-password').value;
-  const msg = document.getElementById('login-msg');
-  msg.className='msg'; msg.textContent='Creando cuenta…';
-  auth.createUserWithEmailAndPassword(email, pass)
-    .then(()=>{ msg.className='msg ok'; msg.textContent='¡Cuenta creada!'; setTimeout(closeLoginModal, 500); })
-    .catch(err=>{ msg.className='msg error'; msg.textContent=traduceError(err); });
-});
-
-if(cloudEnabled){
-  auth.onAuthStateChanged(user=>{
-    currentUser = user;
-    const widget = document.getElementById('account-widget');
-    if(user){
-      profileKey = user.uid;
-      loadLocalState();
-      renderAll();
-      widget.innerHTML = `<span class="sync-dot on" id="sync-dot"></span><span id="account-status">${escapeAttr(user.email)}</span><button id="btn-logout">Cerrar sesión</button>`;
-      document.getElementById('btn-logout').addEventListener('click', ()=> auth.signOut());
-      db.collection('users').doc(user.uid).get().then(doc=>{
-        if(doc.exists){
-          const cloudData = doc.data();
-          const cloudUpdated = cloudData.updatedAt || 0;
-          const localUpdated = Number(localStorage.getItem(storageKey('lastUpdated'))||0);
-          if(cloudUpdated > localUpdated){
-            applyFullState(cloudData);
-          }else{
-            db.collection('users').doc(user.uid).set(getFullState());
-          }
-          setSyncStatus('on', user.email);
-        }else{
-          db.collection('users').doc(user.uid).set(getFullState())
-            .then(()=> setSyncStatus('on', user.email))
-            .catch(()=> setSyncStatus('', 'Error al sincronizar'));
-        }
-      }).catch(()=> setSyncStatus('', 'Error al leer desde Firestore'));
-    }else{
-      profileKey = 'guest';
-      loadLocalState();
-      renderAll();
-      widget.innerHTML = `<span class="sync-dot" id="sync-dot"></span><span id="account-status">Sin sincronizar</span><button id="btn-open-login">Iniciar sesión</button>`;
-      document.getElementById('btn-open-login').addEventListener('click', openLoginModal);
+  // --- Sincronización con Firebase ---
+  scheduleSync: Utils.debounce(() => {
+    if(App.state.currentUser && App.state.cloudEnabled) {
+      App.syncToCloud();
     }
-  });
-}else{
-  document.getElementById('btn-open-login').addEventListener('click', ()=>{
-    alert('La sincronización con la nube no está configurada.');
-  });
-}
+  }, 500),
 
-// ============================================================
-// NAV
-// ============================================================
-document.querySelectorAll('nav.tabs button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('view-'+btn.dataset.view).classList.add('active');
-  });
-});
+  syncToCloud: () => {
+    // Implementado en la sección Firebase
+  },
 
-// ============================================================
-// FILOSOFIA
-// ============================================================
-['objetivos','prioridades','reglas'].forEach(k=>{
-  const el = document.getElementById('philo-'+k);
-  el.addEventListener('input', ()=>{
-    philo[k] = el.textContent;
-    saveJSON('philosophy', philo);
-  });
-});
-function renderPhilosophy(){
-  ['objetivos','prioridades','reglas'].forEach(k=>{
-    document.getElementById('philo-'+k).textContent = philo[k];
-  });
-}
-
-// ============================================================
-// RAMOS — con el BUG DE PRUEBAS ARREGLADO
-// ============================================================
-const HOURS_PER_CREDIT = 1;
-const STATUS_CYCLE = ['sinver','debil','dominado'];
-const STATUS_LABEL = {sinver:'sin ver', debil:'débil', dominado:'dominado'};
-
-function renderSubjects(){
-  const grid = document.getElementById('subjects-grid');
-  grid.innerHTML = '';
-  subjects.forEach(sub=>{
-    try{
-      const card = document.createElement('div');
-      card.className = 'card pad subject-card';
-      card.style.setProperty('--sub-color', sub.color);
-      const creditsNum = parseFloat(sub.credits);
-      const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas` : 'agrega los créditos para estimar horas';
-      card.innerHTML = `
-        <div class="head">
-          <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
-          <span class="icon-btn" title="Eliminar ramo" data-action="delete">✕</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${escapeAttr(sub.credits)}" data-field="credits"></span>
-          <span class="chip mono">tipo:
-            <select data-field="studyType">
-              ${Object.entries(STUDY_TYPES).map(([val,label])=>`<option value="${val}" ${sub.studyType===val?'selected':''}>${label}</option>`).join('')}
-            </select>
-          </span>
-          <span class="hours-hint" data-hours-hint>${hoursHint}</span>
-        </div>
-        <label class="field-label">Temas del ramo</label>
-        <div class="topics-list" data-topiclist></div>
-        <div class="add-topic-row">
-          <input type="text" placeholder="Agregar tema" data-newtopic>
-          <button class="btn ghost small" data-action="add-topic">+</button>
-        </div>
-        <label class="field-label">Fechas de pruebas</label>
-        <div class="test-list" data-testlist></div>
-        <button class="btn ghost small" style="margin-top:8px" data-action="add-test">+ agregar prueba</button>
-      `;
-      grid.appendChild(card);
-
-      card.querySelectorAll('[data-field]').forEach(inp=>{
-        const evt = inp.tagName==='SELECT' ? 'change' : 'input';
-        inp.addEventListener(evt, ()=>{
-          sub[inp.dataset.field] = inp.value;
-          saveJSON('subjects', subjects);
-          if(inp.dataset.field==='credits'){
-            const c = parseFloat(sub.credits);
-            card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas` : 'agrega los créditos para estimar horas';
-          }
-          if(inp.dataset.field==='studyType') renderAsistente();
-        });
-      });
-      card.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
-        if(confirm(`¿Eliminar ${sub.name}?`)){
-          subjects = subjects.filter(s=>s.id!==sub.id);
-          saveJSON('subjects', subjects);
-          renderSubjects();
-          renderAsistente();
-        }
-      });
-      card.querySelector('[data-action="add-test"]').addEventListener('click', ()=>{
-        sub.tests.push({id:uid(), name:'', date:'', temario:[]});
-        saveJSON('subjects', subjects);
-        renderTests(card, sub);
-      });
-      card.querySelector('[data-action="add-topic"]').addEventListener('click', ()=>{
-        const inp = card.querySelector('[data-newtopic]');
-        const name = inp.value.trim();
-        if(!name) return;
-        sub.topics.push({id:uid(), name, status:'sinver'});
-        saveJSON('subjects', subjects);
-        inp.value='';
-        renderTopics(card, sub);
-        renderTests(card, sub);
-        renderAsistente();
-      });
-      renderTopics(card, sub);
-      renderTests(card, sub);
-    }catch(err){
-      console.error('No se pudo dibujar el ramo', sub && sub.name, err);
-    }
-  });
-
-  const addTile = document.createElement('div');
-  addTile.className = 'add-subject-btn';
-  addTile.textContent = '+ agregar ramo';
-  addTile.addEventListener('click', ()=>{
-    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', studyType:'teorico', topics:[], tests:[]});
-    saveJSON('subjects', subjects);
-    renderSubjects();
-    renderAsistente();
-  });
-  grid.appendChild(addTile);
-}
-
-function renderTopics(card, sub){
-  const list = card.querySelector('[data-topiclist]');
-  list.innerHTML = '';
-  sub.topics.forEach(topic=>{
-    const row = document.createElement('div');
-    row.className = 'topic-row';
-    row.innerHTML = `
-      <input type="text" value="${escapeAttr(topic.name)}" data-tpf="name">
-      <button class="status-btn ${topic.status}" data-taction="cycle">${STATUS_LABEL[topic.status]}</button>
-      <span class="icon-btn" data-taction="delete">✕</span>
-    `;
-    list.appendChild(row);
-    row.querySelector('[data-tpf]').addEventListener('input', e=>{
-      topic.name = e.target.value;
-      saveJSON('subjects', subjects);
-      renderAsistente();
-    });
-    row.querySelector('[data-taction="cycle"]').addEventListener('click', ()=>{
-      const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(topic.status)+1) % STATUS_CYCLE.length];
-      topic.status = next;
-      saveJSON('subjects', subjects);
-      renderTopics(card, sub);
-      renderAsistente();
-    });
-    row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
-      sub.topics = sub.topics.filter(t=>t.id!==topic.id);
-      sub.tests.forEach(t=>{ t.temario = t.temario.filter(id=>id!==topic.id); });
-      saveJSON('subjects', subjects);
-      renderTopics(card, sub);
-      renderTests(card, sub);
-      renderAsistente();
-    });
-  });
-}
-
-function daysUntil(dateStr){
-  if(!dateStr) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const target = new Date(dateStr+'T00:00:00');
-  return Math.round((target-today)/86400000);
-}
-
-function renderTests(card, sub){
-  const list = card.querySelector('[data-testlist]');
-  list.innerHTML = '';
-  sub.tests.forEach(test=>{
-    const row = document.createElement('div');
-    row.className = 'test-row';
-    const du = daysUntil(test.date);
-    let badge = '';
-    if(du !== null){
-      const label = du<0 ? 'pasó' : (du===0 ? 'hoy' : `en ${du}d`);
-      badge = `<span class="days-badge ${du!==null && du>=0 && du<=7 ? 'urgent':''}">${label}</span>`;
-    }
-    row.innerHTML = `
-      <input type="text" placeholder="Ej: Certamen 1" value="${escapeAttr(test.name)}" data-tf="name">
-      <input type="date" value="${test.date||''}" data-tf="date">
-      ${badge}
-      <span class="icon-btn" data-taction="delete">✕</span>
-    `;
-    list.appendChild(row);
-    
-    // 🔥 BUG ARREGLADO: Ahora usamos 'change' en lugar de 'input'
-    row.querySelectorAll('[data-tf]').forEach(inp=>{
-      inp.addEventListener('change', ()=>{
-        test[inp.dataset.tf] = inp.value;
-        saveJSON('subjects', subjects);
-        updateTestBadges(card, sub);
-        renderAsistente();
-      });
-    });
-    
-    row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
-      sub.tests = sub.tests.filter(t=>t.id!==test.id);
-      saveJSON('subjects', subjects);
-      renderTests(card, sub);
-      renderAsistente();
-    });
-
-    if(sub.topics.length){
-      const toggle = document.createElement('button');
-      toggle.className = 'link-btn';
-      toggle.textContent = `Temario (${test.temario.length}/${sub.topics.length} temas) ▾`;
-      list.appendChild(toggle);
-      const box = document.createElement('div');
-      box.className = 'temario-box';
-      box.innerHTML = `<label class="field-label">Temas que entran en esta prueba</label><div class="temario-chip-row"></div>`;
-      const chipRow = box.querySelector('.temario-chip-row');
-      sub.topics.forEach(topic=>{
-        const chip = document.createElement('span');
-        chip.className = 'temario-chip' + (test.temario.includes(topic.id) ? ' selected':'');
-        chip.textContent = topic.name;
-        chip.addEventListener('click', ()=>{
-          if(test.temario.includes(topic.id)) test.temario = test.temario.filter(id=>id!==topic.id);
-          else test.temario.push(topic.id);
-          saveJSON('subjects', subjects);
-          chip.classList.toggle('selected');
-          toggle.textContent = `Temario (${test.temario.length}/${sub.topics.length} temas) ▾`;
-          renderAsistente();
-        });
-        chipRow.appendChild(chip);
-      });
-      list.appendChild(box);
-      toggle.addEventListener('click', ()=> box.classList.toggle('open'));
-    }
-  });
-}
-
-function updateTestBadges(card, sub){
-  const badges = card.querySelectorAll('.days-badge');
-  sub.tests.forEach((test, idx)=>{
-    if(badges[idx]){
-      const du = daysUntil(test.date);
-      if(du !== null){
-        const label = du<0 ? 'pasó' : (du===0 ? 'hoy' : `en ${du}d`);
-        badges[idx].textContent = label;
-        badges[idx].className = `days-badge ${du!==null && du>=0 && du<=7 ? 'urgent':''}`;
-      } else {
-        badges[idx].textContent = '';
-        badges[idx].className = 'days-badge';
-      }
-    }
-  });
-}
-
-function randomColor(){
-  const palette = ['#2f4d3f','#c67a2f','#a9503b','#3b6e8f','#6a5a8c','#5c7b6c'];
-  return palette[Math.floor(Math.random()*palette.length)];
-}
-function escapeAttr(str){
-  return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-}
-
-// ============================================================
-// SEMANA (1 SEMANA)
-// ============================================================
-const HOUR_START = 5, HOUR_END = 23;
-const SUGGEST_MIN_HOUR = 8;
-const PX_PER_HOUR = 48;
-const GRID_HEIGHT = (HOUR_END-HOUR_START)*PX_PER_HOUR;
-const DAYS_IN_VIEW = 7;
-
-function timeToMin(t){ const [h,m] = t.split(':').map(Number); return h*60+m; }
-function normalizeTime(str){
-  if(!str) return null;
-  str = str.trim();
-  let m = str.match(/^(\d{1,2}):(\d{2})$/);
-  if(!m) m = str.match(/^(\d{1,2})(\d{2})$/);
-  if(!m) m = str.match(/^(\d{1,2})$/);
-  if(!m) return null;
-  let h = Number(m[1]), min = Number(m[2]||0);
-  if(h>23 || min>59) return null;
-  return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0');
-}
-function minToY(min){ return (min - HOUR_START*60) * (PX_PER_HOUR/60); }
-function yToTime(y){
-  let min = HOUR_START*60 + y/(PX_PER_HOUR/60);
-  min = Math.round(min/15)*15;
-  min = Math.max(HOUR_START*60, Math.min(HOUR_END*60-15, min));
-  const h = Math.floor(min/60), m = min%60;
-  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-}
-function addMin(t, delta){
-  let min = timeToMin(t)+delta;
-  const h = Math.floor(min/60), m = min%60;
-  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-}
-
-function linkClassSubjects(){
-  recurring.forEach(c=>{
-    if(c.type==='clase' && !c.subjectId){
-      const match = subjects.find(s=>s.name===c.subjectName);
-      if(match) c.subjectId = match.id;
-    }
-  });
-}
-function renderRecurringPanel(){
-  linkClassSubjects();
-  const list = document.getElementById('recurring-list');
-  list.innerHTML = '';
-  recurring.forEach(c=>{
-    const row = document.createElement('div');
-    row.className = 'class-row';
-    const secondaryField = c.type==='clase'
-      ? `<select data-cf="subjectId">${subjects.map(s=>`<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${escapeAttr(s.name)}</option>`).join('')}</select>`
-      : `<input type="text" data-cf="label" placeholder="Descripción" value="${escapeAttr(c.label||'')}">`;
-    row.innerHTML = `
-      <select data-cf="type">${RECURRING_TYPES.map(t=>`<option value="${t.value}" ${c.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select>
-      <select data-cf="day">${DAYS.slice(0,7).map((d,i)=>`<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('')}</select>
-      ${secondaryField}
-      <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="start" value="${c.start}">
-      <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="end" value="${c.end}">
-      <span class="icon-btn" data-caction="delete" title="Eliminar regla">✕</span>
-    `;
-    list.appendChild(row);
-    row.querySelectorAll('[data-cf]').forEach(inp=>{
-      const evt = inp.tagName==='SELECT' ? 'change' : 'input';
-      inp.addEventListener(evt, ()=>{
-        const f = inp.dataset.cf;
-        if(f==='day') c.day = Number(inp.value);
-        else if(f==='start' || f==='end'){ const t = normalizeTime(inp.value); if(t) c[f] = t; }
-        else c[f] = inp.value;
-        if(f==='subjectId'){ const s = subjects.find(x=>x.id===inp.value); c.subjectName = s ? s.name : ''; }
-        saveJSON('recurring', recurring);
-        if(f==='type') renderRecurringPanel();
-        renderWeeks();
-      });
-    });
-    row.querySelector('[data-caction="delete"]').addEventListener('click', ()=>{
-      recurring = recurring.filter(x=>x.id!==c.id);
-      saveJSON('recurring', recurring);
-      renderRecurringPanel();
-      renderWeeks();
-    });
-  });
-}
-document.getElementById('btn-add-recurring').addEventListener('click', ()=>{
-  recurring.push({id:uid(), day:0, type:'estudio', subjectId:null, subjectName:'', label:'', start:'18:00', end:'19:00'});
-  saveJSON('recurring', recurring);
-  renderRecurringPanel();
-  renderWeeks();
-});
-
-document.getElementById('btn-add-block').addEventListener('click', ()=>{
-  const date = document.getElementById('nb-date').value;
-  const type = document.getElementById('nb-type').value;
-  const start = normalizeTime(document.getElementById('nb-start').value);
-  const end = normalizeTime(document.getElementById('nb-end').value);
-  const label = document.getElementById('nb-label').value.trim();
-  if(!date || !label){ alert('Falta el día o la descripción.'); return; }
-  if(!start || !end){ alert('La hora debe ser tipo 18:00 o 1800.'); return; }
-  blocks.push({id:uid(), date, type, label, start, end, done:false});
-  saveJSON('blocks', blocks);
-  document.getElementById('nb-label').value='';
-  renderWeeks();
-});
-
-document.getElementById('btn-clear-week').addEventListener('click', ()=>{
-  const end = new Date(weekStart); end.setDate(end.getDate()+6);
-  const startStr = fmt(weekStart), endStr = fmt(end);
-  const inWeek = blocks.filter(b=> b.date>=startStr && b.date<=endStr);
-  if(inWeek.length===0){ alert('Esta semana ya está vacía.'); return; }
-  if(!confirm(`¿Borrar los ${inWeek.length} bloques de esta semana?`)) return;
-  blocks = blocks.filter(b=> !(b.date>=startStr && b.date<=endStr));
-  saveJSON('blocks', blocks);
-  renderWeeks();
-});
-
-function renderWeekRange(){
-  const end = new Date(weekStart); end.setDate(end.getDate()+6);
-  document.getElementById('week-range').textContent = `${fmtLong(weekStart)} — ${fmtLong(end)}`;
-  document.getElementById('nb-date').min = fmt(weekStart);
-  document.getElementById('nb-date').max = fmt(end);
-  if(!document.getElementById('nb-date').value) document.getElementById('nb-date').value = fmt(new Date());
-}
-
-function renderWeeks(){
-  renderRecurringPanel();
-  renderWeekRange();
-  const wrap = document.getElementById('weeks-wrap');
-  wrap.innerHTML = '';
-  const todayStr = fmt(new Date());
-
-  const weekDiv = document.createElement('div');
-  weekDiv.className = 'week-block';
-  weekDiv.innerHTML = `<div class="week-label">Semana · desde ${fmtLong(weekStart)}</div>`;
-
-  const grid = document.createElement('div');
-  grid.className = 'time-grid';
-
-  const header = document.createElement('div');
-  header.className = 'time-grid-header';
-  header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d=>{
-    const date = new Date(weekStart); date.setDate(date.getDate()+d);
-    const isToday = fmt(date)===todayStr;
-    return `<div class="day-head${WEEKEND.includes(d)?' weekend':''}${isToday?' today':''}"><span>${fmtLong(date)}</span><b>${DAYS[d]}${isToday?' · hoy':''}</b></div>`;
-  }).join('');
-  grid.appendChild(header);
-
-  const body = document.createElement('div');
-  body.className = 'time-grid-body';
-  body.style.height = GRID_HEIGHT+'px';
-
-  const gutter = document.createElement('div');
-  gutter.className = 'hour-gutter';
-  gutter.style.height = GRID_HEIGHT+'px';
-  for(let h=HOUR_START; h<=HOUR_END; h++){
-    const lbl = document.createElement('div');
-    lbl.className = 'hour-label';
-    lbl.style.top = minToY(h*60)+'px';
-    lbl.textContent = String(h).padStart(2,'0')+':00';
-    gutter.appendChild(lbl);
-  }
-  body.appendChild(gutter);
-
-  for(let d=0; d<7; d++){
-    const date = new Date(weekStart); date.setDate(date.getDate()+d);
-    const dateStr = fmt(date);
-    const isToday = dateStr===todayStr;
-    const col = document.createElement('div');
-    col.className = 'day-col-grid' + (WEEKEND.includes(d) ? ' weekend':'') + (isToday ? ' today':'');
-    col.style.height = GRID_HEIGHT+'px';
-    col.dataset.date = dateStr;
-    col.dataset.day = d;
-    for(let h=HOUR_START; h<=HOUR_END; h++){
-      const line = document.createElement('div');
-      line.className = 'hour-line';
-      line.style.top = minToY(h*60)+'px';
-      col.appendChild(line);
-    }
-    body.appendChild(col);
-    setupDropZone(col);
-    renderDayColumnBlocks(col, dateStr, d);
-  }
-  grid.appendChild(body);
-  weekDiv.appendChild(grid);
-  wrap.appendChild(weekDiv);
-}
-
-function layoutOverlaps(items){
-  items.sort((a,b)=>a.start-b.start);
-  items.forEach(it=>{ it.col=0; it.cols=1; });
-  for(let i=0;i<items.length;i++){
-    const cluster = [items[i]];
-    let maxEnd = items[i].end;
-    for(let j=i+1;j<items.length;j++){
-      if(items[j].start < maxEnd){ cluster.push(items[j]); maxEnd = Math.max(maxEnd, items[j].end); }
-      else break;
-    }
-    if(cluster.length>1){
-      cluster.forEach((it,idx)=>{ it.col=idx; it.cols=cluster.length; });
-    }
-  }
-  return items;
-}
-
-function renderDayColumnBlocks(col, dateStr, dayIdx){
-  const fixed = recurring
-    .filter(c=>c.day===dayIdx && !recurringExceptions.has(c.id+'|'+dateStr))
-    .map(c=>({ start:timeToMin(c.start), end:timeToMin(c.end), kind:'recurring', ref:c }));
-  const movable = blocks.filter(b=>b.date===dateStr).map(b=>({
-    start:timeToMin(b.start), end:timeToMin(b.end), kind:'movable', ref:b
-  }));
-  const items = layoutOverlaps([...fixed, ...movable]);
-  items.forEach(it=>{
-    const el = it.kind==='recurring' ? renderRecurringBlock(it, dateStr) : renderMovableBlock(it);
-    const top = minToY(it.start);
-    const height = Math.max(18, minToY(it.end)-top);
-    const widthPct = 100/it.cols;
-    el.style.top = top+'px';
-    el.style.height = height+'px';
-    el.style.left = `calc(${it.col*widthPct}% + 2px)`;
-    el.style.width = `calc(${widthPct}% - 4px)`;
-    col.appendChild(el);
-  });
-}
-
-function renderRecurringBlock(it, dateStr){
-  const c = it.ref;
-  const sub = c.type==='clase' ? subjects.find(s=>s.id===c.subjectId) : null;
-  const labelText = c.type==='clase' ? (sub?sub.name:c.subjectName) : (c.label||'');
-  const el = document.createElement('div');
-  el.className = `block-abs type-${c.type} fixed`;
-  if(sub) el.style.borderColor = sub.color;
-  el.innerHTML = `
-    <div class="b-actions"><span data-raction="skip" title="Quitar solo esta semana">✕</span></div>
-    <span class="b-range">${c.start}–${c.end}</span>${escapeAttr(labelText)}
-  `;
-  el.querySelector('[data-raction="skip"]').addEventListener('click', e=>{
-    e.stopPropagation();
-    recurringExceptions.add(c.id+'|'+dateStr);
-    saveJSON('recurringExceptions', [...recurringExceptions]);
-    renderWeeks();
-  });
-  return el;
-}
-
-function renderMovableBlock(it){
-  const b = it.ref;
-  const el = document.createElement('div');
-  el.className = `block-abs type-${b.type}` + (b.done?' done':'') + (b.plan?' has-plan':'');
-  el.draggable = true;
-  el.dataset.id = b.id;
-  el.innerHTML = `
-    <div class="b-actions">
-      ${b.plan ? '<span data-baction="plan" title="Ver plan de estudio">📋</span>' : ''}
-      <span data-baction="edit" title="Editar">✎</span>
-      <span data-baction="toggle" title="Marcar cumplido">✓</span>
-      <span data-baction="delete" title="Eliminar">✕</span>
-    </div>
-    <span class="b-range">${b.start}–${b.end}</span>${escapeAttr(b.label)}
-  `;
-  el.addEventListener('dragstart', e=>{
-    e.dataTransfer.setData('text/plain', b.id);
-    setTimeout(()=>el.style.opacity='0.3',0);
-  });
-  el.addEventListener('dragend', ()=> el.style.opacity='1');
-  if(b.plan){
-    el.addEventListener('click', ()=> openPlanModal(b));
-    el.querySelector('[data-baction="plan"]').addEventListener('click', e=>{ e.stopPropagation(); openPlanModal(b); });
-  }
-  el.querySelector('[data-baction="toggle"]').addEventListener('click', e=>{
-    e.stopPropagation();
-    b.done = !b.done; saveJSON('blocks', blocks); renderWeeks();
-  });
-  el.querySelector('[data-baction="delete"]').addEventListener('click', e=>{
-    e.stopPropagation();
-    blocks = blocks.filter(x=>x.id!==b.id); saveJSON('blocks', blocks); renderWeeks();
-  });
-  el.querySelector('[data-baction="edit"]').addEventListener('click', e=>{
-    e.stopPropagation();
-    const newLabel = prompt('Descripción', b.label); if(newLabel===null) return;
-    const newStart = prompt('Hora de inicio (HH:MM)', b.start); if(newStart===null) return;
-    const newEnd = prompt('Hora de término (HH:MM)', b.end); if(newEnd===null) return;
-    b.label = newLabel.trim() || b.label; b.start = normalizeTime(newStart)||b.start; b.end = normalizeTime(newEnd)||b.end;
-    saveJSON('blocks', blocks); renderWeeks();
-  });
-  return el;
-}
-
-function openPlanModal(b){
-  document.getElementById('plan-title').textContent = b.label;
-  document.getElementById('plan-sub').textContent = `${b.start}–${b.end} · estructura sugerida de la sesión`;
-  const wrap = document.getElementById('plan-steps');
-  wrap.innerHTML = (b.plan||[]).map(step=>`
-    <div class="plan-step">
-      <div class="p-title">${escapeAttr(step.label)} <span class="mins">${step.minutes} min</span></div>
-      <p>${escapeAttr(step.desc)}</p>
-    </div>
-  `).join('');
-  document.getElementById('plan-overlay').classList.add('open');
-}
-document.getElementById('btn-close-plan').addEventListener('click', ()=>{
-  document.getElementById('plan-overlay').classList.remove('open');
-});
-
-function setupDropZone(col){
-  col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('drag-over'); });
-  col.addEventListener('dragleave', ()=> col.classList.remove('drag-over'));
-  col.addEventListener('drop', e=>{
-    e.preventDefault();
-    col.classList.remove('drag-over');
-    const id = e.dataTransfer.getData('text/plain');
-    const b = blocks.find(x=>x.id===id);
-    if(b){
-      const rect = col.getBoundingClientRect();
-      const offsetY = e.clientY - rect.top;
-      const duration = timeToMin(b.end)-timeToMin(b.start);
-      const newStart = yToTime(offsetY);
-      b.date = col.dataset.date;
-      b.start = newStart;
-      b.end = addMin(newStart, duration);
-      if(b.type==='sugerido') b.type='estudio';
-      saveJSON('blocks', blocks);
-      renderWeeks();
-    }
-  });
-}
-
-document.getElementById('btn-prev-week').addEventListener('click', ()=>{
-  weekStart.setDate(weekStart.getDate()-7);
-  saveJSON('weekStart', weekStart.toISOString());
-  renderWeeks();
-});
-document.getElementById('btn-next-week').addEventListener('click', ()=>{
-  weekStart.setDate(weekStart.getDate()+7);
-  saveJSON('weekStart', weekStart.toISOString());
-  renderWeeks();
-});
-
-// ============================================================
-// PLAN DE ESTUDIO
-// ============================================================
-function buildStudyPlan(durationMin, topicName, studyType, purpose){
-  const forExam = purpose === 'prueba';
-  let parts;
-
-  if(studyType === 'idioma'){
-    parts = [
-      {label:'Vocabulario y gramática', pct:0.20, desc:`Recuperación activa: recuerda en voz alta o por escrito el vocabulario y las reglas de "${topicName}", sin mirar apuntes.`},
-      {label:'Comprensión (lectura o audio)', pct:0.25, desc: forExam ? `Lee o escucha un material similar al que podría aparecer en la prueba sobre "${topicName}", y responde preguntas sobre él.` : `Lee o escucha algo breve relacionado a "${topicName}" para mantener el oído y la lectura entrenados.`},
-      {label:'Producción oral', pct:0.30, desc:`Habla en voz alta (o grábate) usando "${topicName}": arma 3-5 oraciones o un mini-monólogo. Esto es lo que más rinde y lo que menos se practica solo/a.`},
-      {label:'Producción escrita', pct:0.15, desc:`Escribe un párrafo corto usando el vocabulario o la estructura de "${topicName}".`},
-      {label:'Autoevaluación', pct:0.10, desc:'Revisa tus propios errores de pronunciación, gramática u ortografía y anótalos en tu banco de errores.'}
+  // --- Inicialización ---
+  loadState() {
+    const defaultSubjects = [
+      {id:'demo1', name:'Matemática II', color:'#a9503b', credits:'5', studyType:'practico', topics:[], tests:[]},
+      {id:'demo2', name:'Algoritmos', color:'#3b6e8f', credits:'5', studyType:'practico', topics:[], tests:[]},
+      {id:'demo3', name:'Arquitectura', color:'#c67a2f', credits:'4', studyType:'teorico', topics:[], tests:[]},
+      {id:'demo4', name:'Inglés 6', color:'#6a5a8c', credits:'3', studyType:'idioma', topics:[], tests:[]},
     ];
-  }else if(studyType === 'practico'){
-    parts = [
-      {label:'Recuperación activa', pct:0.15, desc:`Sin mirar apuntes, recuerda o escribe las fórmulas, métodos o pasos clave de "${topicName}".`},
-      {label:'Ejercicios nuevos', pct:0.30, desc:`Resuelve ejercicios de "${topicName}" que no hayas hecho antes.`},
-      {label: forExam ? 'Ejercicios de certámenes antiguos' : 'Ejercicios variados / intercalados', pct:0.30, desc: forExam ? `Resuelve preguntas de certámenes anteriores sobre "${topicName}", en condiciones similares a la prueba (tiempo limitado, sin apuntes).` : `Mezcla ejercicios de "${topicName}" con otro tema ya visto, para practicar identificar qué método usar (esto es lo que de verdad mantiene la materia fresca).`},
-      {label:'Banco de errores', pct:0.15, desc:'Anota cada error que cometiste y por qué, para repasarlo después.'},
-      {label:'Autoevaluación', pct:0.10, desc:'Explica en voz alta, paso a paso, cómo resolverías un ejercicio nuevo de este tema.'}
-    ];
-  }else{
-    parts = [
-      {label:'Recuperación activa', pct:0.20, desc:`Sin mirar apuntes, escribe o explica en voz alta todo lo que recuerdes de "${topicName}".`},
-      {label:'Mapa conceptual / esquema', pct:0.20, desc:`Dibuja o escribe cómo se conecta "${topicName}" con otros conceptos del ramo.`},
-      {label: forExam ? 'Casos o preguntas de certámenes antiguos' : 'Aplicación a un caso o ejemplo nuevo', pct:0.30, desc: forExam ? `Responde preguntas de desarrollo o casos de certámenes anteriores sobre "${topicName}".` : `Aplica "${topicName}" a un ejemplo o caso que no hayas visto antes, para comprobar que lo entiendes y no solo lo memorizaste.`},
-      {label:'Banco de errores', pct:0.15, desc:'Anota qué conceptos confundiste o te costó explicar.'},
-      {label:'Autoevaluación', pct:0.15, desc:'Explica el concepto completo en voz alta, como si le enseñaras a alguien que no sabe nada del tema.'}
-    ];
-  }
-  return parts.map(p=>({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
-}
 
-function pickTopicForSession(sub, test, rotateIdx){
-  let candidates = sub.topics.filter(t=> t.status!=='dominado');
-  if(test && test.temario && test.temario.length){
-    const inTemario = candidates.filter(t=>test.temario.includes(t.id));
-    if(inTemario.length) candidates = inTemario;
-  }
-  if(!candidates.length) candidates = sub.topics;
-  if(!candidates.length) return null;
-  const order = {debil:0, sinver:1, dominado:2};
-  candidates = [...candidates].sort((a,b)=> order[a.status]-order[b.status]);
-  return candidates[(rotateIdx||0) % candidates.length];
-}
-
-function getOccupiedRanges(dateStr, dayIdx){
-  const fixed = recurring
-    .filter(c=>c.day===dayIdx && !recurringExceptions.has(c.id+'|'+dateStr))
-    .map(c=>[timeToMin(c.start), timeToMin(c.end)]);
-  const movable = blocks.filter(b=>b.date===dateStr).map(b=>[timeToMin(b.start), timeToMin(b.end)]);
-  return [...fixed, ...movable];
-}
-function findFreeSlot(dateStr, dayIdx, durationMin, minStartHour){
-  const minStart = (minStartHour!=null ? minStartHour : HOUR_START) * 60;
-  const occupied = getOccupiedRanges(dateStr, dayIdx);
-  const searchStarts = [];
-  for(let m=17*60; m<=HOUR_END*60-durationMin; m+=30) searchStarts.push(m);
-  for(let m=minStart; m<17*60; m+=30) searchStarts.push(m);
-  for(const start of searchStarts){
-    const end = start+durationMin;
-    const overlaps = occupied.some(([os,oe])=> start<oe && end>os);
-    if(!overlaps){
-      const h=Math.floor(start/60), m=start%60;
-      const h2=Math.floor(end/60), m2=end%60;
-      return [String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'), String(h2).padStart(2,'0')+':'+String(m2).padStart(2,'0')];
-    }
-  }
-  return null;
-}
-function spreadDayIndices(count, totalDays){
-  if(count<=1) return [0];
-  const idxs = [];
-  for(let k=0;k<count;k++) idxs.push(Math.round(k*((totalDays-1)/(count-1))));
-  return [...new Set(idxs)];
-}
-
-// ============================================================
-// 🔥 GENERADOR DE SUGERENCIAS INTELIGENTE (NO BORRA LO EXISTENTE)
-// ============================================================
-document.getElementById('btn-predict').addEventListener('click', ()=>{
-  const startStr = fmt(weekStart);
-  const endDate = new Date(weekStart);
-  endDate.setDate(endDate.getDate() + 6);
-  const endStr = fmt(endDate);
-  
-  // 🔥 SOLO ELIMINAR SUGERENCIAS QUE COLISIONAN CON BLOQUES REALES
-  const blocksToKeep = [];
-  blocks.forEach(b => {
-    if (b.type !== 'sugerido') {
-      blocksToKeep.push(b);
-      return;
-    }
-    // Si la sugerencia está fuera de esta semana, la conservamos
-    if (b.date < startStr || b.date > endStr) {
-      blocksToKeep.push(b);
-      return;
-    }
-    // Verificar si colisiona con algún bloque real (no sugerido)
-    const hasCollision = blocks.some(existing => 
-      existing.id !== b.id &&
-      existing.type !== 'sugerido' &&
-      existing.date === b.date &&
-      timeToMin(existing.start) < timeToMin(b.end) &&
-      timeToMin(existing.end) > timeToMin(b.start)
+    this.state.subjects = this.normalizeSubjects(
+      this.loadJSON('subjects', JSON.parse(JSON.stringify(defaultSubjects)))
     );
-    if (!hasCollision) {
-      blocksToKeep.push(b);
-    }
-  });
-  blocks = blocksToKeep;
+    this.state.blocks = this.normalizeBlocks(this.loadJSON('blocks', []));
+    this.state.recurring = this.normalizeRecurring(this.loadJSON('recurring', []));
+    this.state.recurringExceptions = new Set(this.loadJSON('recurringExceptions', []));
+    this.state.meals = this.normalizeMeals(this.loadJSON('meals', null));
+    this.state.philo = {...this.state.philo, ...this.loadJSON('philosophy', {})};
+    this.state.weekStart = new Date(this.loadJSON('weekStart', Utils.mondayOf(new Date()).toISOString()));
+    this.state.inventory = this.loadJSON('inventory', []);
+    if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
+    document.getElementById('inventory-input').value = this.state.inventory.join(', ');
+  },
 
-  const horizon = 21;
-  const info = subjects.map(sub=>{
-    const creditsNum = parseFloat(sub.credits) || 3;
-    const baseSessions = Math.min(4, Math.max(1, Math.round(creditsNum*HOURS_PER_CREDIT/1.5)));
-    const upcoming = sub.tests
-      .map(t=>({...t, d: daysUntil(t.date)}))
-      .filter(t=>t.d!==null && t.d>=0 && t.d<=horizon)
-      .sort((a,b)=>a.d-b.d);
-    const nearest = upcoming[0] || null;
-    const priorityBoost = /matemática/i.test(sub.name) ? 1.6 : 1;
-    const urgency = nearest ? priorityBoost/Math.max(nearest.d,1) : 0;
-    return {sub, nearest, baseSessions, urgency};
-  });
+  normalizeSubjects(arr) {
+    if(!Array.isArray(arr)) return [];
+    arr.forEach(s => {
+      if(!s.id) s.id = Utils.uid();
+      if(!s.name) s.name = 'Ramo sin nombre';
+      if(!s.color) s.color = Utils.randomColor();
+      if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
+      if(!s.studyType || !CONFIG.STUDY_TYPES[s.studyType]) s.studyType = Utils.guessStudyType(s.name);
+      if(!Array.isArray(s.topics)) s.topics = [];
+      s.topics.forEach(t => {
+        if(!t.id) t.id = Utils.uid();
+        if(!t.status || !CONFIG.STATUS_CYCLE.includes(t.status)) t.status = 'sinver';
+      });
+      if(!Array.isArray(s.tests)) s.tests = [];
+      s.tests.forEach(t => {
+        if(!t.id) t.id = Utils.uid();
+        if(!Array.isArray(t.temario)) t.temario = [];
+        t.temario = t.temario.filter(tid => s.topics.some(top => top.id === tid));
+      });
+    });
+    return arr;
+  },
 
-  const totalUrgency = info.reduce((s,w)=>s+w.urgency,0);
-  const bonusPool = Math.round(info.length*1.2);
-  info.forEach(w=>{
-    const bonus = totalUrgency>0 ? Math.round((w.urgency/totalUrgency)*bonusPool) : 0;
-    w.totalSessions = w.baseSessions + bonus;
-  });
+  normalizeBlocks(arr) {
+    if(!Array.isArray(arr)) return [];
+    arr.forEach(b => {
+      if(!b.id) b.id = Utils.uid();
+      if(!b.start) b.start = '18:00';
+      if(!b.end) b.end = '19:00';
+      if(typeof b.done !== 'boolean') b.done = false;
+      if(!b.type) b.type = 'otro';
+    });
+    return arr;
+  },
 
-  if(info.every(w=>w.totalSessions===0)){
-    alert('Agrega créditos a tus ramos, o fechas de prueba próximas, para poder generar sugerencias.');
-    return;
-  }
+  normalizeRecurring(arr) {
+    if(!Array.isArray(arr)) return [];
+    arr.forEach(c => {
+      if(!c.id) c.id = Utils.uid();
+      if(typeof c.day !== 'number') c.day = 0;
+      if(!c.start) c.start = '09:00';
+      if(!c.end) c.end = '10:00';
+      if(!c.type) c.type = 'clase';
+    });
+    return arr;
+  },
 
-  info.forEach(w=>{
-    if(w.totalSessions<=0) return;
-    const purpose = w.nearest ? 'prueba' : 'mantenimiento';
-    const desired = spreadDayIndices(w.totalSessions, DAYS_IN_VIEW);
-    let placed = 0;
-    desired.forEach(centerIdx=>{
-      if(placed>=w.totalSessions) return;
-      for(let offset=0; offset<DAYS_IN_VIEW && placed<w.totalSessions; offset++){
-        for(const cand of [centerIdx-offset, centerIdx+offset]){
-          if(cand<0 || cand>=DAYS_IN_VIEW) continue;
-          const d = new Date(weekStart); d.setDate(d.getDate()+cand);
-          const dow = (d.getDay()+6)%7;
-          const dateStr = fmt(d);
-          const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
-          if(alreadyThisSubject) continue;
-          const slot = findFreeSlot(dateStr, dow, 90, SUGGEST_MIN_HOUR);
-          if(!slot) continue;
-          const topic = pickTopicForSession(w.sub, w.nearest, placed);
-          const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : ' (mantenimiento)';
-          const label = topic ? `Estudiar ${w.sub.name} — ${topic.name}${testNote}` : `Estudiar ${w.sub.name}${testNote}`;
-          blocks.push({
-            id:uid(), date:dateStr, type:'sugerido', subjectId:w.sub.id,
-            label, start:slot[0], end:slot[1], done:false,
-            plan: buildStudyPlan(90, topic ? topic.name : w.sub.name, w.sub.studyType, purpose)
-          });
-          placed++;
-          break;
+  normalizeMeals(obj) {
+    const result = Object.fromEntries(CONFIG.DAYS.map(d => [d, []]));
+    if(obj && typeof obj === 'object') {
+      CONFIG.DAYS.forEach(d => {
+        const val = obj[d];
+        if(Array.isArray(val)) {
+          result[d] = val.map(e => ({id:e.id||Utils.uid(), name:e.name||'', value:e.value||''}));
         }
+      });
+    }
+    return result;
+  },
+
+  getFullState() {
+    return {
+      philosophy: this.state.philo,
+      subjects: this.state.subjects,
+      blocks: this.state.blocks,
+      recurring: this.state.recurring,
+      meals: this.state.meals,
+      weekStart: this.state.weekStart.toISOString(),
+      recurringExceptions: [...this.state.recurringExceptions],
+      inventory: this.state.inventory,
+      updatedAt: Number(localStorage.getItem(this.storageKey('lastUpdated')) || Date.now())
+    };
+  },
+
+  applyFullState(state) {
+    if(state.philosophy) this.state.philo = {...this.state.philo, ...state.philosophy};
+    this.state.subjects = this.normalizeSubjects(state.subjects || []);
+    this.state.blocks = this.normalizeBlocks(state.blocks || []);
+    this.state.recurring = this.normalizeRecurring(state.recurring || []);
+    this.state.meals = this.normalizeMeals(state.meals);
+    if(state.weekStart) this.state.weekStart = new Date(state.weekStart);
+    this.state.recurringExceptions = new Set(state.recurringExceptions || []);
+    this.state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
+    this.saveJSON('philosophy', this.state.philo);
+    this.saveJSON('subjects', this.state.subjects);
+    this.saveJSON('blocks', this.state.blocks);
+    this.saveJSON('recurring', this.state.recurring);
+    this.saveJSON('meals', this.state.meals);
+    this.saveJSON('weekStart', this.state.weekStart.toISOString());
+    this.saveJSON('recurringExceptions', [...this.state.recurringExceptions]);
+    this.saveJSON('inventory', this.state.inventory);
+    this.saveJSON('lastUpdated', String(state.updatedAt || Date.now()));
+    this.renderAll();
+  },
+
+  // --- Render ---
+  renderAll() {
+    try {
+      this.renderPhilosophy();
+      this.renderSubjects();
+      this.renderWeeks();
+      this.renderMeals();
+      this.renderAsistente();
+      document.getElementById('inventory-input').value = this.state.inventory.join(', ');
+      this.renderWeekRange();
+      this.renderRecurringPanel();
+    } catch(err) {
+      console.error('Error en render:', err);
+    }
+  },
+
+  // --- Filosofía ---
+  renderPhilosophy() {
+    ['objetivos','prioridades','reglas'].forEach(k => {
+      document.getElementById('philo-'+k).textContent = this.state.philo[k];
+    });
+  },
+
+  // --- Subjects ---
+  renderSubjects() {
+    const grid = document.getElementById('subjects-grid');
+    grid.innerHTML = '';
+    
+    this.state.subjects.forEach(sub => {
+      const card = this.createSubjectCard(sub);
+      grid.appendChild(card);
+    });
+
+    const addTile = document.createElement('div');
+    addTile.className = 'add-subject-btn';
+    addTile.textContent = '+ agregar ramo';
+    addTile.dataset.action = 'add-subject';
+    grid.appendChild(addTile);
+  },
+
+  createSubjectCard(sub) {
+    const card = document.createElement('div');
+    card.className = 'card pad subject-card';
+    card.style.setProperty('--sub-color', sub.color);
+    card.dataset.subjectId = sub.id;
+
+    const creditsNum = parseFloat(sub.credits);
+    const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*CONFIG.HOURS_PER_CREDIT)} h/semana` : 'agrega créditos';
+
+    card.innerHTML = `
+      <div class="head">
+        <input type="text" value="${Utils.escape(sub.name)}" data-field="name" data-subject="${sub.id}">
+        <span class="icon-btn" data-action="delete-subject" data-subject="${sub.id}">✕</span>
+      </div>
+      <div class="chip-row">
+        <span class="chip mono">créditos: <input type="text" style="border:none;width:28px;background:transparent;padding:0;font-family:inherit;font-size:inherit;color:inherit" value="${Utils.escape(sub.credits)}" data-field="credits" data-subject="${sub.id}"></span>
+        <span class="chip mono">tipo:
+          <select data-field="studyType" data-subject="${sub.id}">
+            ${Object.entries(CONFIG.STUDY_TYPES).map(([val,label]) => `<option value="${val}" ${sub.studyType===val?'selected':''}>${label}</option>`).join('')}
+          </select>
+        </span>
+        <span class="hours-hint" data-hours-hint>${hoursHint}</span>
+      </div>
+      <label class="field-label">Temas del ramo</label>
+      <div class="topics-list" data-topiclist data-subject="${sub.id}"></div>
+      <div class="add-topic-row">
+        <input type="text" placeholder="Agregar tema" data-newtopic data-subject="${sub.id}">
+        <button class="btn ghost small" data-action="add-topic" data-subject="${sub.id}">+</button>
+      </div>
+      <label class="field-label">Fechas de pruebas</label>
+      <div class="test-list" data-testlist data-subject="${sub.id}"></div>
+      <button class="btn ghost small" style="margin-top:8px" data-action="add-test" data-subject="${sub.id}">+ agregar prueba</button>
+    `;
+
+    this.renderTopics(card, sub);
+    this.renderTests(card, sub);
+    return card;
+  },
+
+  renderTopics(card, sub) {
+    const list = card.querySelector('[data-topiclist]');
+    list.innerHTML = '';
+    sub.topics.forEach(topic => {
+      const row = document.createElement('div');
+      row.className = 'topic-row';
+      row.innerHTML = `
+        <input type="text" value="${Utils.escape(topic.name)}" data-tpf="name" data-topic="${topic.id}" data-subject="${sub.id}">
+        <button class="status-btn ${topic.status}" data-taction="cycle-topic" data-topic="${topic.id}" data-subject="${sub.id}">${CONFIG.STATUS_LABEL[topic.status]}</button>
+        <span class="icon-btn" data-taction="delete-topic" data-topic="${topic.id}" data-subject="${sub.id}">✕</span>
+      `;
+      list.appendChild(row);
+    });
+  },
+
+  renderTests(card, sub) {
+    const list = card.querySelector('[data-testlist]');
+    list.innerHTML = '';
+    sub.tests.forEach(test => {
+      const row = document.createElement('div');
+      row.className = 'test-row';
+      const du = Utils.daysUntil(test.date);
+      let badge = '';
+      if(du !== null) {
+        const label = du<0 ? 'pasó' : (du===0 ? 'hoy' : `en ${du}d`);
+        badge = `<span class="days-badge ${du!==null && du>=0 && du<=7 ? 'urgent':''}">${label}</span>`;
+      }
+      row.innerHTML = `
+        <input type="text" placeholder="Ej: Certamen 1" value="${Utils.escape(test.name)}" data-tf="name" data-test="${test.id}" data-subject="${sub.id}">
+        <input type="date" value="${test.date||''}" data-tf="date" data-test="${test.id}" data-subject="${sub.id}">
+        ${badge}
+        <span class="icon-btn" data-taction="delete-test" data-test="${test.id}" data-subject="${sub.id}">✕</span>
+      `;
+      list.appendChild(row);
+
+      if(sub.topics.length) {
+        const toggle = document.createElement('button');
+        toggle.className = 'link-btn';
+        toggle.textContent = `Temario (${test.temario.length}/${sub.topics.length} temas) ▾`;
+        toggle.dataset.testId = test.id;
+        toggle.dataset.subjectId = sub.id;
+        list.appendChild(toggle);
+        
+        const box = document.createElement('div');
+        box.className = 'temario-box';
+        box.innerHTML = `<label class="field-label">Temas que entran en esta prueba</label><div class="temario-chip-row"></div>`;
+        const chipRow = box.querySelector('.temario-chip-row');
+        sub.topics.forEach(topic => {
+          const chip = document.createElement('span');
+          chip.className = 'temario-chip' + (test.temario.includes(topic.id) ? ' selected':'');
+          chip.textContent = topic.name;
+          chip.dataset.topicId = topic.id;
+          chip.dataset.testId = test.id;
+          chip.dataset.subjectId = sub.id;
+          chipRow.appendChild(chip);
+        });
+        list.appendChild(box);
       }
     });
-  });
+  },
 
-  saveJSON('blocks', blocks);
-  renderWeeks();
-});
-
-// ============================================================
-// ASISTENTE DE SESIÓN DE ESTUDIO
-// ============================================================
-let asPurpose = 'mantenimiento';
-
-document.querySelectorAll('.purpose-toggle button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.purpose-toggle button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    asPurpose = btn.dataset.purpose;
-    document.getElementById('as-test-wrap').style.display = asPurpose==='prueba' ? 'block' : 'none';
-    renderAsistenteTestSelect();
-    renderAsistenteTopics();
-  });
-});
-
-function renderAsistente(){
-  const subSel = document.getElementById('as-subject');
-  const currentSubId = subSel.value;
-  subSel.innerHTML = subjects.map(s=>`<option value="${s.id}">${escapeAttr(s.name)}</option>`).join('');
-  if(currentSubId && subjects.some(s=>s.id===currentSubId)) subSel.value = currentSubId;
-  if(!document.getElementById('as-date').value){
-    document.getElementById('as-date').value = fmt(new Date());
-  }
-  renderAsistenteTestSelect();
-  renderAsistenteTopics();
-}
-document.getElementById('as-subject').addEventListener('change', ()=>{
-  renderAsistenteTestSelect();
-  renderAsistenteTopics();
-});
-
-function renderAsistenteTestSelect(){
-  const subId = document.getElementById('as-subject').value;
-  const sub = subjects.find(s=>s.id===subId);
-  const sel = document.getElementById('as-test');
-  if(!sub){ sel.innerHTML=''; return; }
-  const upcoming = sub.tests.map(t=>({...t, d:daysUntil(t.date)})).filter(t=>t.d!==null && t.d>=0).sort((a,b)=>a.d-b.d);
-  if(!upcoming.length){
-    sel.innerHTML = `<option value="">(sin pruebas próximas — se usará el temario completo)</option>`;
-    return;
-  }
-  sel.innerHTML = upcoming.map(t=>`<option value="${t.id}">${escapeAttr(t.name||'Prueba')} · en ${t.d}d</option>`).join('');
-}
-document.getElementById('as-test').addEventListener('change', renderAsistenteTopics);
-
-function getSelectedTest(sub){
-  if(asPurpose!=='prueba' || !sub) return null;
-  const testId = document.getElementById('as-test').value;
-  return sub.tests.find(t=>t.id===testId) || null;
-}
-
-function renderAsistenteTopics(){
-  const subId = document.getElementById('as-subject').value;
-  const sub = subjects.find(s=>s.id===subId);
-  const list = document.getElementById('as-topics');
-  list.innerHTML = '';
-  if(!sub || !sub.topics.length){
-    list.innerHTML = `<p style="font-size:12px; color:var(--ink-soft);">Este ramo todavía no tiene temas cargados. Agrégalos en la pestaña "Ramos".</p>`;
-    updateAsistentePreview(null, null);
-    return;
-  }
-  const selectedTest = getSelectedTest(sub);
-  const order = {debil:0, sinver:1, dominado:2};
-  const sorted = [...sub.topics].sort((a,b)=>{
-    const aIn = selectedTest && selectedTest.temario.includes(a.id) ? 0:1;
-    const bIn = selectedTest && selectedTest.temario.includes(b.id) ? 0:1;
-    if(aIn!==bIn) return aIn-bIn;
-    return order[a.status]-order[b.status];
-  });
-  sorted.forEach((topic, idx)=>{
-    const inTemario = selectedTest && selectedTest.temario.includes(topic.id);
-    const opt = document.createElement('div');
-    opt.className = 'asistente-topic-opt' + (idx===0 ? ' selected':'');
-    opt.dataset.topicId = topic.id;
-    opt.innerHTML = `
-      <span class="status-btn ${topic.status}" style="pointer-events:none;">${STATUS_LABEL[topic.status]}</span>
-      <span style="flex:1;">${escapeAttr(topic.name)}</span>
-      ${inTemario ? `<span class="badge temario">temario</span>` : ''}
-    `;
-    opt.addEventListener('click', ()=>{
-      list.querySelectorAll('.asistente-topic-opt').forEach(o=>o.classList.remove('selected'));
-      opt.classList.add('selected');
-      updateAsistentePreview(sub, topic);
-    });
-    list.appendChild(opt);
-  });
-  updateAsistentePreview(sub, sorted[0]);
-}
-document.getElementById('as-duration').addEventListener('change', ()=>{
-  const subId = document.getElementById('as-subject').value;
-  const sub = subjects.find(s=>s.id===subId);
-  const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
-  const topic = sub && selectedOpt ? sub.topics.find(t=>t.id===selectedOpt.dataset.topicId) : null;
-  updateAsistentePreview(sub, topic);
-});
-
-function updateAsistentePreview(sub, topic){
-  const box = document.getElementById('as-preview');
-  if(!sub || !topic){
-    box.innerHTML = `<p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver aquí la estructura de la sesión antes de agregarla a tu semana.</p>`;
-    return;
-  }
-  const duration = Number(document.getElementById('as-duration').value);
-  const plan = buildStudyPlan(duration, topic.name, sub.studyType, asPurpose);
-  box.innerHTML = `<span class="type-tag">${STUDY_TYPES[sub.studyType]} · ${asPurpose==='prueba'?'preparando prueba':'manteniendo fresco'}</span>` +
-    `<h3 style="font-size:15px; margin-bottom:10px;">${escapeAttr(sub.name)} — ${escapeAttr(topic.name)}</h3>` +
-    plan.map(step=>`
-      <div class="plan-step">
-        <div class="p-title">${escapeAttr(step.label)} <span class="mins">${step.minutes} min</span></div>
-        <p>${escapeAttr(step.desc)}</p>
-      </div>
-    `).join('');
-}
-
-document.getElementById('btn-generate-session').addEventListener('click', ()=>{
-  const subId = document.getElementById('as-subject').value;
-  const sub = subjects.find(s=>s.id===subId);
-  const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
-  const msg = document.getElementById('as-msg');
-  if(!sub || !selectedOpt){ msg.className='msg error'; msg.textContent='Elige un ramo y un tema primero.'; return; }
-  const topic = sub.topics.find(t=>t.id===selectedOpt.dataset.topicId);
-  const duration = Number(document.getElementById('as-duration').value);
-  const date = document.getElementById('as-date').value;
-  const start = normalizeTime(document.getElementById('as-start').value);
-  if(!date || !start){ msg.className='msg error'; msg.textContent='Elige un día y una hora de inicio válida (ej: 18:00).'; return; }
-  const end = addMin(start, duration);
-  const selectedTest = getSelectedTest(sub);
-  const testNote = selectedTest ? ` (${selectedTest.name||'prueba'})` : '';
-  blocks.push({
-    id:uid(), date, type:'estudio', subjectId:sub.id,
-    label:`Estudiar ${sub.name} — ${topic.name}${testNote}`,
-    start, end, done:false,
-    plan: buildStudyPlan(duration, topic.name, sub.studyType, asPurpose)
-  });
-  saveJSON('blocks', blocks);
-  renderWeeks();
-  msg.className='msg ok';
-  msg.textContent = 'Sesión agregada a tu semana. Ábrela desde la grilla para ver el plan.';
-});
-
-// ============================================================
-// 🔥 ASISTENTE CONVERSACIONAL
-// ============================================================
-document.getElementById('btn-chat-plan').addEventListener('click', ()=>{
-  const subId = document.getElementById('as-subject').value;
-  const sub = subjects.find(s=>s.id===subId);
-  const userInput = document.getElementById('as-chat-input').value.trim();
-  const responseDiv = document.getElementById('as-chat-response');
-  
-  if (!sub) {
-    responseDiv.innerHTML = '<span style="color:var(--clay)">Primero selecciona un ramo.</span>';
-    responseDiv.style.display = 'block';
-    return;
-  }
-  
-  if (!userInput) {
-    responseDiv.innerHTML = '<span style="color:var(--clay)">Escribe qué necesitas ayuda específicamente.</span>';
-    responseDiv.style.display = 'block';
-    return;
-  }
-  
-  // Buscar el tema más relevante en el input del usuario
-  let bestTopic = null;
-  let bestScore = 0;
-  sub.topics.forEach(t => {
-    const words = t.name.toLowerCase().split(' ');
-    let score = 0;
-    words.forEach(word => {
-      if (userInput.toLowerCase().includes(word)) score++;
-    });
-    if (score > bestScore) {
-      bestScore = score;
-      bestTopic = t;
+  // --- Semana ---
+  renderWeekRange() {
+    const end = new Date(this.state.weekStart);
+    end.setDate(end.getDate() + 6);
+    document.getElementById('week-range').textContent = `${Utils.fmtLong(this.state.weekStart)} — ${Utils.fmtLong(end)}`;
+    document.getElementById('nb-date').min = Utils.fmt(this.state.weekStart);
+    document.getElementById('nb-date').max = Utils.fmt(end);
+    if(!document.getElementById('nb-date').value) {
+      document.getElementById('nb-date').value = Utils.fmt(new Date());
     }
-  });
-  const topic = bestTopic || sub.topics[0];
-  
-  const duration = Number(document.getElementById('as-duration').value);
-  const plan = buildStudyPlan(duration, topic ? topic.name : sub.name, sub.studyType, asPurpose);
-  
-  let response = `📚 <strong>Guía personalizada para ${sub.name}</strong>\n\n`;
-  response += `🔍 Basado en tu consulta: "${userInput}"\n\n`;
-  response += `📌 Plan de estudio sugerido (${duration} min):\n\n`;
-  plan.forEach((step, i) => {
-    response += `${i+1}. ${step.label} (${step.minutes} min)\n   ${step.desc}\n\n`;
-  });
-  response += `💡 Consejo: Enfócate en los temas que mencionaste: ${topic ? topic.name : 'los principales del ramo'}`;
-  
-  responseDiv.innerHTML = response.replace(/\n/g, '<br>');
-  responseDiv.style.display = 'block';
-  
-  // Guardar el plan generado para poder guardarlo como bloque
-  window._lastChatPlan = { sub, topic, plan, duration };
-});
+  },
 
-document.getElementById('btn-chat-save').addEventListener('click', ()=>{
-  const plan = window._lastChatPlan;
-  if (!plan) {
-    alert('Primero genera una guía con "Generar guía personalizada".');
-    return;
+  renderWeeks() {
+    const wrap = document.getElementById('weeks-wrap');
+    wrap.innerHTML = '';
+    const todayStr = Utils.fmt(new Date());
+
+    const weekDiv = document.createElement('div');
+    weekDiv.className = 'week-block';
+    weekDiv.innerHTML = `<div class="week-label">Semana · desde ${Utils.fmtLong(this.state.weekStart)}</div>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'time-grid';
+
+    const header = document.createElement('div');
+    header.className = 'time-grid-header';
+    header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d => {
+      const date = new Date(this.state.weekStart);
+      date.setDate(date.getDate() + d);
+      const isToday = Utils.fmt(date) === todayStr;
+      return `<div class="day-head${CONFIG.WEEKEND.includes(d)?' weekend':''}${isToday?' today':''}"><span>${Utils.fmtLong(date)}</span><b>${CONFIG.DAYS[d]}${isToday?' · hoy':''}</b></div>`;
+    }).join('');
+    grid.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'time-grid-body';
+    const height = (CONFIG.HOUR_END - CONFIG.HOUR_START) * CONFIG.PX_PER_HOUR;
+    body.style.height = height + 'px';
+
+    const gutter = document.createElement('div');
+    gutter.className = 'hour-gutter';
+    gutter.style.height = height + 'px';
+    for(let h = CONFIG.HOUR_START; h <= CONFIG.HOUR_END; h++) {
+      const lbl = document.createElement('div');
+      lbl.className = 'hour-label';
+      lbl.style.top = Utils.minToY(h*60, CONFIG.HOUR_START) + 'px';
+      lbl.textContent = String(h).padStart(2,'0') + ':00';
+      gutter.appendChild(lbl);
+    }
+    body.appendChild(gutter);
+
+    for(let d=0; d<7; d++) {
+      const date = new Date(this.state.weekStart);
+      date.setDate(date.getDate() + d);
+      const dateStr = Utils.fmt(date);
+      const isToday = dateStr === todayStr;
+      const col = document.createElement('div');
+      col.className = 'day-col-grid' + (CONFIG.WEEKEND.includes(d) ? ' weekend':'') + (isToday ? ' today':'');
+      col.style.height = height + 'px';
+      col.dataset.date = dateStr;
+      col.dataset.day = d;
+      
+      for(let h=CONFIG.HOUR_START; h<=CONFIG.HOUR_END; h++) {
+        const line = document.createElement('div');
+        line.className = 'hour-line';
+        line.style.top = Utils.minToY(h*60, CONFIG.HOUR_START) + 'px';
+        col.appendChild(line);
+      }
+      body.appendChild(col);
+      this.renderDayColumn(col, dateStr, d);
+    }
+    grid.appendChild(body);
+    weekDiv.appendChild(grid);
+    wrap.appendChild(weekDiv);
+  },
+
+  renderDayColumn(col, dateStr, dayIdx) {
+    const fixed = this.state.recurring
+      .filter(c => c.day === dayIdx && !this.state.recurringExceptions.has(c.id+'|'+dateStr))
+      .map(c => ({ start: Utils.timeToMin(c.start), end: Utils.timeToMin(c.end), kind:'recurring', ref:c }));
+    const movable = this.state.blocks
+      .filter(b => b.date === dateStr)
+      .map(b => ({ start: Utils.timeToMin(b.start), end: Utils.timeToMin(b.end), kind:'movable', ref:b }));
+    
+    const items = this.layoutOverlaps([...fixed, ...movable]);
+    items.forEach(it => {
+      const el = it.kind === 'recurring' ? this.createRecurringBlock(it, dateStr) : this.createMovableBlock(it);
+      const top = Utils.minToY(it.start, CONFIG.HOUR_START);
+      const height = Math.max(18, Utils.minToY(it.end, CONFIG.HOUR_START) - top);
+      const widthPct = 100 / it.cols;
+      el.style.top = top + 'px';
+      el.style.height = height + 'px';
+      el.style.left = `calc(${it.col * widthPct}% + 2px)`;
+      el.style.width = `calc(${widthPct}% - 4px)`;
+      col.appendChild(el);
+    });
+  },
+
+  layoutOverlaps(items) {
+    items.sort((a,b) => a.start - b.start);
+    items.forEach(it => { it.col=0; it.cols=1; });
+    for(let i=0; i<items.length; i++) {
+      const cluster = [items[i]];
+      let maxEnd = items[i].end;
+      for(let j=i+1; j<items.length; j++) {
+        if(items[j].start < maxEnd) { cluster.push(items[j]); maxEnd = Math.max(maxEnd, items[j].end); }
+        else break;
+      }
+      if(cluster.length > 1) {
+        cluster.forEach((it, idx) => { it.col = idx; it.cols = cluster.length; });
+      }
+    }
+    return items;
+  },
+
+  createRecurringBlock(it, dateStr) {
+    const c = it.ref;
+    const sub = c.type === 'clase' ? this.state.subjects.find(s => s.id === c.subjectId) : null;
+    const labelText = c.type === 'clase' ? (sub ? sub.name : c.subjectName) : (c.label || '');
+    const el = document.createElement('div');
+    el.className = `block-abs type-${c.type} fixed`;
+    if(sub) el.style.borderColor = sub.color;
+    el.innerHTML = `
+      <div class="b-actions"><span data-action="skip-recurring" data-id="${c.id}" data-date="${dateStr}">✕</span></div>
+      <span class="b-range">${c.start}–${c.end}</span>${Utils.escape(labelText)}
+    `;
+    return el;
+  },
+
+  createMovableBlock(it) {
+    const b = it.ref;
+    const el = document.createElement('div');
+    el.className = `block-abs type-${b.type}` + (b.done?' done':'') + (b.plan?' has-plan':'');
+    el.draggable = true;
+    el.dataset.id = b.id;
+    el.innerHTML = `
+      <div class="b-actions">
+        ${b.plan ? '<span data-action="view-plan" data-id="'+b.id+'">📋</span>' : ''}
+        <span data-action="edit-block" data-id="${b.id}">✎</span>
+        <span data-action="toggle-block" data-id="${b.id}">✓</span>
+        <span data-action="delete-block" data-id="${b.id}">✕</span>
+      </div>
+      <span class="b-range">${b.start}–${b.end}</span>${Utils.escape(b.label)}
+    `;
+    return el;
+  },
+
+  renderRecurringPanel() {
+    const list = document.getElementById('recurring-list');
+    list.innerHTML = '';
+    this.state.recurring.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'class-row';
+      const secondaryField = c.type === 'clase'
+        ? `<select data-cf="subjectId" data-id="${c.id}">${this.state.subjects.map(s => `<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${Utils.escape(s.name)}</option>`).join('')}</select>`
+        : `<input type="text" data-cf="label" data-id="${c.id}" placeholder="Descripción" value="${Utils.escape(c.label||'')}">`;
+      row.innerHTML = `
+        <select data-cf="type" data-id="${c.id}">${CONFIG.RECURRING_TYPES.map(t => `<option value="${t.value}" ${c.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select>
+        <select data-cf="day" data-id="${c.id}">${CONFIG.DAYS.slice(0,7).map((d,i) => `<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('')}</select>
+        ${secondaryField}
+        <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="start" data-id="${c.id}" value="${c.start}">
+        <input type="text" inputmode="numeric" placeholder="HH:MM" data-cf="end" data-id="${c.id}" value="${c.end}">
+        <span class="icon-btn" data-action="delete-recurring" data-id="${c.id}">✕</span>
+      `;
+      list.appendChild(row);
+    });
+  },
+
+  // --- Comidas ---
+  renderMeals() {
+    const grid = document.getElementById('meals-grid');
+    grid.innerHTML = '';
+    CONFIG.DAYS.slice(0,7).forEach(day => {
+      const div = document.createElement('div');
+      div.className = 'card pad meal-day';
+      div.innerHTML = `<h4>${day}</h4><div class="meal-entries" data-entries data-day="${day}"></div>
+        <div class="add-meal-row">
+          <input type="text" placeholder="Ej: Desayuno" data-newmealname data-day="${day}">
+          <button class="btn ghost small" data-action="add-meal" data-day="${day}">+</button>
+        </div>`;
+      grid.appendChild(div);
+      this.renderMealEntries(div, day);
+    });
+  },
+
+  renderMealEntries(div, day) {
+    const wrap = div.querySelector('[data-entries]');
+    wrap.innerHTML = '';
+    (this.state.meals[day] || []).forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'meal-entry';
+      row.innerHTML = `
+        <input type="text" class="meal-name" value="${Utils.escape(entry.name)}" data-mf="name" data-day="${day}" data-id="${entry.id}">
+        <input type="text" class="meal-value" placeholder="qué vas a comer" value="${Utils.escape(entry.value)}" data-mf="value" data-day="${day}" data-id="${entry.id}">
+        <span class="icon-btn" data-action="delete-meal" data-day="${day}" data-id="${entry.id}">✕</span>
+      `;
+      wrap.appendChild(row);
+    });
+  },
+
+  // --- Asistente ---
+  renderAsistente() {
+    const subSel = document.getElementById('as-subject');
+    const currentSubId = subSel.value;
+    subSel.innerHTML = this.state.subjects.map(s => `<option value="${s.id}">${Utils.escape(s.name)}</option>`).join('');
+    if(currentSubId && this.state.subjects.some(s => s.id === currentSubId)) {
+      subSel.value = currentSubId;
+    }
+    if(!document.getElementById('as-date').value) {
+      document.getElementById('as-date').value = Utils.fmt(new Date());
+    }
+    this.renderAsistenteTestSelect();
+    this.renderAsistenteTopics();
+  },
+
+  renderAsistenteTestSelect() {
+    const subId = document.getElementById('as-subject').value;
+    const sub = this.state.subjects.find(s => s.id === subId);
+    const sel = document.getElementById('as-test');
+    if(!sub) { sel.innerHTML = ''; return; }
+    const upcoming = sub.tests.map(t => ({...t, d: Utils.daysUntil(t.date)})).filter(t => t.d !== null && t.d >= 0).sort((a,b) => a.d - b.d);
+    if(!upcoming.length) {
+      sel.innerHTML = `<option value="">(sin pruebas próximas)</option>`;
+      return;
+    }
+    sel.innerHTML = upcoming.map(t => `<option value="${t.id}">${Utils.escape(t.name||'Prueba')} · en ${t.d}d</option>`).join('');
+  },
+
+  renderAsistenteTopics() {
+    const subId = document.getElementById('as-subject').value;
+    const sub = this.state.subjects.find(s => s.id === subId);
+    const list = document.getElementById('as-topics');
+    list.innerHTML = '';
+    if(!sub || !sub.topics.length) {
+      list.innerHTML = `<p style="font-size:12px; color:var(--ink-soft);">Este ramo no tiene temas cargados.</p>`;
+      this.updateAsistentePreview(null, null);
+      return;
+    }
+    const selectedTest = this.getSelectedTest(sub);
+    const order = {debil:0, sinver:1, dominado:2};
+    const sorted = [...sub.topics].sort((a,b) => {
+      const aIn = selectedTest && selectedTest.temario.includes(a.id) ? 0:1;
+      const bIn = selectedTest && selectedTest.temario.includes(b.id) ? 0:1;
+      if(aIn !== bIn) return aIn - bIn;
+      return order[a.status] - order[b.status];
+    });
+    sorted.forEach((topic, idx) => {
+      const inTemario = selectedTest && selectedTest.temario.includes(topic.id);
+      const opt = document.createElement('div');
+      opt.className = 'asistente-topic-opt' + (idx === 0 ? ' selected':'');
+      opt.dataset.topicId = topic.id;
+      opt.dataset.subjectId = sub.id;
+      opt.innerHTML = `
+        <span class="status-btn ${topic.status}" style="pointer-events:none;">${CONFIG.STATUS_LABEL[topic.status]}</span>
+        <span style="flex:1;">${Utils.escape(topic.name)}</span>
+        ${inTemario ? `<span class="badge temario">temario</span>` : ''}
+      `;
+      list.appendChild(opt);
+    });
+    this.updateAsistentePreview(sub, sorted[0]);
+  },
+
+  getSelectedTest(sub) {
+    if(this.state.asPurpose !== 'prueba' || !sub) return null;
+    const testId = document.getElementById('as-test').value;
+    return sub.tests.find(t => t.id === testId) || null;
+  },
+
+  updateAsistentePreview(sub, topic) {
+    const box = document.getElementById('as-preview');
+    if(!sub || !topic) {
+      box.innerHTML = `<p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver la estructura.</p>`;
+      return;
+    }
+    const duration = Number(document.getElementById('as-duration').value);
+    const plan = this.buildStudyPlan(duration, topic.name, sub.studyType, this.state.asPurpose);
+    box.innerHTML = `<span class="type-tag">${CONFIG.STUDY_TYPES[sub.studyType]} · ${this.state.asPurpose==='prueba'?'preparando prueba':'manteniendo fresco'}</span>` +
+      `<h3 style="font-size:15px; margin-bottom:10px;">${Utils.escape(sub.name)} — ${Utils.escape(topic.name)}</h3>` +
+      plan.map(step => `
+        <div class="plan-step">
+          <div class="p-title">${Utils.escape(step.label)} <span class="mins">${step.minutes} min</span></div>
+          <p>${Utils.escape(step.desc)}</p>
+        </div>
+      `).join('');
+  },
+
+  // --- Plan de estudio ---
+  buildStudyPlan(durationMin, topicName, studyType, purpose) {
+    const forExam = purpose === 'prueba';
+    let parts;
+
+    if(studyType === 'idioma') {
+      parts = [
+        {label:'Vocabulario y gramática', pct:0.20, desc:`Recuperación activa: recuerda en voz alta el vocabulario y reglas de "${topicName}".`},
+        {label:'Comprensión', pct:0.25, desc: forExam ? `Lee material similar a la prueba sobre "${topicName}".` : `Lee algo breve relacionado a "${topicName}".`},
+        {label:'Producción oral', pct:0.30, desc:`Habla en voz alta usando "${topicName}".`},
+        {label:'Producción escrita', pct:0.15, desc:`Escribe un párrafo usando "${topicName}".`},
+        {label:'Autoevaluación', pct:0.10, desc:'Revisa tus errores.'}
+      ];
+    } else if(studyType === 'practico') {
+      parts = [
+        {label:'Recuperación activa', pct:0.15, desc:`Recuerda las fórmulas de "${topicName}".`},
+        {label:'Ejercicios nuevos', pct:0.30, desc:`Resuelve ejercicios de "${topicName}".`},
+        {label: forExam ? 'Certámenes antiguos' : 'Ejercicios variados', pct:0.30, desc: forExam ? `Resuelve certámenes de "${topicName}".` : `Mezcla ejercicios de "${topicName}" con otros temas.`},
+        {label:'Banco de errores', pct:0.15, desc:'Anota tus errores.'},
+        {label:'Autoevaluación', pct:0.10, desc:'Explica cómo resolverías un ejercicio.'}
+      ];
+    } else {
+      parts = [
+        {label:'Recuperación activa', pct:0.20, desc:`Explica todo lo que recuerdes de "${topicName}".`},
+        {label:'Mapa conceptual', pct:0.20, desc:`Conecta "${topicName}" con otros conceptos.`},
+        {label: forExam ? 'Casos antiguos' : 'Aplicación práctica', pct:0.30, desc: forExam ? `Responde casos de "${topicName}".` : `Aplica "${topicName}" a un ejemplo nuevo.`},
+        {label:'Banco de errores', pct:0.15, desc:'Anota conceptos confusos.'},
+        {label:'Autoevaluación', pct:0.15, desc:'Enséñale a alguien el concepto.'}
+      ];
+    }
+    return parts.map(p => ({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
   }
-  
-  const date = document.getElementById('as-date').value;
-  const start = normalizeTime(document.getElementById('as-start').value);
-  if (!date || !start) {
-    alert('Elige un día y hora de inicio válida.');
-    return;
-  }
-  
-  const duration = plan.duration;
-  const end = addMin(start, duration);
-  
-  blocks.push({
-    id: uid(),
-    date: date,
-    type: 'estudio',
-    subjectId: plan.sub.id,
-    label: `📋 ${plan.sub.name} — guía personalizada: ${plan.topic ? plan.topic.name : 'repaso'}`,
-    start: start,
-    end: end,
-    done: false,
-    plan: plan.plan
-  });
-  
-  saveJSON('blocks', blocks);
-  renderWeeks();
-  document.getElementById('as-msg').className = 'msg ok';
-  document.getElementById('as-msg').textContent = '✅ Guía guardada como bloque de estudio.';
-});
+};
 
 // ============================================================
-// COMIDA
+// EVENTOS - Event Delegation
 // ============================================================
-function renderMeals(){
-  const grid = document.getElementById('meals-grid');
-  grid.innerHTML = '';
-  DAYS.slice(0,7).forEach(day=>{
-    const div = document.createElement('div');
-    div.className = 'card pad meal-day';
-    div.innerHTML = `<h4>${day}</h4><div class="meal-entries" data-entries></div>
-      <div class="add-meal-row">
-        <input type="text" placeholder="Ej: Desayuno" data-newmealname>
-        <button class="btn ghost small" data-add-meal>+</button>
-      </div>`;
-    grid.appendChild(div);
-    renderMealEntries(div, day);
-    div.querySelector('[data-add-meal]').addEventListener('click', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicializar
+  App.loadState();
+  App.renderAll();
+
+  // ============================================================
+  // EVENT DELEGATION - Un único listener para todo
+  // ============================================================
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-action]');
+    if(!target) return;
+    const action = target.dataset.action;
+
+    // --- Subjects ---
+    if(action === 'add-subject') {
+      App.state.subjects.push({
+        id: Utils.uid(),
+        name: 'Nuevo ramo',
+        color: Utils.randomColor(),
+        credits: '',
+        studyType: 'teorico',
+        topics: [],
+        tests: []
+      });
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    if(action === 'delete-subject') {
+      const id = target.dataset.subject;
+      const sub = App.state.subjects.find(s => s.id === id);
+      if(sub && confirm(`¿Eliminar ${sub.name}?`)) {
+        App.state.subjects = App.state.subjects.filter(s => s.id !== id);
+        App.saveJSON('subjects', App.state.subjects);
+        App.renderSubjects();
+        App.renderAsistente();
+      }
+    }
+
+    if(action === 'add-topic') {
+      const subId = target.dataset.subject;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const card = target.closest('.subject-card');
+      const inp = card.querySelector('[data-newtopic]');
+      const name = inp.value.trim();
+      if(!name || !sub) return;
+      sub.topics.push({id: Utils.uid(), name, status:'sinver'});
+      App.saveJSON('subjects', App.state.subjects);
+      inp.value = '';
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    if(action === 'cycle-topic') {
+      const subId = target.dataset.subject;
+      const topicId = target.dataset.topic;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const topic = sub?.topics.find(t => t.id === topicId);
+      if(!topic) return;
+      const idx = CONFIG.STATUS_CYCLE.indexOf(topic.status);
+      topic.status = CONFIG.STATUS_CYCLE[(idx + 1) % CONFIG.STATUS_CYCLE.length];
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    if(action === 'delete-topic') {
+      const subId = target.dataset.subject;
+      const topicId = target.dataset.topic;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      if(!sub) return;
+      sub.topics = sub.topics.filter(t => t.id !== topicId);
+      sub.tests.forEach(t => { t.temario = t.temario.filter(id => id !== topicId); });
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    if(action === 'add-test') {
+      const subId = target.dataset.subject;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      if(!sub) return;
+      sub.tests.push({id: Utils.uid(), name: '', date: '', temario: []});
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    if(action === 'delete-test') {
+      const subId = target.dataset.subject;
+      const testId = target.dataset.test;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      if(!sub) return;
+      sub.tests = sub.tests.filter(t => t.id !== testId);
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    // --- Temario chips ---
+    if(target.classList.contains('temario-chip')) {
+      const topicId = target.dataset.topicId;
+      const testId = target.dataset.testId;
+      const subId = target.dataset.subjectId;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const test = sub?.tests.find(t => t.id === testId);
+      if(!test) return;
+      if(test.temario.includes(topicId)) {
+        test.temario = test.temario.filter(id => id !== topicId);
+      } else {
+        test.temario.push(topicId);
+      }
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderAsistente();
+    }
+
+    // --- Temario toggle ---
+    if(target.classList.contains('link-btn')) {
+      const box = target.parentElement.querySelector('.temario-box');
+      if(box) box.classList.toggle('open');
+    }
+
+    // --- Recurring ---
+    if(action === 'delete-recurring') {
+      const id = target.dataset.id;
+      App.state.recurring = App.state.recurring.filter(c => c.id !== id);
+      App.saveJSON('recurring', App.state.recurring);
+      App.renderRecurringPanel();
+      App.renderWeeks();
+    }
+
+    if(action === 'skip-recurring') {
+      const id = target.dataset.id;
+      const date = target.dataset.date;
+      App.state.recurringExceptions.add(id + '|' + date);
+      App.saveJSON('recurringExceptions', [...App.state.recurringExceptions]);
+      App.renderWeeks();
+    }
+
+    // --- Blocks ---
+    if(action === 'delete-block') {
+      const id = target.dataset.id;
+      App.state.blocks = App.state.blocks.filter(b => b.id !== id);
+      App.saveJSON('blocks', App.state.blocks);
+      App.renderWeeks();
+    }
+
+    if(action === 'toggle-block') {
+      const id = target.dataset.id;
+      const block = App.state.blocks.find(b => b.id === id);
+      if(block) {
+        block.done = !block.done;
+        App.saveJSON('blocks', App.state.blocks);
+        App.renderWeeks();
+      }
+    }
+
+    if(action === 'edit-block') {
+      const id = target.dataset.id;
+      const block = App.state.blocks.find(b => b.id === id);
+      if(!block) return;
+      const newLabel = prompt('Descripción', block.label);
+      if(newLabel === null) return;
+      const newStart = prompt('Hora de inicio (HH:MM)', block.start);
+      if(newStart === null) return;
+      const newEnd = prompt('Hora de término (HH:MM)', block.end);
+      if(newEnd === null) return;
+      block.label = newLabel.trim() || block.label;
+      block.start = Utils.normalizeTime(newStart) || block.start;
+      block.end = Utils.normalizeTime(newEnd) || block.end;
+      App.saveJSON('blocks', App.state.blocks);
+      App.renderWeeks();
+    }
+
+    if(action === 'view-plan') {
+      const id = target.dataset.id;
+      const block = App.state.blocks.find(b => b.id === id);
+      if(block && block.plan) {
+        document.getElementById('plan-title').textContent = block.label;
+        document.getElementById('plan-sub').textContent = `${block.start}–${block.end} · estructura sugerida`;
+        const wrap = document.getElementById('plan-steps');
+        wrap.innerHTML = block.plan.map(step => `
+          <div class="plan-step">
+            <div class="p-title">${Utils.escape(step.label)} <span class="mins">${step.minutes} min</span></div>
+            <p>${Utils.escape(step.desc)}</p>
+          </div>
+        `).join('');
+        document.getElementById('plan-overlay').classList.add('open');
+      }
+    }
+
+    // --- Add block ---
+    if(action === 'add-block') {
+      const date = document.getElementById('nb-date').value;
+      const type = document.getElementById('nb-type').value;
+      const start = Utils.normalizeTime(document.getElementById('nb-start').value);
+      const end = Utils.normalizeTime(document.getElementById('nb-end').value);
+      const label = document.getElementById('nb-label').value.trim();
+      if(!date || !label) { alert('Falta el día o la descripción.'); return; }
+      if(!start || !end) { alert('Hora inválida.'); return; }
+      App.state.blocks.push({id: Utils.uid(), date, type, label, start, end, done: false});
+      App.saveJSON('blocks', App.state.blocks);
+      document.getElementById('nb-label').value = '';
+      App.renderWeeks();
+    }
+
+    // --- Add recurring ---
+    if(action === 'add-recurring') {
+      App.state.recurring.push({
+        id: Utils.uid(),
+        day: 0,
+        type: 'estudio',
+        subjectId: null,
+        subjectName: '',
+        label: '',
+        start: '18:00',
+        end: '19:00'
+      });
+      App.saveJSON('recurring', App.state.recurring);
+      App.renderRecurringPanel();
+      App.renderWeeks();
+    }
+
+    // --- Meals ---
+    if(action === 'add-meal') {
+      const day = target.dataset.day;
+      const div = target.closest('.meal-day');
       const inp = div.querySelector('[data-newmealname]');
       const name = inp.value.trim();
       if(!name) return;
-      if(!Array.isArray(meals[day])) meals[day] = [];
-      meals[day].push({id:uid(), name, value:''});
-      saveJSON('meals', meals);
-      inp.value='';
-      renderMealEntries(div, day);
+      if(!Array.isArray(App.state.meals[day])) App.state.meals[day] = [];
+      App.state.meals[day].push({id: Utils.uid(), name, value: ''});
+      App.saveJSON('meals', App.state.meals);
+      inp.value = '';
+      App.renderMeals();
+    }
+
+    if(action === 'delete-meal') {
+      const day = target.dataset.day;
+      const id = target.dataset.id;
+      App.state.meals[day] = App.state.meals[day].filter(e => e.id !== id);
+      App.saveJSON('meals', App.state.meals);
+      App.renderMeals();
+    }
+
+    // --- Asistente topics ---
+    if(target.classList.contains('asistente-topic-opt')) {
+      const subId = target.dataset.subjectId;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const topicId = target.dataset.topicId;
+      const topic = sub?.topics.find(t => t.id === topicId);
+      document.querySelectorAll('.asistente-topic-opt').forEach(o => o.classList.remove('selected'));
+      target.classList.add('selected');
+      App.updateAsistentePreview(sub, topic);
+    }
+
+    // --- Asistente generate session ---
+    if(action === 'generate-session') {
+      const subId = document.getElementById('as-subject').value;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
+      const msg = document.getElementById('as-msg');
+      if(!sub || !selectedOpt) { msg.className='msg error'; msg.textContent='Elige un ramo y un tema.'; return; }
+      const topic = sub.topics.find(t => t.id === selectedOpt.dataset.topicId);
+      const duration = Number(document.getElementById('as-duration').value);
+      const date = document.getElementById('as-date').value;
+      const start = Utils.normalizeTime(document.getElementById('as-start').value);
+      if(!date || !start) { msg.className='msg error'; msg.textContent='Elige día y hora.'; return; }
+      const end = Utils.addMin(start, duration);
+      const selectedTest = App.getSelectedTest(sub);
+      const testNote = selectedTest ? ` (${selectedTest.name||'prueba'})` : '';
+      App.state.blocks.push({
+        id: Utils.uid(),
+        date,
+        type: 'estudio',
+        subjectId: sub.id,
+        label: `Estudiar ${sub.name} — ${topic.name}${testNote}`,
+        start, end,
+        done: false,
+        plan: App.buildStudyPlan(duration, topic.name, sub.studyType, App.state.asPurpose)
+      });
+      App.saveJSON('blocks', App.state.blocks);
+      App.renderWeeks();
+      msg.className='msg ok';
+      msg.textContent = '✅ Sesión agregada a tu semana.';
+    }
+
+    // --- Chat plan ---
+    if(action === 'chat-plan') {
+      const subId = document.getElementById('as-subject').value;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const userInput = document.getElementById('as-chat-input').value.trim();
+      const responseDiv = document.getElementById('as-chat-response');
+      if(!sub) { responseDiv.innerHTML = '<span style="color:var(--clay)">Selecciona un ramo.</span>'; responseDiv.style.display='block'; return; }
+      if(!userInput) { responseDiv.innerHTML = '<span style="color:var(--clay)">Escribe qué necesitas.</span>'; responseDiv.style.display='block'; return; }
+      
+      let bestTopic = null, bestScore = 0;
+      sub.topics.forEach(t => {
+        const words = t.name.toLowerCase().split(' ');
+        let score = words.filter(w => userInput.toLowerCase().includes(w)).length;
+        if(score > bestScore) { bestScore = score; bestTopic = t; }
+      });
+      const topic = bestTopic || sub.topics[0];
+      const duration = Number(document.getElementById('as-duration').value);
+      const plan = App.buildStudyPlan(duration, topic ? topic.name : sub.name, sub.studyType, App.state.asPurpose);
+      
+      let response = `📚 <strong>Guía para ${sub.name}</strong>\n\n`;
+      response += `🔍 "${userInput}"\n\n📌 Plan (${duration} min):\n\n`;
+      plan.forEach((step, i) => {
+        response += `${i+1}. ${step.label} (${step.minutes} min)\n   ${step.desc}\n\n`;
+      });
+      response += `💡 Enfócate en: ${topic ? topic.name : 'los temas principales'}`;
+      
+      responseDiv.innerHTML = response.replace(/\n/g, '<br>');
+      responseDiv.style.display = 'block';
+      App.state._lastChatPlan = { sub, topic, plan, duration };
+    }
+
+    // --- Chat save ---
+    if(action === 'chat-save') {
+      const plan = App.state._lastChatPlan;
+      if(!plan) { alert('Primero genera una guía.'); return; }
+      const date = document.getElementById('as-date').value;
+      const start = Utils.normalizeTime(document.getElementById('as-start').value);
+      if(!date || !start) { alert('Elige día y hora.'); return; }
+      const end = Utils.addMin(start, plan.duration);
+      App.state.blocks.push({
+        id: Utils.uid(),
+        date,
+        type: 'estudio',
+        subjectId: plan.sub.id,
+        label: `📋 ${plan.sub.name} — guía: ${plan.topic ? plan.topic.name : 'repaso'}`,
+        start, end,
+        done: false,
+        plan: plan.plan
+      });
+      App.saveJSON('blocks', App.state.blocks);
+      App.renderWeeks();
+      document.getElementById('as-msg').className = 'msg ok';
+      document.getElementById('as-msg').textContent = '✅ Guía guardada como bloque.';
+    }
+
+    // --- Predict ---
+    if(action === 'predict') {
+      // Llamamos a la función de predicción
+      generateSuggestions();
+    }
+
+    // --- Clear week ---
+    if(action === 'clear-week') {
+      const end = new Date(App.state.weekStart);
+      end.setDate(end.getDate() + 6);
+      const startStr = Utils.fmt(App.state.weekStart);
+      const endStr = Utils.fmt(end);
+      const inWeek = App.state.blocks.filter(b => b.date >= startStr && b.date <= endStr);
+      if(inWeek.length === 0) { alert('Esta semana está vacía.'); return; }
+      if(confirm(`¿Borrar los ${inWeek.length} bloques de esta semana?`)) {
+        App.state.blocks = App.state.blocks.filter(b => !(b.date >= startStr && b.date <= endStr));
+        App.saveJSON('blocks', App.state.blocks);
+        App.renderWeeks();
+      }
+    }
+
+    // --- Inventory ---
+    if(action === 'save-inventory') {
+      const input = document.getElementById('inventory-input').value;
+      App.state.inventory = input.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
+      App.saveJSON('inventory', App.state.inventory);
+      alert('✅ Inventario guardado: ' + App.state.inventory.join(', '));
+    }
+
+    // --- Suggest meals ---
+    if(action === 'suggest-meals') {
+      const time = parseInt(document.getElementById('cook-time').value);
+      const suggestions = document.getElementById('meal-suggestions');
+      if(!App.state.inventory.length) {
+        suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
+        return;
+      }
+      let timeCategory = 'rapido';
+      if(time >= 45) timeCategory = 'largo';
+      else if(time >= 25) timeCategory = 'medio';
+      
+      const available = CONFIG.RECIPES[timeCategory] || [];
+      const scored = available.map(recipe => {
+        const match = recipe.ingredients.filter(ing => 
+          App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
+        );
+        return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
+      });
+      scored.sort((a,b) => b.matchCount - a.matchCount);
+      const top = scored.slice(0, 4);
+      
+      if(!top.length || top[0].matchCount === 0) {
+        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario.</p>`;
+        return;
+      }
+      suggestions.innerHTML = top.map(r => `
+        <div class="meal-suggestion-card">
+          <h5>🍳 ${r.name}</h5>
+          <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
+          <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
+        </div>
+      `).join('');
+    }
+
+    // --- Modals ---
+    if(action === 'close-plan') {
+      document.getElementById('plan-overlay').classList.remove('open');
+    }
+    if(action === 'close-login') {
+      document.getElementById('login-overlay').classList.remove('open');
+    }
+  });
+
+  // ============================================================
+  // INPUT EVENTS (con debounce para guardado inteligente)
+  // ============================================================
+  const saveSubject = Utils.debounce(() => {
+    App.saveJSON('subjects', App.state.subjects);
+  }, 500);
+
+  // Subject fields
+  document.addEventListener('input', (e) => {
+    const target = e.target;
+    
+    // Subject name/credits/type
+    if(target.dataset.field === 'name' || target.dataset.field === 'credits' || target.dataset.field === 'studyType') {
+      const subId = target.dataset.subject;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      if(!sub) return;
+      sub[target.dataset.field] = target.value;
+      saveSubject();
+      if(target.dataset.field === 'credits') {
+        const card = target.closest('.subject-card');
+        const c = parseFloat(sub.credits);
+        card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*CONFIG.HOURS_PER_CREDIT)} h/semana` : 'agrega créditos';
+      }
+      if(target.dataset.field === 'studyType') App.renderAsistente();
+    }
+
+    // Topic name
+    if(target.dataset.tpf === 'name') {
+      const subId = target.dataset.subject;
+      const topicId = target.dataset.topic;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const topic = sub?.topics.find(t => t.id === topicId);
+      if(topic) {
+        topic.name = target.value;
+        saveSubject();
+        App.renderAsistente();
+      }
+    }
+
+    // Test fields (usando 'change' para evitar el bug)
+    // Pero también escuchamos input para que sea fluido
+    if(target.dataset.tf) {
+      const subId = target.dataset.subject;
+      const testId = target.dataset.test;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      const test = sub?.tests.find(t => t.id === testId);
+      if(test) {
+        test[target.dataset.tf] = target.value;
+        saveSubject();
+        App.renderAsistente();
+      }
+    }
+
+    // Recurring fields
+    if(target.dataset.cf) {
+      const id = target.dataset.id;
+      const c = App.state.recurring.find(r => r.id === id);
+      if(!c) return;
+      const f = target.dataset.cf;
+      if(f === 'day') c.day = Number(target.value);
+      else if(f === 'start' || f === 'end') { const t = Utils.normalizeTime(target.value); if(t) c[f] = t; }
+      else if(f === 'subjectId') {
+        c[f] = target.value;
+        const s = App.state.subjects.find(x => x.id === target.value);
+        c.subjectName = s ? s.name : '';
+      } else {
+        c[f] = target.value;
+      }
+      App.saveJSON('recurring', App.state.recurring);
+      if(f === 'type') App.renderRecurringPanel();
+      App.renderWeeks();
+    }
+
+    // Meal fields
+    if(target.dataset.mf) {
+      const day = target.dataset.day;
+      const id = target.dataset.id;
+      const entry = App.state.meals[day]?.find(e => e.id === id);
+      if(entry) {
+        entry[target.dataset.mf] = target.value;
+        App.saveJSON('meals', App.state.meals);
+      }
+    }
+
+    // Philosophy
+    if(target.id && target.id.startsWith('philo-')) {
+      const key = target.dataset.key;
+      if(key) {
+        App.state.philo[key] = target.textContent;
+        App.saveJSON('philosophy', App.state.philo);
+      }
+    }
+  });
+
+  // ============================================================
+  // BOTONES DE NAVEGACIÓN SEMANAL
+  // ============================================================
+  document.getElementById('btn-prev-week').addEventListener('click', () => {
+    App.state.weekStart.setDate(App.state.weekStart.getDate() - 7);
+    App.saveJSON('weekStart', App.state.weekStart.toISOString());
+    App.renderWeeks();
+    App.renderWeekRange();
+  });
+
+  document.getElementById('btn-next-week').addEventListener('click', () => {
+    App.state.weekStart.setDate(App.state.weekStart.getDate() + 7);
+    App.saveJSON('weekStart', App.state.weekStart.toISOString());
+    App.renderWeeks();
+    App.renderWeekRange();
+  });
+
+  // ============================================================
+  // DRAG & DROP
+  // ============================================================
+  document.addEventListener('dragover', (e) => {
+    const col = e.target.closest('.day-col-grid');
+    if(col) { e.preventDefault(); col.classList.add('drag-over'); }
+  });
+
+  document.addEventListener('dragleave', (e) => {
+    const col = e.target.closest('.day-col-grid');
+    if(col) col.classList.remove('drag-over');
+  });
+
+  document.addEventListener('dragstart', (e) => {
+    const block = e.target.closest('.block-abs');
+    if(block && block.dataset.id) {
+      e.dataTransfer.setData('text/plain', block.dataset.id);
+      setTimeout(() => block.style.opacity = '0.3', 0);
+    }
+  });
+
+  document.addEventListener('dragend', (e) => {
+    const block = e.target.closest('.block-abs');
+    if(block) block.style.opacity = '1';
+  });
+
+  document.addEventListener('drop', (e) => {
+    const col = e.target.closest('.day-col-grid');
+    if(!col) return;
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    
+    const id = e.dataTransfer.getData('text/plain');
+    const block = App.state.blocks.find(b => b.id === id);
+    if(!block) return;
+    
+    const rect = col.getBoundingClientRect();
+    const offsetY = e.clientY - rect.top;
+    const duration = Utils.timeToMin(block.end) - Utils.timeToMin(block.start);
+    const newStart = Utils.yToTime(offsetY, CONFIG.HOUR_START);
+    block.date = col.dataset.date;
+    block.start = newStart;
+    block.end = Utils.addMin(newStart, duration);
+    if(block.type === 'sugerido') block.type = 'estudio';
+    App.saveJSON('blocks', App.state.blocks);
+    App.renderWeeks();
+  });
+
+  // ============================================================
+  // TABS
+  // ============================================================
+  document.querySelectorAll('nav.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + btn.dataset.view).classList.add('active');
     });
   });
-}
 
-function renderMealEntries(div, day){
-  const wrap = div.querySelector('[data-entries]');
-  wrap.innerHTML = '';
-  (meals[day]||[]).forEach(entry=>{
-    const row = document.createElement('div');
-    row.className = 'meal-entry';
-    row.innerHTML = `
-      <input type="text" class="meal-name" value="${escapeAttr(entry.name)}" data-mf="name">
-      <input type="text" class="meal-value" placeholder="qué vas a comer" value="${escapeAttr(entry.value)}" data-mf="value">
-      <span class="icon-btn" data-maction="delete">✕</span>
-    `;
-    wrap.appendChild(row);
-    row.querySelectorAll('[data-mf]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        entry[inp.dataset.mf] = inp.value;
-        saveJSON('meals', meals);
+  // ============================================================
+  // PURPOSE TOGGLE
+  // ============================================================
+  document.querySelectorAll('.purpose-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.purpose-toggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      App.state.asPurpose = btn.dataset.purpose;
+      document.getElementById('as-test-wrap').style.display = App.state.asPurpose === 'prueba' ? 'block' : 'none';
+      App.renderAsistenteTestSelect();
+      App.renderAsistenteTopics();
+    });
+  });
+
+  // ============================================================
+  // ASISTENTE: change events
+  // ============================================================
+  document.getElementById('as-subject').addEventListener('change', () => {
+    App.renderAsistenteTestSelect();
+    App.renderAsistenteTopics();
+  });
+
+  document.getElementById('as-test').addEventListener('change', App.renderAsistenteTopics.bind(App));
+
+  document.getElementById('as-duration').addEventListener('change', () => {
+    const subId = document.getElementById('as-subject').value;
+    const sub = App.state.subjects.find(s => s.id === subId);
+    const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
+    const topic = sub && selectedOpt ? sub.topics.find(t => t.id === selectedOpt.dataset.topicId) : null;
+    App.updateAsistentePreview(sub, topic);
+  });
+
+  // ============================================================
+  // THEME
+  // ============================================================
+  function applyTheme(key) {
+    const theme = CONFIG.THEMES[key] || CONFIG.THEMES.bosque;
+    Object.entries(theme.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+    localStorage.setItem('theme', key);
+    renderThemeMenu(key);
+  }
+
+  function renderThemeMenu(activeKey) {
+    const menu = document.getElementById('theme-menu');
+    menu.innerHTML = Object.entries(CONFIG.THEMES).map(([key, t]) => `
+      <div class="theme-opt${key===activeKey?' active':''}" data-theme="${key}">
+        <span class="theme-swatch" style="background:${t.swatch}"></span>${t.label}
+      </div>
+    `).join('');
+    menu.querySelectorAll('[data-theme]').forEach(opt => {
+      opt.addEventListener('click', () => {
+        applyTheme(opt.dataset.theme);
+        menu.classList.remove('open');
       });
     });
-    row.querySelector('[data-maction="delete"]').addEventListener('click', ()=>{
-      meals[day] = meals[day].filter(e=>e.id!==entry.id);
-      saveJSON('meals', meals);
-      renderMealEntries(div, day);
+  }
+
+  document.getElementById('theme-toggle').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('theme-menu').classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => document.getElementById('theme-menu').classList.remove('open'));
+  applyTheme(localStorage.getItem('theme') || 'bosque');
+
+  // ============================================================
+  // FUNCIÓN DE PREDICCIÓN (extraída para poder llamarla)
+  // ============================================================
+  function generateSuggestions() {
+    const startStr = Utils.fmt(App.state.weekStart);
+    const endDate = new Date(App.state.weekStart);
+    endDate.setDate(endDate.getDate() + 6);
+    const endStr = Utils.fmt(endDate);
+    
+    // Solo eliminar sugerencias que colisionan
+    const blocksToKeep = [];
+    App.state.blocks.forEach(b => {
+      if(b.type !== 'sugerido') { blocksToKeep.push(b); return; }
+      if(b.date < startStr || b.date > endStr) { blocksToKeep.push(b); return; }
+      const hasCollision = App.state.blocks.some(existing =>
+        existing.id !== b.id &&
+        existing.type !== 'sugerido' &&
+        existing.date === b.date &&
+        Utils.timeToMin(existing.start) < Utils.timeToMin(b.end) &&
+        Utils.timeToMin(existing.end) > Utils.timeToMin(b.start)
+      );
+      if(!hasCollision) blocksToKeep.push(b);
+    });
+    App.state.blocks = blocksToKeep;
+
+    const horizon = 21;
+    const info = App.state.subjects.map(sub => {
+      const creditsNum = parseFloat(sub.credits) || 3;
+      const baseSessions = Math.min(4, Math.max(1, Math.round(creditsNum * CONFIG.HOURS_PER_CREDIT / 1.5)));
+      const upcoming = sub.tests
+        .map(t => ({...t, d: Utils.daysUntil(t.date)}))
+        .filter(t => t.d !== null && t.d >= 0 && t.d <= horizon)
+        .sort((a,b) => a.d - b.d);
+      const nearest = upcoming[0] || null;
+      const priorityBoost = /matemática/i.test(sub.name) ? 1.6 : 1;
+      const urgency = nearest ? priorityBoost / Math.max(nearest.d, 1) : 0;
+      return {sub, nearest, baseSessions, urgency};
+    });
+
+    const totalUrgency = info.reduce((s,w) => s + w.urgency, 0);
+    const bonusPool = Math.round(info.length * 1.2);
+    info.forEach(w => {
+      const bonus = totalUrgency > 0 ? Math.round((w.urgency/totalUrgency) * bonusPool) : 0;
+      w.totalSessions = w.baseSessions + bonus;
+    });
+
+    if(info.every(w => w.totalSessions === 0)) {
+      alert('Agrega créditos o fechas de prueba para generar sugerencias.');
+      return;
+    }
+
+    info.forEach(w => {
+      if(w.totalSessions <= 0) return;
+      const purpose = w.nearest ? 'prueba' : 'mantenimiento';
+      const desired = [];
+      if(w.totalSessions <= 1) desired.push(0);
+      else {
+        for(let k=0; k<w.totalSessions; k++) {
+          desired.push(Math.round(k * 6 / (w.totalSessions - 1)));
+        }
+      }
+      let placed = 0;
+      desired.forEach(centerIdx => {
+        if(placed >= w.totalSessions) return;
+        for(let offset=0; offset<7 && placed<w.totalSessions; offset++) {
+          for(const cand of [centerIdx - offset, centerIdx + offset]) {
+            if(cand < 0 || cand >= 7) continue;
+            const d = new Date(App.state.weekStart);
+            d.setDate(d.getDate() + cand);
+            const dow = (d.getDay() + 6) % 7;
+            const dateStr = Utils.fmt(d);
+            const already = App.state.blocks.some(b => b.date === dateStr && b.subjectId === w.sub.id);
+            if(already) continue;
+            
+            // Buscar slot libre
+            const occupied = [...App.state.recurring
+              .filter(c => c.day === dow && !App.state.recurringExceptions.has(c.id+'|'+dateStr))
+              .map(c => [Utils.timeToMin(c.start), Utils.timeToMin(c.end)]),
+              ...App.state.blocks.filter(b => b.date === dateStr).map(b => [Utils.timeToMin(b.start), Utils.timeToMin(b.end)])
+            ];
+            const minStart = CONFIG.SUGGEST_MIN_HOUR * 60;
+            let slot = null;
+            for(let m=17*60; m<=CONFIG.HOUR_END*60-90; m+=30) {
+              const end = m+90;
+              const overlaps = occupied.some(([os,oe]) => m < oe && end > os);
+              if(!overlaps) { slot = [m, end]; break; }
+            }
+            if(!slot) {
+              for(let m=minStart; m<17*60; m+=30) {
+                const end = m+90;
+                const overlaps = occupied.some(([os,oe]) => m < oe && end > os);
+                if(!overlaps) { slot = [m, end]; break; }
+              }
+            }
+            if(!slot) continue;
+            
+            const topic = (() => {
+              let candidates = w.sub.topics.filter(t => t.status !== 'dominado');
+              if(w.nearest && w.nearest.temario.length) {
+                const inTemario = candidates.filter(t => w.nearest.temario.includes(t.id));
+                if(inTemario.length) candidates = inTemario;
+              }
+              if(!candidates.length) candidates = w.sub.topics;
+              if(!candidates.length) return null;
+              const order = {debil:0, sinver:1, dominado:2};
+              candidates = [...candidates].sort((a,b) => order[a.status] - order[b.status]);
+              return candidates[placed % candidates.length];
+            })();
+            
+            const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : ' (mantenimiento)';
+            const label = topic ? `Estudiar ${w.sub.name} — ${topic.name}${testNote}` : `Estudiar ${w.sub.name}${testNote}`;
+            const h = Math.floor(slot[0]/60), m = slot[0]%60;
+            const h2 = Math.floor(slot[1]/60), m2 = slot[1]%60;
+            App.state.blocks.push({
+              id: Utils.uid(),
+              date: dateStr,
+              type: 'sugerido',
+              subjectId: w.sub.id,
+              label,
+              start: String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+              end: String(h2).padStart(2,'0')+':'+String(m2).padStart(2,'0'),
+              done: false,
+              plan: App.buildStudyPlan(90, topic ? topic.name : w.sub.name, w.sub.studyType, purpose)
+            });
+            placed++;
+            break;
+          }
+        }
+      });
+    });
+
+    App.saveJSON('blocks', App.state.blocks);
+    App.renderWeeks();
+  }
+
+  // ============================================================
+  // FIREBASE (sincronización)
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
+    authDomain: "planificador-b4f8a.firebaseapp.com",
+    projectId: "planificador-b4f8a",
+    storageBucket: "planificador-b4f8a.firebasestorage.app",
+    messagingSenderId: "335729353878",
+    appId: "1:335729353878:web:43900782feca9063f0ceb7"
+  };
+
+  let auth = null, db = null;
+  try {
+    if(firebaseConfig.apiKey) {
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      App.state.cloudEnabled = true;
+    }
+  } catch(e) { console.warn('Firebase no configurado:', e); }
+
+  // Sobrescribir scheduleSync para usar Firebase
+  App.scheduleSync = Utils.debounce(() => {
+    if(App.state.currentUser && App.state.cloudEnabled) {
+      App.syncToCloud();
+    }
+  }, 500);
+
+  App.syncToCloud = () => {
+    if(!App.state.currentUser || !db) return;
+    db.collection('users').doc(App.state.currentUser.uid).set(App.getFullState())
+      .then(() => {
+        const dot = document.getElementById('sync-dot');
+        const label = document.getElementById('account-status');
+        if(dot) dot.className = 'sync-dot on';
+        if(label) label.textContent = App.state.currentUser.email;
+      })
+      .catch(err => {
+        console.error('Error al sincronizar:', err);
+        const dot = document.getElementById('sync-dot');
+        const label = document.getElementById('account-status');
+        if(dot) dot.className = 'sync-dot';
+        if(label) label.textContent = 'Error al sincronizar';
+      });
+  };
+
+  if(auth) {
+    auth.onAuthStateChanged(user => {
+      App.state.currentUser = user;
+      const widget = document.getElementById('account-widget');
+      if(user) {
+        App.state.profileKey = user.uid;
+        App.loadState();
+        App.renderAll();
+        widget.innerHTML = `<span class="sync-dot on" id="sync-dot"></span><span id="account-status">${Utils.escape(user.email)}</span><button id="btn-logout">Cerrar sesión</button>`;
+        document.getElementById('btn-logout').addEventListener('click', () => auth.signOut());
+        
+        db.collection('users').doc(user.uid).get().then(doc => {
+          if(doc.exists) {
+            const cloudData = doc.data();
+            const cloudUpdated = cloudData.updatedAt || 0;
+            const localUpdated = Number(localStorage.getItem(App.storageKey('lastUpdated')) || 0);
+            if(cloudUpdated > localUpdated) {
+              App.applyFullState(cloudData);
+            } else {
+              db.collection('users').doc(user.uid).set(App.getFullState());
+            }
+          } else {
+            db.collection('users').doc(user.uid).set(App.getFullState());
+          }
+        }).catch(() => console.warn('Error al leer desde Firestore'));
+      } else {
+        App.state.profileKey = 'guest';
+        App.loadState();
+        App.renderAll();
+        widget.innerHTML = `<span class="sync-dot" id="sync-dot"></span><span id="account-status">Sin sincronizar</span><button id="btn-open-login">Iniciar sesión</button>`;
+        document.getElementById('btn-open-login').addEventListener('click', () => {
+          document.getElementById('login-overlay').classList.add('open');
+        });
+      }
+    });
+  }
+
+  // ============================================================
+  // LOGIN MODAL
+  // ============================================================
+  document.getElementById('btn-close-login').addEventListener('click', () => {
+    document.getElementById('login-overlay').classList.remove('open');
+  });
+
+  document.getElementById('btn-signin').addEventListener('click', () => {
+    if(!auth) { alert('Firebase no configurado.'); return; }
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    const msg = document.getElementById('login-msg');
+    msg.className='msg'; msg.textContent='Ingresando…';
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => { msg.className='msg ok'; msg.textContent='¡Listo!'; setTimeout(() => document.getElementById('login-overlay').classList.remove('open'), 500); })
+      .catch(err => { msg.className='msg error'; msg.textContent=err.message; });
+  });
+
+  document.getElementById('btn-signup').addEventListener('click', () => {
+    if(!auth) { alert('Firebase no configurado.'); return; }
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    const msg = document.getElementById('login-msg');
+    msg.className='msg'; msg.textContent='Creando cuenta…';
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(() => { msg.className='msg ok'; msg.textContent='¡Cuenta creada!'; setTimeout(() => document.getElementById('login-overlay').classList.remove('open'), 500); })
+      .catch(err => { msg.className='msg error'; msg.textContent=err.message; });
+  });
+
+  // ============================================================
+  // EXPORT / IMPORT
+  // ============================================================
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const data = JSON.stringify(App.getFullState(), null, 2);
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `respaldo-planificador-${Utils.fmt(new Date())}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btn-import').addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+
+  document.getElementById('import-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const state = JSON.parse(reader.result);
+        if(!confirm('¿Reemplazar todos los datos por el respaldo?')) return;
+        state.updatedAt = Date.now();
+        App.applyFullState(state);
+        if(App.state.currentUser) App.syncToCloud();
+        alert('✅ Respaldo restaurado.');
+      } catch(err) {
+        alert('El archivo no es un respaldo válido.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // ============================================================
+  // PLAN MODAL CLOSE
+  // ============================================================
+  document.getElementById('btn-close-plan').addEventListener('click', () => {
+    document.getElementById('plan-overlay').classList.remove('open');
+  });
+
+  // ============================================================
+  // CIERRE DE MODALES CON CLICK FUERA
+  // ============================================================
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) overlay.classList.remove('open');
     });
   });
-}
 
-// ============================================================
-// 🔥 SUGERENCIAS DE COMIDAS CON INVENTARIO
-// ============================================================
-const RECIPES = {
-  'rapido': [
-    { name: 'Huevos revueltos con tostadas', ingredients: ['huevos', 'pan', 'sal'], time: 10 },
-    { name: 'Sándwich de pollo', ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], time: 15 },
-    { name: 'Tortilla de verduras', ingredients: ['huevos', 'cebolla', 'pimentón'], time: 15 },
-    { name: 'Ensalada rápida', ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], time: 10 },
-    { name: 'Palta con pan', ingredients: ['pan', 'palta', 'sal'], time: 5 }
-  ],
-  'medio': [
-    { name: 'Arroz con pollo', ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], time: 30 },
-    { name: 'Pasta con salsa', ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], time: 25 },
-    { name: 'Hamburguesas caseras', ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], time: 30 },
-    { name: 'Tortilla de papas', ingredients: ['huevos', 'papas', 'cebolla', 'aceite'], time: 35 },
-    { name: 'Fajitas de pollo', ingredients: ['pollo', 'cebolla', 'pimentón', 'tortillas'], time: 30 }
-  ],
-  'largo': [
-    { name: 'Cazuela de pollo', ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], time: 60 },
-    { name: 'Lasagna', ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], time: 55 },
-    { name: 'Estofado de carne', ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], time: 50 },
-    { name: 'Pollo al horno', ingredients: ['pollo', 'papas', 'cebolla', 'ajo'], time: 60 },
-    { name: 'Pastel de choclo', ingredients: ['choclo', 'carne', 'cebolla', 'huevos'], time: 55 }
-  ]
-};
-
-document.getElementById('btn-save-inventory').addEventListener('click', ()=>{
-  const input = document.getElementById('inventory-input').value;
-  inventory = input.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
-  saveJSON('inventory', inventory);
-  alert('✅ Inventario guardado: ' + inventory.join(', '));
+  console.log('✅ Planificador v2.0 cargado correctamente');
+  console.log(`📊 ${App.state.subjects.length} ramos, ${App.state.blocks.length} bloques`);
 });
-
-document.getElementById('btn-suggest-meals').addEventListener('click', ()=>{
-  const time = parseInt(document.getElementById('cook-time').value);
-  const suggestions = document.getElementById('meal-suggestions');
-  
-  if (!inventory.length) {
-    suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario de ingredientes.</p>';
-    return;
-  }
-  
-  let timeCategory = 'rapido';
-  if (time >= 45) timeCategory = 'largo';
-  else if (time >= 25) timeCategory = 'medio';
-  
-  const available = RECIPES[timeCategory] || [];
-  const scored = available.map(recipe => {
-    const match = recipe.ingredients.filter(ing => 
-      inventory.some(inv => ing.includes(inv) || inv.includes(ing))
-    );
-    return { ...recipe, matchCount: match.length, total: recipe.ingredients.length };
-  });
-  
-  scored.sort((a,b) => b.matchCount - a.matchCount);
-  const top = scored.slice(0, 4);
-  
-  if (!top.length || top[0].matchCount === 0) {
-    suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario. ¿Quieres agregar más ingredientes?</p>`;
-    return;
-  }
-  
-  suggestions.innerHTML = top.map(r => `
-    <div class="meal-suggestion-card">
-      <h5>🍳 ${r.name}</h5>
-      <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total} ingredientes</div>
-      <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
-    </div>
-  `).join('');
-});
-
-// ============================================================
-// INIT
-// ============================================================
-renderAll();
 </script>
 </body>
 </html>
