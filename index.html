@@ -39,7 +39,6 @@ body{
 h1,h2,h3{font-family:'Newsreader', serif; font-weight:600; margin:0;}
 .mono{font-family:'IBM Plex Mono', monospace;}
 
-/* ---------- top bar ---------- */
 header.top{
   position:sticky; top:0; z-index:50;
   background:var(--paper); border-bottom:1px solid var(--line);
@@ -55,7 +54,7 @@ header.top{
 }
 .brand h1{font-size:22px; letter-spacing:-0.01em;}
 .brand .sub{font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono'; letter-spacing:0.02em;}
-nav.tabs{display:flex; gap:2px; margin-top:16px;}
+nav.tabs{display:flex; gap:2px; margin-top:16px; flex-wrap:wrap;}
 nav.tabs button{
   appearance:none; border:none; background:transparent; cursor:pointer;
   padding:10px 16px; font-family:'IBM Plex Sans'; font-size:13.5px; font-weight:500;
@@ -87,6 +86,8 @@ button.btn:hover{background:#000;}
 button.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
 button.btn.ghost:hover{border-color:var(--ink);}
 button.btn.pine{background:var(--pine); border-color:var(--pine);}
+button.btn.danger{background:transparent; color:var(--clay); border:1px solid var(--clay);}
+button.btn.danger:hover{background:var(--clay); color:#fff;}
 button.btn.small{padding:5px 10px; font-size:12px; border-radius:6px;}
 textarea, input[type=text], input[type=date], input[type=number], select{
   font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--ink);
@@ -100,7 +101,6 @@ label.field-label{
 }
 label.field-label:first-child{margin-top:0;}
 
-/* ---------- Filosofia ---------- */
 .philo-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
 .philo-card{border-top:3px solid var(--pine);}
 .philo-card:nth-child(2){border-top-color:var(--amber);}
@@ -120,7 +120,6 @@ label.field-label:first-child{margin-top:0;}
 .pillar h4{font-family:'IBM Plex Sans'; font-weight:600; font-size:13.5px; margin:0 0 4px 0;}
 .pillar p{font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
 
-/* ---------- Ramos ---------- */
 .subjects-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px;}
 .subject-card{border-left:5px solid var(--sub-color, var(--pine));}
 .subject-card .head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
@@ -134,7 +133,6 @@ label.field-label:first-child{margin-top:0;}
 .chip select{border:none; background:transparent; padding:0; font-family:inherit; font-size:inherit; color:inherit; width:auto;}
 .hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
 
-/* --- temas / topics --- */
 .topics-list{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
 .topic-row{display:flex; align-items:center; gap:6px;}
 .topic-row input[type=text]{flex:1; font-size:12.5px; padding:5px 8px;}
@@ -159,7 +157,6 @@ label.field-label:first-child{margin-top:0;}
 .temario-chip.selected{background:var(--pine); border-color:var(--pine); color:#fff;}
 .link-btn{background:none; border:none; color:var(--pine-soft); font-family:'IBM Plex Mono'; font-size:10.5px; cursor:pointer; padding:0; margin-top:4px;}
 
-/* ---------- Asistente ---------- */
 .asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
 .asistente-form label.field-label{margin-top:12px;}
 .purpose-toggle{display:flex; gap:6px;}
@@ -206,7 +203,6 @@ label.field-label:first-child{margin-top:0;}
 }
 .add-subject-btn:hover{border-color:var(--pine); color:var(--pine);}
 
-/* ---------- Semana (grilla horaria) ---------- */
 .week-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;}
 .week-toolbar .range{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--ink-soft);}
 .week-toolbar .actions{display:flex; gap:8px; flex-wrap:wrap;}
@@ -233,6 +229,8 @@ label.field-label:first-child{margin-top:0;}
 .time-grid-header .day-head span{display:block; font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--ink-soft);}
 .time-grid-header .day-head b{display:block; font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--ink); font-weight:600;}
 .time-grid-header .day-head.weekend{background:#f4f2ec;}
+.time-grid-header .day-head.today{background:color-mix(in srgb, var(--ink) 10%, var(--paper-raised));}
+.time-grid-header .day-head.today b{color:var(--pine);}
 .time-grid-body{display:grid; grid-template-columns:52px repeat(7,1fr); position:relative;}
 .hour-gutter{position:relative;}
 .hour-gutter .hour-label{
@@ -241,6 +239,7 @@ label.field-label:first-child{margin-top:0;}
 .hour-line{position:absolute; left:0; right:0; border-top:1px solid var(--line); opacity:0.55; pointer-events:none;}
 .day-col-grid{position:relative; border-left:1px solid var(--line);}
 .day-col-grid.weekend{background:#f4f2ec;}
+.day-col-grid.today{background:color-mix(in srgb, var(--ink) 7%, var(--paper-raised));}
 .day-col-grid.drag-over{background:var(--amber-soft);}
 .block-abs{
   position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 34px 3px 6px; font-size:10.5px; line-height:1.3;
@@ -264,7 +263,6 @@ label.field-label:first-child{margin-top:0;}
 .legend span{display:inline-flex; align-items:center; gap:5px;}
 .legend i{width:10px;height:10px;border-radius:3px; display:inline-block;}
 
-/* ---------- Comida ---------- */
 .meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
 .meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
 .meal-entry{display:flex; gap:5px; margin-bottom:6px; align-items:center;}
@@ -273,9 +271,19 @@ label.field-label:first-child{margin-top:0;}
 .add-meal-row{display:flex; gap:5px; margin-top:8px;}
 .add-meal-row input{flex:1; font-size:12px;}
 
+.inventory-section{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+.inventory-box{background:var(--paper); border-radius:8px; padding:14px;}
+.inventory-box textarea{min-height:80px; font-size:12px;}
+.meal-suggestion-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:8px;
+  padding:12px 14px; margin-bottom:8px;
+}
+.meal-suggestion-card h5{margin:0 0 4px 0; font-size:13px;}
+.meal-suggestion-card .meta{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono';}
+.meal-suggestion-card .ingredients{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+
 footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:30px; font-family:'IBM Plex Mono';}
 
-/* ---------- Cuenta / sincronización ---------- */
 .account-widget{display:flex; align-items:center; gap:8px; font-size:12px; font-family:'IBM Plex Mono'; color:var(--ink-soft);}
 .account-widget .sync-dot{width:7px; height:7px; border-radius:50%; background:#c9c9c9; display:inline-block;}
 .account-widget .sync-dot.on{background:var(--pine);}
@@ -324,12 +332,17 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .modal-box .close-x{position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft); font-size:16px; background:none; border:none;}
 .modal-box{position:relative;}
 
+.chat-response{background:var(--paper); border-radius:8px; padding:14px; margin-top:10px; white-space:pre-wrap; font-size:13px; line-height:1.6;}
+.chat-response h4{margin:0 0 8px 0; font-size:14px;}
+
 @media (max-width:900px){
   .time-grid{overflow-x:auto;}
   .time-grid-header, .time-grid-body{min-width:760px;}
   .philo-grid{grid-template-columns:1fr;}
   .pillars{grid-template-columns:1fr;}
   .add-block-grid{grid-template-columns:1fr 1fr;}
+  .asistente-grid{grid-template-columns:1fr;}
+  .inventory-section{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -409,7 +422,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
   <!-- ================= SEMANA ================= -->
   <section class="view" id="view-semana">
-    <div class="eyebrow">Parte 2 y 9 · Vista de dos semanas por horas + predicción</div>
+    <div class="eyebrow">Parte 2 y 9 · Semana + predicción</div>
 
     <div class="card pad add-block-panel">
       <h3>Agregar bloque a un día puntual</h3>
@@ -433,9 +446,10 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <div class="week-toolbar">
       <div class="range mono" id="week-range"></div>
       <div class="actions">
-        <button class="btn ghost small" id="btn-prev-fortnight">← Quincena anterior</button>
-        <button class="btn ghost small" id="btn-next-fortnight">Quincena siguiente →</button>
+        <button class="btn ghost small" id="btn-prev-week">← Semana anterior</button>
+        <button class="btn ghost small" id="btn-next-week">Semana siguiente →</button>
         <button class="btn pine small" id="btn-predict">Generar sugerencia de estudio</button>
+        <button class="btn danger small" id="btn-clear-week">Borrar todo (esta semana)</button>
       </div>
     </div>
     <div class="weeks-wrap" id="weeks-wrap"></div>
@@ -490,6 +504,18 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
           <label class="field-label">Hora de inicio</label>
           <input type="text" inputmode="numeric" placeholder="HH:MM" id="as-start" value="18:00">
           <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session">Generar sesión de estudio</button>
+          
+          <!-- NUEVO: Asistente conversacional -->
+          <div style="margin-top:20px; border-top:1px solid var(--line); padding-top:16px;">
+            <label class="field-label">Cuéntame más sobre lo que necesitas (opcional)</label>
+            <textarea id="as-chat-input" rows="3" placeholder="Ej: Mañana tengo prueba y no entiendo bien los métodos de ordenamiento..."></textarea>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="btn pine small" id="btn-chat-plan">Generar guía personalizada</button>
+              <button class="btn ghost small" id="btn-chat-save">Guardar como bloque</button>
+            </div>
+            <div id="as-chat-response" style="display:none;" class="chat-response"></div>
+          </div>
+          
           <div class="msg" id="as-msg"></div>
         </div>
         <div class="asistente-preview" id="as-preview">
@@ -503,11 +529,33 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   <section class="view" id="view-comida">
     <div class="eyebrow">Parte 6 · Minuta editable</div>
     <div class="meals-grid" id="meals-grid"></div>
+    
+    <!-- NUEVO: Inventario y sugerencias de comidas -->
+    <div class="card pad" style="margin-top:20px;">
+      <h3>📦 Inventario y sugerencias</h3>
+      <div class="inventory-section">
+        <div>
+          <label class="field-label">Ingredientes disponibles</label>
+          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos, pan, lechuga..."></textarea>
+          <button class="btn ghost small" id="btn-save-inventory" style="margin-top:6px;">Guardar inventario</button>
+        </div>
+        <div>
+          <label class="field-label">Tiempo para cocinar</label>
+          <select id="cook-time">
+            <option value="15">15 min (muy rápido)</option>
+            <option value="30" selected>30 min</option>
+            <option value="60">60 min</option>
+          </select>
+          <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
+          <div id="meal-suggestions" style="margin-top:12px;"></div>
+        </div>
+      </div>
+    </div>
   </section>
 
 </main>
 
-<footer class="foot">Tus datos se guardan localmente en este navegador, y si inicias sesión, también en la nube para verlos desde otros dispositivos.</footer>
+<footer class="foot">Sin sesión iniciada, todo es un ejemplo genérico guardado solo en este navegador. Con tu correo y contraseña, tus datos reales viajan contigo entre dispositivos.</footer>
 
 <div class="modal-overlay" id="plan-overlay">
   <div class="modal-box wide">
@@ -536,29 +584,29 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 </div>
 
 <script>
-/* ============================================================
-   ESTADO Y PERSISTENCIA
-   ============================================================ */
-const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-const WEEKEND = [5,6];
+// ============================================================
+// PERFIL ACTIVO (invitado vs cuenta)
+// ============================================================
+let profileKey = 'guest';
+function storageKey(base){ return base + '::' + profileKey; }
 
 function loadJSON(key, fallback){
   try{
-    const raw = localStorage.getItem(key);
+    const raw = localStorage.getItem(storageKey(key));
     return raw ? JSON.parse(raw) : fallback;
   }catch(e){ return fallback; }
 }
 function saveJSON(key, value){
-  localStorage.setItem(key, JSON.stringify(value));
-  if(key!=='lastUpdated') localStorage.setItem('lastUpdated', String(Date.now()));
+  localStorage.setItem(storageKey(key), JSON.stringify(value));
+  if(key!=='lastUpdated') localStorage.setItem(storageKey('lastUpdated'), String(Date.now()));
   if(typeof scheduleCloudSync === 'function') scheduleCloudSync();
 }
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
-/* ============================================================
-   TEMAS DE COLOR
-   ============================================================ */
+// ============================================================
+// TEMAS DE COLOR
+// ============================================================
 const THEMES = {
   bosque: {
     label:'Bosque (original)', swatch:'#2f4d3f',
@@ -619,17 +667,19 @@ document.getElementById('theme-toggle').addEventListener('click', (e)=>{
 document.addEventListener('click', ()=> document.getElementById('theme-menu').classList.remove('open'));
 applyTheme(localStorage.getItem('theme') || 'bosque');
 
-/* --- Filosofía --- */
-const defaultPhilo = {
-  objetivos: "Escribe aquí tus objetivos del semestre: qué ramos son prioridad, qué quieres lograr y qué significa para ti que 'te haya ido bien' al final.",
-  prioridades: "Escribe aquí el orden de tus prioridades (ej: el ramo más exigente primero, luego el resto según carga, entrenamiento, salud mental, vida social).",
-  reglas: "Escribe aquí tus reglas de estudio: qué técnicas quieres usar, qué NO quieres volver a hacer, y qué compromisos tienes contigo mismo/a este semestre."
-};
-const philo = loadJSON('philosophy', defaultPhilo);
+// ============================================================
+// ESTADO
+// ============================================================
+const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const WEEKEND = [5,6];
 
-/* ============================================================
-   TIPOS DE RAMO (para que el Asistente estudie cada uno distinto)
-   ============================================================ */
+const defaultPhilo = {
+  objetivos: "Escribe aquí tus objetivos del semestre.",
+  prioridades: "Escribe aquí el orden de tus prioridades.",
+  reglas: "Escribe aquí tus reglas de estudio."
+};
+let philo = {...defaultPhilo};
+
 const STUDY_TYPES = {
   practico: 'Práctico (ejercicios)',
   teorico: 'Teórico (conceptos)',
@@ -637,23 +687,18 @@ const STUDY_TYPES = {
 };
 function guessStudyType(name){
   const n = (name||'').toLowerCase();
-  if(/ingl[eé]s|idioma|franc[eé]s|alem[aá]n|portugu[eé]s|italiano/.test(n)) return 'idioma';
-  if(/matem[aá]tica|c[aá]lculo|[aá]lgebra|estad[ií]stica|algoritmo|complejidad|f[ií]sica|arquitectura|programaci[oó]n|estructura de datos/.test(n)) return 'practico';
+  if(/ingl[eé]s|idioma|franc[eé]s|alem[aá]n/.test(n)) return 'idioma';
+  if(/matem[aá]tica|c[aá]lculo|algoritmo|f[ií]sica/.test(n)) return 'practico';
   return 'teorico';
 }
 
-/* --- Ramos --- */
 const defaultSubjects = [
-  {id:uid(), name:'Matemática II', color:'#a9503b', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Algoritmos y Complejidad', color:'#3b6e8f', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Arquitectura y Organización de Computadores', color:'#c67a2f', credits:'', studyType:'practico', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Análisis y Diseño de Software', color:'#2f4d3f', credits:'', studyType:'teorico', schedule:'', topics:[], tests:[]},
-  {id:uid(), name:'Inglés 6', color:'#6a5a8c', credits:'', studyType:'idioma', schedule:'', topics:[], tests:[]},
+  {id:'demo1', name:'Matemática II', color:'#a9503b', credits:'5', studyType:'practico', topics:[], tests:[]},
+  {id:'demo2', name:'Algoritmos', color:'#3b6e8f', credits:'5', studyType:'practico', topics:[], tests:[]},
+  {id:'demo3', name:'Arquitectura', color:'#c67a2f', credits:'4', studyType:'teorico', topics:[], tests:[]},
+  {id:'demo4', name:'Inglés 6', color:'#6a5a8c', credits:'3', studyType:'idioma', topics:[], tests:[]},
 ];
 
-/* Normaliza un arreglo de ramos para que siempre tenga la forma correcta,
-   sin importar si viene de localStorage, de la nube, o de una versión vieja.
-   Se llama SIEMPRE que los ramos se reemplazan por completo (carga inicial o sync). */
 function normalizeSubjects(arr){
   if(!Array.isArray(arr)) return JSON.parse(JSON.stringify(defaultSubjects));
   arr.forEach(s=>{
@@ -662,9 +707,7 @@ function normalizeSubjects(arr){
     if(!s.color) s.color = randomColor();
     if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
     if(!s.studyType || !STUDY_TYPES[s.studyType]) s.studyType = guessStudyType(s.name);
-    if(!Array.isArray(s.topics)){
-      s.topics = (s.content && String(s.content).trim()) ? [{id:uid(), name:String(s.content).trim().slice(0,120), status:'sinver'}] : [];
-    }
+    if(!Array.isArray(s.topics)) s.topics = [];
     s.topics.forEach(t=>{
       if(!t.id) t.id = uid();
       if(!t.status || !['sinver','debil','dominado'].includes(t.status)) t.status = 'sinver';
@@ -673,15 +716,11 @@ function normalizeSubjects(arr){
     s.tests.forEach(t=>{
       if(!t.id) t.id = uid();
       if(!Array.isArray(t.temario)) t.temario = [];
-      // filtra referencias a temas que ya no existen, para que nunca truene el conteo
       t.temario = t.temario.filter(tid => s.topics.some(top=>top.id===tid));
     });
   });
   return arr;
 }
-let subjects = normalizeSubjects(loadJSON('subjects', JSON.parse(JSON.stringify(defaultSubjects))));
-
-/* --- Bloques puntuales (fecha específica) --- */
 function normalizeBlocks(arr){
   if(!Array.isArray(arr)) return [];
   arr.forEach(b=>{
@@ -693,10 +732,13 @@ function normalizeBlocks(arr){
   });
   return arr;
 }
-let blocks = normalizeBlocks(loadJSON('blocks', []));
-
-/* --- Bloques recurrentes (se repiten cada semana): clases, gimnasio, o cualquier cosa fija --- */
-// day: 0=Lunes ... 6=Domingo. Vacío por defecto: cada quien agrega los suyos desde la sección Semana.
+const RECURRING_TYPES = [
+  {value:'clase', label:'Clase'},
+  {value:'estudio', label:'Estudio'},
+  {value:'gym', label:'Gimnasio'},
+  {value:'social', label:'Vida social'},
+  {value:'otro', label:'Otro'}
+];
 function normalizeRecurring(arr){
   if(!Array.isArray(arr)) return [];
   arr.forEach(c=>{
@@ -708,17 +750,6 @@ function normalizeRecurring(arr){
   });
   return arr;
 }
-let recurring = normalizeRecurring(loadJSON('recurring', loadJSON('classTemplate', [])));
-let recurringExceptions = new Set(loadJSON('recurringExceptions', []));
-// migración: si ya tenía gimnasio sembrado automáticamente (versión anterior) y no tiene aún una regla
-// recurrente de gimnasio, se la creamos una sola vez para no perder esa función.
-if(!recurring.some(c=>c.type==='gym') && blocks.some(b=>b.type==='gym')){
-  [0,2,4].forEach(day=>{
-    recurring.push({id:uid(), day, type:'gym', subjectId:null, subjectName:'', label:'Gimnasio · Full Body', start:'18:00', end:'19:15'});
-  });
-}
-
-/* --- Comida --- */
 const legacyMealSlots = ['Colación pre-gym','Almuerzo','Cena'];
 function normalizeMeals(obj){
   const result = Object.fromEntries(DAYS.map(d=>[d, []]));
@@ -734,27 +765,45 @@ function normalizeMeals(obj){
   }
   return result;
 }
-let meals = normalizeMeals(loadJSON('meals', null));
 
-/* --- fecha ancla: lunes de la primera semana visible --- */
 function mondayOf(d){
   const date = new Date(d);
-  const day = (date.getDay()+6)%7; // 0=lunes
+  const day = (date.getDay()+6)%7;
   date.setDate(date.getDate()-day);
   date.setHours(0,0,0,0);
   return date;
 }
-let fortnightStart = loadJSON('fortnightStart', mondayOf(new Date()).toISOString());
-fortnightStart = new Date(fortnightStart);
+
+let subjects = [];
+let blocks = [];
+let recurring = [];
+let recurringExceptions = new Set();
+let meals = {};
+let weekStart = mondayOf(new Date());
+let inventory = [];
+
+function loadLocalState(){
+  subjects = normalizeSubjects(loadJSON('subjects', JSON.parse(JSON.stringify(defaultSubjects))));
+  blocks = normalizeBlocks(loadJSON('blocks', []));
+  recurring = normalizeRecurring(loadJSON('recurring', []));
+  recurringExceptions = new Set(loadJSON('recurringExceptions', []));
+  meals = normalizeMeals(loadJSON('meals', null));
+  philo = {...defaultPhilo, ...loadJSON('philosophy', {})};
+  weekStart = new Date(loadJSON('weekStart', mondayOf(new Date()).toISOString()));
+  inventory = loadJSON('inventory', []);
+  if(!Array.isArray(inventory)) inventory = [];
+  document.getElementById('inventory-input').value = inventory.join(', ');
+}
+loadLocalState();
 
 function fmt(d){ return d.toISOString().slice(0,10); }
 function fmtLong(d){ return d.toLocaleDateString('es-CL', {day:'numeric', month:'short'}); }
 
 document.getElementById('today-label').textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
 
-/* ============================================================
-   SINCRONIZACIÓN ENTRE DISPOSITIVOS (Firebase)
-   ============================================================ */
+// ============================================================
+// FIREBASE (sincronización)
+// ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyDSJ8G1mmi8Lbq3NbUMRwyizRHpgA6B55A",
   authDomain: "planificador-b4f8a.firebaseapp.com",
@@ -788,29 +837,31 @@ function setSyncStatus(state, text){
 function getFullState(){
   return {
     philosophy: philo, subjects, blocks, recurring, meals,
-    fortnightStart: fortnightStart.toISOString(),
+    weekStart: weekStart.toISOString(),
     recurringExceptions: [...recurringExceptions],
-    updatedAt: Number(localStorage.getItem('lastUpdated')||Date.now())
+    inventory: inventory,
+    updatedAt: Number(localStorage.getItem(storageKey('lastUpdated'))||Date.now())
   };
 }
 function applyFullState(state){
   suppressCloudSync = true;
-  if(state.philosophy) Object.assign(philo, state.philosophy);
-  if(state.subjects) subjects = normalizeSubjects(state.subjects);
-  if(state.blocks) blocks = normalizeBlocks(state.blocks);
-  if(state.recurring) recurring = normalizeRecurring(state.recurring);
-  else if(state.classTemplate) recurring = normalizeRecurring(state.classTemplate.map(c=>({...c, type:c.type||'clase'})));
-  if(state.meals) meals = normalizeMeals(state.meals);
-  if(state.fortnightStart) fortnightStart = new Date(state.fortnightStart);
-  if(state.recurringExceptions) recurringExceptions = new Set(state.recurringExceptions);
-  localStorage.setItem('philosophy', JSON.stringify(philo));
-  localStorage.setItem('subjects', JSON.stringify(subjects));
-  localStorage.setItem('blocks', JSON.stringify(blocks));
-  localStorage.setItem('recurring', JSON.stringify(recurring));
-  localStorage.setItem('meals', JSON.stringify(meals));
-  localStorage.setItem('fortnightStart', JSON.stringify(fortnightStart.toISOString()));
-  localStorage.setItem('recurringExceptions', JSON.stringify([...recurringExceptions]));
-  localStorage.setItem('lastUpdated', String(state.updatedAt || Date.now()));
+  if(state.philosophy) philo = {...defaultPhilo, ...state.philosophy};
+  subjects = normalizeSubjects(state.subjects || []);
+  blocks = normalizeBlocks(state.blocks || []);
+  recurring = normalizeRecurring(state.recurring || []);
+  meals = normalizeMeals(state.meals);
+  if(state.weekStart) weekStart = new Date(state.weekStart);
+  recurringExceptions = new Set(state.recurringExceptions || []);
+  inventory = Array.isArray(state.inventory) ? state.inventory : [];
+  localStorage.setItem(storageKey('philosophy'), JSON.stringify(philo));
+  localStorage.setItem(storageKey('subjects'), JSON.stringify(subjects));
+  localStorage.setItem(storageKey('blocks'), JSON.stringify(blocks));
+  localStorage.setItem(storageKey('recurring'), JSON.stringify(recurring));
+  localStorage.setItem(storageKey('meals'), JSON.stringify(meals));
+  localStorage.setItem(storageKey('weekStart'), JSON.stringify(weekStart.toISOString()));
+  localStorage.setItem(storageKey('recurringExceptions'), JSON.stringify([...recurringExceptions]));
+  localStorage.setItem(storageKey('inventory'), JSON.stringify(inventory));
+  localStorage.setItem(storageKey('lastUpdated'), String(state.updatedAt || Date.now()));
   renderAll();
   suppressCloudSync = false;
 }
@@ -821,6 +872,7 @@ function renderAll(){
     renderWeeks();
     renderMeals();
     renderAsistente();
+    document.getElementById('inventory-input').value = inventory.join(', ');
   }catch(err){
     console.error('Error al dibujar la página:', err);
   }
@@ -837,14 +889,17 @@ function flushCloudSyncNow(){
   clearTimeout(cloudSyncTimer);
   db.collection('users').doc(currentUser.uid).set(getFullState())
     .then(()=> setSyncStatus('on', currentUser.email))
-    .catch(()=> setSyncStatus('', 'Error al sincronizar (revisa las reglas de Firestore)'));
+    .catch((err)=>{
+      console.error('Error al sincronizar con Firestore:', err);
+      setSyncStatus('', 'Error al sincronizar');
+    });
 }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushCloudSyncNow(); });
 window.addEventListener('pagehide', flushCloudSyncNow);
 
 function traduceError(err){
   const map = {
-    'auth/email-already-in-use':'Ese correo ya tiene una cuenta. Prueba iniciar sesión.',
+    'auth/email-already-in-use':'Ese correo ya tiene una cuenta.',
     'auth/invalid-email':'Correo inválido.',
     'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
     'auth/wrong-password':'Contraseña incorrecta.',
@@ -877,13 +932,13 @@ document.getElementById('import-file').addEventListener('change', e=>{
   reader.onload = ()=>{
     try{
       const state = JSON.parse(reader.result);
-      if(!confirm('Esto va a reemplazar todos tus datos actuales por los del respaldo. ¿Continuar?')) return;
+      if(!confirm('¿Reemplazar todos los datos actuales por el respaldo?')) return;
       state.updatedAt = Date.now();
       applyFullState(state);
       if(cloudEnabled && currentUser) flushCloudSyncNow();
       alert('Respaldo restaurado.');
     }catch(err){
-      alert('El archivo no parece un respaldo válido.');
+      alert('El archivo no es un respaldo válido.');
     }
   };
   reader.readAsText(file);
@@ -892,7 +947,7 @@ document.getElementById('import-file').addEventListener('change', e=>{
 
 document.getElementById('btn-close-login').addEventListener('click', closeLoginModal);
 document.getElementById('btn-signin').addEventListener('click', ()=>{
-  if(!cloudEnabled){ alert('La sincronización todavía no está configurada.'); return; }
+  if(!cloudEnabled){ alert('La sincronización no está configurada.'); return; }
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-password').value;
   const msg = document.getElementById('login-msg');
@@ -902,7 +957,7 @@ document.getElementById('btn-signin').addEventListener('click', ()=>{
     .catch(err=>{ msg.className='msg error'; msg.textContent=traduceError(err); });
 });
 document.getElementById('btn-signup').addEventListener('click', ()=>{
-  if(!cloudEnabled){ alert('La sincronización todavía no está configurada.'); return; }
+  if(!cloudEnabled){ alert('La sincronización no está configurada.'); return; }
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-password').value;
   const msg = document.getElementById('login-msg');
@@ -917,13 +972,16 @@ if(cloudEnabled){
     currentUser = user;
     const widget = document.getElementById('account-widget');
     if(user){
+      profileKey = user.uid;
+      loadLocalState();
+      renderAll();
       widget.innerHTML = `<span class="sync-dot on" id="sync-dot"></span><span id="account-status">${escapeAttr(user.email)}</span><button id="btn-logout">Cerrar sesión</button>`;
       document.getElementById('btn-logout').addEventListener('click', ()=> auth.signOut());
       db.collection('users').doc(user.uid).get().then(doc=>{
         if(doc.exists){
           const cloudData = doc.data();
           const cloudUpdated = cloudData.updatedAt || 0;
-          const localUpdated = Number(localStorage.getItem('lastUpdated')||0);
+          const localUpdated = Number(localStorage.getItem(storageKey('lastUpdated'))||0);
           if(cloudUpdated > localUpdated){
             applyFullState(cloudData);
           }else{
@@ -931,23 +989,28 @@ if(cloudEnabled){
           }
           setSyncStatus('on', user.email);
         }else{
-          db.collection('users').doc(user.uid).set(getFullState()).then(()=> setSyncStatus('on', user.email));
+          db.collection('users').doc(user.uid).set(getFullState())
+            .then(()=> setSyncStatus('on', user.email))
+            .catch(()=> setSyncStatus('', 'Error al sincronizar'));
         }
-      }).catch(()=> setSyncStatus('', 'Error al leer desde Firestore (revisa las reglas)'));
+      }).catch(()=> setSyncStatus('', 'Error al leer desde Firestore'));
     }else{
+      profileKey = 'guest';
+      loadLocalState();
+      renderAll();
       widget.innerHTML = `<span class="sync-dot" id="sync-dot"></span><span id="account-status">Sin sincronizar</span><button id="btn-open-login">Iniciar sesión</button>`;
       document.getElementById('btn-open-login').addEventListener('click', openLoginModal);
     }
   });
 }else{
   document.getElementById('btn-open-login').addEventListener('click', ()=>{
-    alert('La sincronización con la nube todavía no está configurada en este archivo.');
+    alert('La sincronización con la nube no está configurada.');
   });
 }
 
-/* ============================================================
-   NAV
-   ============================================================ */
+// ============================================================
+// NAV
+// ============================================================
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
@@ -957,9 +1020,9 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
   });
 });
 
-/* ============================================================
-   FILOSOFIA
-   ============================================================ */
+// ============================================================
+// FILOSOFIA
+// ============================================================
 ['objetivos','prioridades','reglas'].forEach(k=>{
   const el = document.getElementById('philo-'+k);
   el.addEventListener('input', ()=>{
@@ -972,11 +1035,10 @@ function renderPhilosophy(){
     document.getElementById('philo-'+k).textContent = philo[k];
   });
 }
-renderPhilosophy();
 
-/* ============================================================
-   RAMOS
-   ============================================================ */
+// ============================================================
+// RAMOS — con el BUG DE PRUEBAS ARREGLADO
+// ============================================================
 const HOURS_PER_CREDIT = 1;
 const STATUS_CYCLE = ['sinver','debil','dominado'];
 const STATUS_LABEL = {sinver:'sin ver', debil:'débil', dominado:'dominado'};
@@ -990,7 +1052,7 @@ function renderSubjects(){
       card.className = 'card pad subject-card';
       card.style.setProperty('--sub-color', sub.color);
       const creditsNum = parseFloat(sub.credits);
-      const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+      const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*HOURS_PER_CREDIT)} h/semana sugeridas` : 'agrega los créditos para estimar horas';
       card.innerHTML = `
         <div class="head">
           <input type="text" value="${escapeAttr(sub.name)}" data-field="name">
@@ -1008,7 +1070,7 @@ function renderSubjects(){
         <label class="field-label">Temas del ramo</label>
         <div class="topics-list" data-topiclist></div>
         <div class="add-topic-row">
-          <input type="text" placeholder="Agregar tema (ej: unidad 2 — recursión)" data-newtopic>
+          <input type="text" placeholder="Agregar tema" data-newtopic>
           <button class="btn ghost small" data-action="add-topic">+</button>
         </div>
         <label class="field-label">Fechas de pruebas</label>
@@ -1024,7 +1086,7 @@ function renderSubjects(){
           saveJSON('subjects', subjects);
           if(inp.dataset.field==='credits'){
             const c = parseFloat(sub.credits);
-            card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas fuera de clases` : 'agrega los créditos para estimar horas semanales';
+            card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*HOURS_PER_CREDIT)} h/semana sugeridas` : 'agrega los créditos para estimar horas';
           }
           if(inp.dataset.field==='studyType') renderAsistente();
         });
@@ -1064,7 +1126,7 @@ function renderSubjects(){
   addTile.className = 'add-subject-btn';
   addTile.textContent = '+ agregar ramo';
   addTile.addEventListener('click', ()=>{
-    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', studyType:'teorico', schedule:'', topics:[], tests:[]});
+    subjects.push({id:uid(), name:'Nuevo ramo', color: randomColor(), credits:'', studyType:'teorico', topics:[], tests:[]});
     saveJSON('subjects', subjects);
     renderSubjects();
     renderAsistente();
@@ -1133,14 +1195,17 @@ function renderTests(card, sub){
       <span class="icon-btn" data-taction="delete">✕</span>
     `;
     list.appendChild(row);
+    
+    // 🔥 BUG ARREGLADO: Ahora usamos 'change' en lugar de 'input'
     row.querySelectorAll('[data-tf]').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
+      inp.addEventListener('change', ()=>{
         test[inp.dataset.tf] = inp.value;
         saveJSON('subjects', subjects);
-        renderTests(card, sub);
+        updateTestBadges(card, sub);
         renderAsistente();
       });
     });
+    
     row.querySelector('[data-taction="delete"]').addEventListener('click', ()=>{
       sub.tests = sub.tests.filter(t=>t.id!==test.id);
       saveJSON('subjects', subjects);
@@ -1177,6 +1242,23 @@ function renderTests(card, sub){
   });
 }
 
+function updateTestBadges(card, sub){
+  const badges = card.querySelectorAll('.days-badge');
+  sub.tests.forEach((test, idx)=>{
+    if(badges[idx]){
+      const du = daysUntil(test.date);
+      if(du !== null){
+        const label = du<0 ? 'pasó' : (du===0 ? 'hoy' : `en ${du}d`);
+        badges[idx].textContent = label;
+        badges[idx].className = `days-badge ${du!==null && du>=0 && du<=7 ? 'urgent':''}`;
+      } else {
+        badges[idx].textContent = '';
+        badges[idx].className = 'days-badge';
+      }
+    }
+  });
+}
+
 function randomColor(){
   const palette = ['#2f4d3f','#c67a2f','#a9503b','#3b6e8f','#6a5a8c','#5c7b6c'];
   return palette[Math.floor(Math.random()*palette.length)];
@@ -1185,13 +1267,14 @@ function escapeAttr(str){
   return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 }
 
-/* ============================================================
-   SEMANA (2 semanas, drag & drop)
-   ============================================================ */
-const HOUR_START = 5, HOUR_END = 23; // grilla visible 05:00–23:00
-const SUGGEST_MIN_HOUR = 8; // las sugerencias automáticas nunca proponen antes de esta hora
+// ============================================================
+// SEMANA (1 SEMANA)
+// ============================================================
+const HOUR_START = 5, HOUR_END = 23;
+const SUGGEST_MIN_HOUR = 8;
 const PX_PER_HOUR = 48;
 const GRID_HEIGHT = (HOUR_END-HOUR_START)*PX_PER_HOUR;
+const DAYS_IN_VIEW = 7;
 
 function timeToMin(t){ const [h,m] = t.split(':').map(Number); return h*60+m; }
 function normalizeTime(str){
@@ -1219,7 +1302,6 @@ function addMin(t, delta){
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
 }
 
-/* --- Bloques recurrentes: panel editor --- */
 function linkClassSubjects(){
   recurring.forEach(c=>{
     if(c.type==='clase' && !c.subjectId){
@@ -1228,13 +1310,6 @@ function linkClassSubjects(){
     }
   });
 }
-const RECURRING_TYPES = [
-  {value:'clase', label:'Clase'},
-  {value:'estudio', label:'Estudio'},
-  {value:'gym', label:'Gimnasio'},
-  {value:'social', label:'Vida social'},
-  {value:'otro', label:'Otro'}
-];
 function renderRecurringPanel(){
   linkClassSubjects();
   const list = document.getElementById('recurring-list');
@@ -1282,7 +1357,6 @@ document.getElementById('btn-add-recurring').addEventListener('click', ()=>{
   renderWeeks();
 });
 
-/* --- Agregar bloque puntual --- */
 document.getElementById('btn-add-block').addEventListener('click', ()=>{
   const date = document.getElementById('nb-date').value;
   const type = document.getElementById('nb-type').value;
@@ -1297,10 +1371,21 @@ document.getElementById('btn-add-block').addEventListener('click', ()=>{
   renderWeeks();
 });
 
+document.getElementById('btn-clear-week').addEventListener('click', ()=>{
+  const end = new Date(weekStart); end.setDate(end.getDate()+6);
+  const startStr = fmt(weekStart), endStr = fmt(end);
+  const inWeek = blocks.filter(b=> b.date>=startStr && b.date<=endStr);
+  if(inWeek.length===0){ alert('Esta semana ya está vacía.'); return; }
+  if(!confirm(`¿Borrar los ${inWeek.length} bloques de esta semana?`)) return;
+  blocks = blocks.filter(b=> !(b.date>=startStr && b.date<=endStr));
+  saveJSON('blocks', blocks);
+  renderWeeks();
+});
+
 function renderWeekRange(){
-  const end = new Date(fortnightStart); end.setDate(end.getDate()+13);
-  document.getElementById('week-range').textContent = `${fmtLong(fortnightStart)} — ${fmtLong(end)}`;
-  document.getElementById('nb-date').min = fmt(fortnightStart);
+  const end = new Date(weekStart); end.setDate(end.getDate()+6);
+  document.getElementById('week-range').textContent = `${fmtLong(weekStart)} — ${fmtLong(end)}`;
+  document.getElementById('nb-date').min = fmt(weekStart);
   document.getElementById('nb-date').max = fmt(end);
   if(!document.getElementById('nb-date').value) document.getElementById('nb-date').value = fmt(new Date());
 }
@@ -1310,61 +1395,62 @@ function renderWeeks(){
   renderWeekRange();
   const wrap = document.getElementById('weeks-wrap');
   wrap.innerHTML = '';
-  for(let w=0; w<2; w++){
-    const weekDiv = document.createElement('div');
-    weekDiv.className = 'week-block';
-    const weekMonday = new Date(fortnightStart); weekMonday.setDate(weekMonday.getDate()+w*7);
-    weekDiv.innerHTML = `<div class="week-label">Semana ${w+1} · desde ${fmtLong(weekMonday)}</div>`;
+  const todayStr = fmt(new Date());
 
-    const grid = document.createElement('div');
-    grid.className = 'time-grid';
+  const weekDiv = document.createElement('div');
+  weekDiv.className = 'week-block';
+  weekDiv.innerHTML = `<div class="week-label">Semana · desde ${fmtLong(weekStart)}</div>`;
 
-    const header = document.createElement('div');
-    header.className = 'time-grid-header';
-    header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d=>{
-      const date = new Date(weekMonday); date.setDate(date.getDate()+d);
-      return `<div class="day-head${WEEKEND.includes(d)?' weekend':''}"><span>${fmtLong(date)}</span><b>${DAYS[d]}</b></div>`;
-    }).join('');
-    grid.appendChild(header);
+  const grid = document.createElement('div');
+  grid.className = 'time-grid';
 
-    const body = document.createElement('div');
-    body.className = 'time-grid-body';
-    body.style.height = GRID_HEIGHT+'px';
+  const header = document.createElement('div');
+  header.className = 'time-grid-header';
+  header.innerHTML = '<div></div>' + [0,1,2,3,4,5,6].map(d=>{
+    const date = new Date(weekStart); date.setDate(date.getDate()+d);
+    const isToday = fmt(date)===todayStr;
+    return `<div class="day-head${WEEKEND.includes(d)?' weekend':''}${isToday?' today':''}"><span>${fmtLong(date)}</span><b>${DAYS[d]}${isToday?' · hoy':''}</b></div>`;
+  }).join('');
+  grid.appendChild(header);
 
-    const gutter = document.createElement('div');
-    gutter.className = 'hour-gutter';
-    gutter.style.height = GRID_HEIGHT+'px';
-    for(let h=HOUR_START; h<=HOUR_END; h++){
-      const lbl = document.createElement('div');
-      lbl.className = 'hour-label';
-      lbl.style.top = minToY(h*60)+'px';
-      lbl.textContent = String(h).padStart(2,'0')+':00';
-      gutter.appendChild(lbl);
-    }
-    body.appendChild(gutter);
+  const body = document.createElement('div');
+  body.className = 'time-grid-body';
+  body.style.height = GRID_HEIGHT+'px';
 
-    for(let d=0; d<7; d++){
-      const date = new Date(weekMonday); date.setDate(date.getDate()+d);
-      const dateStr = fmt(date);
-      const col = document.createElement('div');
-      col.className = 'day-col-grid' + (WEEKEND.includes(d) ? ' weekend':'');
-      col.style.height = GRID_HEIGHT+'px';
-      col.dataset.date = dateStr;
-      col.dataset.day = d;
-      for(let h=HOUR_START; h<=HOUR_END; h++){
-        const line = document.createElement('div');
-        line.className = 'hour-line';
-        line.style.top = minToY(h*60)+'px';
-        col.appendChild(line);
-      }
-      body.appendChild(col);
-      setupDropZone(col);
-      renderDayColumnBlocks(col, dateStr, d);
-    }
-    grid.appendChild(body);
-    weekDiv.appendChild(grid);
-    wrap.appendChild(weekDiv);
+  const gutter = document.createElement('div');
+  gutter.className = 'hour-gutter';
+  gutter.style.height = GRID_HEIGHT+'px';
+  for(let h=HOUR_START; h<=HOUR_END; h++){
+    const lbl = document.createElement('div');
+    lbl.className = 'hour-label';
+    lbl.style.top = minToY(h*60)+'px';
+    lbl.textContent = String(h).padStart(2,'0')+':00';
+    gutter.appendChild(lbl);
   }
+  body.appendChild(gutter);
+
+  for(let d=0; d<7; d++){
+    const date = new Date(weekStart); date.setDate(date.getDate()+d);
+    const dateStr = fmt(date);
+    const isToday = dateStr===todayStr;
+    const col = document.createElement('div');
+    col.className = 'day-col-grid' + (WEEKEND.includes(d) ? ' weekend':'') + (isToday ? ' today':'');
+    col.style.height = GRID_HEIGHT+'px';
+    col.dataset.date = dateStr;
+    col.dataset.day = d;
+    for(let h=HOUR_START; h<=HOUR_END; h++){
+      const line = document.createElement('div');
+      line.className = 'hour-line';
+      line.style.top = minToY(h*60)+'px';
+      col.appendChild(line);
+    }
+    body.appendChild(col);
+    setupDropZone(col);
+    renderDayColumnBlocks(col, dateStr, d);
+  }
+  grid.appendChild(body);
+  weekDiv.appendChild(grid);
+  wrap.appendChild(weekDiv);
 }
 
 function layoutOverlaps(items){
@@ -1462,7 +1548,7 @@ function renderMovableBlock(it){
     const newLabel = prompt('Descripción', b.label); if(newLabel===null) return;
     const newStart = prompt('Hora de inicio (HH:MM)', b.start); if(newStart===null) return;
     const newEnd = prompt('Hora de término (HH:MM)', b.end); if(newEnd===null) return;
-    b.label = newLabel.trim() || b.label; b.start = newStart; b.end = newEnd;
+    b.label = newLabel.trim() || b.label; b.start = normalizeTime(newStart)||b.start; b.end = normalizeTime(newEnd)||b.end;
     saveJSON('blocks', blocks); renderWeeks();
   });
   return el;
@@ -1507,22 +1593,20 @@ function setupDropZone(col){
   });
 }
 
-document.getElementById('btn-prev-fortnight').addEventListener('click', ()=>{
-  fortnightStart.setDate(fortnightStart.getDate()-14);
-  saveJSON('fortnightStart', fortnightStart.toISOString());
+document.getElementById('btn-prev-week').addEventListener('click', ()=>{
+  weekStart.setDate(weekStart.getDate()-7);
+  saveJSON('weekStart', weekStart.toISOString());
   renderWeeks();
 });
-document.getElementById('btn-next-fortnight').addEventListener('click', ()=>{
-  fortnightStart.setDate(fortnightStart.getDate()+14);
-  saveJSON('fortnightStart', fortnightStart.toISOString());
+document.getElementById('btn-next-week').addEventListener('click', ()=>{
+  weekStart.setDate(weekStart.getDate()+7);
+  saveJSON('weekStart', weekStart.toISOString());
   renderWeeks();
 });
 
-/* ============================================================
-   PLAN DE ESTUDIO — distinto según tipo de ramo y propósito
-   ============================================================ */
-// studyType: 'practico' | 'teorico' | 'idioma'
-// purpose:   'prueba' (temario acotado, urgencia) | 'mantenimiento' (repaso espaciado, sin apuro)
+// ============================================================
+// PLAN DE ESTUDIO
+// ============================================================
 function buildStudyPlan(durationMin, topicName, studyType, purpose){
   const forExam = purpose === 'prueba';
   let parts;
@@ -1530,9 +1614,7 @@ function buildStudyPlan(durationMin, topicName, studyType, purpose){
   if(studyType === 'idioma'){
     parts = [
       {label:'Vocabulario y gramática', pct:0.20, desc:`Recuperación activa: recuerda en voz alta o por escrito el vocabulario y las reglas de "${topicName}", sin mirar apuntes.`},
-      {label:'Comprensión (lectura o audio)', pct:0.25, desc: forExam
-        ? `Lee o escucha un material similar al que podría aparecer en la prueba sobre "${topicName}", y responde preguntas sobre él.`
-        : `Lee o escucha algo breve relacionado a "${topicName}" para mantener el oído y la lectura entrenados.`},
+      {label:'Comprensión (lectura o audio)', pct:0.25, desc: forExam ? `Lee o escucha un material similar al que podría aparecer en la prueba sobre "${topicName}", y responde preguntas sobre él.` : `Lee o escucha algo breve relacionado a "${topicName}" para mantener el oído y la lectura entrenados.`},
       {label:'Producción oral', pct:0.30, desc:`Habla en voz alta (o grábate) usando "${topicName}": arma 3-5 oraciones o un mini-monólogo. Esto es lo que más rinde y lo que menos se practica solo/a.`},
       {label:'Producción escrita', pct:0.15, desc:`Escribe un párrafo corto usando el vocabulario o la estructura de "${topicName}".`},
       {label:'Autoevaluación', pct:0.10, desc:'Revisa tus propios errores de pronunciación, gramática u ortografía y anótalos en tu banco de errores.'}
@@ -1541,9 +1623,7 @@ function buildStudyPlan(durationMin, topicName, studyType, purpose){
     parts = [
       {label:'Recuperación activa', pct:0.15, desc:`Sin mirar apuntes, recuerda o escribe las fórmulas, métodos o pasos clave de "${topicName}".`},
       {label:'Ejercicios nuevos', pct:0.30, desc:`Resuelve ejercicios de "${topicName}" que no hayas hecho antes.`},
-      {label: forExam ? 'Ejercicios de certámenes antiguos' : 'Ejercicios variados / intercalados', pct:0.30, desc: forExam
-        ? `Resuelve preguntas de certámenes anteriores sobre "${topicName}", en condiciones similares a la prueba (tiempo limitado, sin apuntes).`
-        : `Mezcla ejercicios de "${topicName}" con otro tema ya visto, para practicar identificar qué método usar (esto es lo que de verdad mantiene la materia fresca).`},
+      {label: forExam ? 'Ejercicios de certámenes antiguos' : 'Ejercicios variados / intercalados', pct:0.30, desc: forExam ? `Resuelve preguntas de certámenes anteriores sobre "${topicName}", en condiciones similares a la prueba (tiempo limitado, sin apuntes).` : `Mezcla ejercicios de "${topicName}" con otro tema ya visto, para practicar identificar qué método usar (esto es lo que de verdad mantiene la materia fresca).`},
       {label:'Banco de errores', pct:0.15, desc:'Anota cada error que cometiste y por qué, para repasarlo después.'},
       {label:'Autoevaluación', pct:0.10, desc:'Explica en voz alta, paso a paso, cómo resolverías un ejercicio nuevo de este tema.'}
     ];
@@ -1551,9 +1631,7 @@ function buildStudyPlan(durationMin, topicName, studyType, purpose){
     parts = [
       {label:'Recuperación activa', pct:0.20, desc:`Sin mirar apuntes, escribe o explica en voz alta todo lo que recuerdes de "${topicName}".`},
       {label:'Mapa conceptual / esquema', pct:0.20, desc:`Dibuja o escribe cómo se conecta "${topicName}" con otros conceptos del ramo.`},
-      {label: forExam ? 'Casos o preguntas de certámenes antiguos' : 'Aplicación a un caso o ejemplo nuevo', pct:0.30, desc: forExam
-        ? `Responde preguntas de desarrollo o casos de certámenes anteriores sobre "${topicName}".`
-        : `Aplica "${topicName}" a un ejemplo o caso que no hayas visto antes, para comprobar que lo entiendes y no solo lo memorizaste.`},
+      {label: forExam ? 'Casos o preguntas de certámenes antiguos' : 'Aplicación a un caso o ejemplo nuevo', pct:0.30, desc: forExam ? `Responde preguntas de desarrollo o casos de certámenes anteriores sobre "${topicName}".` : `Aplica "${topicName}" a un ejemplo o caso que no hayas visto antes, para comprobar que lo entiendes y no solo lo memorizaste.`},
       {label:'Banco de errores', pct:0.15, desc:'Anota qué conceptos confundiste o te costó explicar.'},
       {label:'Autoevaluación', pct:0.15, desc:'Explica el concepto completo en voz alta, como si le enseñaras a alguien que no sabe nada del tema.'}
     ];
@@ -1574,7 +1652,6 @@ function pickTopicForSession(sub, test, rotateIdx){
   return candidates[(rotateIdx||0) % candidates.length];
 }
 
-/* ---------- Predicción semanal (automática) ---------- */
 function getOccupiedRanges(dateStr, dayIdx){
   const fixed = recurring
     .filter(c=>c.day===dayIdx && !recurringExceptions.has(c.id+'|'+dateStr))
@@ -1586,8 +1663,8 @@ function findFreeSlot(dateStr, dayIdx, durationMin, minStartHour){
   const minStart = (minStartHour!=null ? minStartHour : HOUR_START) * 60;
   const occupied = getOccupiedRanges(dateStr, dayIdx);
   const searchStarts = [];
-  for(let m=17*60; m<=HOUR_END*60-durationMin; m+=30) searchStarts.push(m); // prioriza tarde/noche
-  for(let m=minStart; m<17*60; m+=30) searchStarts.push(m); // luego el resto del día razonable
+  for(let m=17*60; m<=HOUR_END*60-durationMin; m+=30) searchStarts.push(m);
+  for(let m=minStart; m<17*60; m+=30) searchStarts.push(m);
   for(const start of searchStarts){
     const end = start+durationMin;
     const overlaps = occupied.some(([os,oe])=> start<oe && end>os);
@@ -1599,21 +1676,52 @@ function findFreeSlot(dateStr, dayIdx, durationMin, minStartHour){
   }
   return null;
 }
-
-function spreadDayIndices(count){
+function spreadDayIndices(count, totalDays){
   if(count<=1) return [0];
   const idxs = [];
-  for(let k=0;k<count;k++) idxs.push(Math.round(k*(13/(count-1))));
+  for(let k=0;k<count;k++) idxs.push(Math.round(k*((totalDays-1)/(count-1))));
   return [...new Set(idxs)];
 }
 
+// ============================================================
+// 🔥 GENERADOR DE SUGERENCIAS INTELIGENTE (NO BORRA LO EXISTENTE)
+// ============================================================
 document.getElementById('btn-predict').addEventListener('click', ()=>{
-  blocks = blocks.filter(b=>b.type!=='sugerido');
+  const startStr = fmt(weekStart);
+  const endDate = new Date(weekStart);
+  endDate.setDate(endDate.getDate() + 6);
+  const endStr = fmt(endDate);
+  
+  // 🔥 SOLO ELIMINAR SUGERENCIAS QUE COLISIONAN CON BLOQUES REALES
+  const blocksToKeep = [];
+  blocks.forEach(b => {
+    if (b.type !== 'sugerido') {
+      blocksToKeep.push(b);
+      return;
+    }
+    // Si la sugerencia está fuera de esta semana, la conservamos
+    if (b.date < startStr || b.date > endStr) {
+      blocksToKeep.push(b);
+      return;
+    }
+    // Verificar si colisiona con algún bloque real (no sugerido)
+    const hasCollision = blocks.some(existing => 
+      existing.id !== b.id &&
+      existing.type !== 'sugerido' &&
+      existing.date === b.date &&
+      timeToMin(existing.start) < timeToMin(b.end) &&
+      timeToMin(existing.end) > timeToMin(b.start)
+    );
+    if (!hasCollision) {
+      blocksToKeep.push(b);
+    }
+  });
+  blocks = blocksToKeep;
 
-  const horizon = 14;
+  const horizon = 21;
   const info = subjects.map(sub=>{
     const creditsNum = parseFloat(sub.credits) || 3;
-    const baseSessions = Math.min(4, Math.max(1, Math.round((creditsNum*HOURS_PER_CREDIT*2)/1.5)));
+    const baseSessions = Math.min(4, Math.max(1, Math.round(creditsNum*HOURS_PER_CREDIT/1.5)));
     const upcoming = sub.tests
       .map(t=>({...t, d: daysUntil(t.date)}))
       .filter(t=>t.d!==null && t.d>=0 && t.d<=horizon)
@@ -1625,7 +1733,7 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
   });
 
   const totalUrgency = info.reduce((s,w)=>s+w.urgency,0);
-  const bonusPool = Math.round(info.length*1.5);
+  const bonusPool = Math.round(info.length*1.2);
   info.forEach(w=>{
     const bonus = totalUrgency>0 ? Math.round((w.urgency/totalUrgency)*bonusPool) : 0;
     w.totalSessions = w.baseSessions + bonus;
@@ -1639,14 +1747,14 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
   info.forEach(w=>{
     if(w.totalSessions<=0) return;
     const purpose = w.nearest ? 'prueba' : 'mantenimiento';
-    const desired = spreadDayIndices(w.totalSessions);
+    const desired = spreadDayIndices(w.totalSessions, DAYS_IN_VIEW);
     let placed = 0;
     desired.forEach(centerIdx=>{
       if(placed>=w.totalSessions) return;
-      for(let offset=0; offset<14 && placed<w.totalSessions; offset++){
+      for(let offset=0; offset<DAYS_IN_VIEW && placed<w.totalSessions; offset++){
         for(const cand of [centerIdx-offset, centerIdx+offset]){
-          if(cand<0 || cand>13) continue;
-          const d = new Date(fortnightStart); d.setDate(d.getDate()+cand);
+          if(cand<0 || cand>=DAYS_IN_VIEW) continue;
+          const d = new Date(weekStart); d.setDate(d.getDate()+cand);
           const dow = (d.getDay()+6)%7;
           const dateStr = fmt(d);
           const alreadyThisSubject = blocks.some(b=>b.date===dateStr && b.subjectId===w.sub.id);
@@ -1672,9 +1780,9 @@ document.getElementById('btn-predict').addEventListener('click', ()=>{
   renderWeeks();
 });
 
-/* ============================================================
-   ASISTENTE DE SESIÓN DE ESTUDIO
-   ============================================================ */
+// ============================================================
+// ASISTENTE DE SESIÓN DE ESTUDIO
+// ============================================================
 let asPurpose = 'mantenimiento';
 
 document.querySelectorAll('.purpose-toggle button').forEach(btn=>{
@@ -1813,9 +1921,99 @@ document.getElementById('btn-generate-session').addEventListener('click', ()=>{
   msg.textContent = 'Sesión agregada a tu semana. Ábrela desde la grilla para ver el plan.';
 });
 
-/* ============================================================
-   COMIDA
-   ============================================================ */
+// ============================================================
+// 🔥 ASISTENTE CONVERSACIONAL
+// ============================================================
+document.getElementById('btn-chat-plan').addEventListener('click', ()=>{
+  const subId = document.getElementById('as-subject').value;
+  const sub = subjects.find(s=>s.id===subId);
+  const userInput = document.getElementById('as-chat-input').value.trim();
+  const responseDiv = document.getElementById('as-chat-response');
+  
+  if (!sub) {
+    responseDiv.innerHTML = '<span style="color:var(--clay)">Primero selecciona un ramo.</span>';
+    responseDiv.style.display = 'block';
+    return;
+  }
+  
+  if (!userInput) {
+    responseDiv.innerHTML = '<span style="color:var(--clay)">Escribe qué necesitas ayuda específicamente.</span>';
+    responseDiv.style.display = 'block';
+    return;
+  }
+  
+  // Buscar el tema más relevante en el input del usuario
+  let bestTopic = null;
+  let bestScore = 0;
+  sub.topics.forEach(t => {
+    const words = t.name.toLowerCase().split(' ');
+    let score = 0;
+    words.forEach(word => {
+      if (userInput.toLowerCase().includes(word)) score++;
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestTopic = t;
+    }
+  });
+  const topic = bestTopic || sub.topics[0];
+  
+  const duration = Number(document.getElementById('as-duration').value);
+  const plan = buildStudyPlan(duration, topic ? topic.name : sub.name, sub.studyType, asPurpose);
+  
+  let response = `📚 <strong>Guía personalizada para ${sub.name}</strong>\n\n`;
+  response += `🔍 Basado en tu consulta: "${userInput}"\n\n`;
+  response += `📌 Plan de estudio sugerido (${duration} min):\n\n`;
+  plan.forEach((step, i) => {
+    response += `${i+1}. ${step.label} (${step.minutes} min)\n   ${step.desc}\n\n`;
+  });
+  response += `💡 Consejo: Enfócate en los temas que mencionaste: ${topic ? topic.name : 'los principales del ramo'}`;
+  
+  responseDiv.innerHTML = response.replace(/\n/g, '<br>');
+  responseDiv.style.display = 'block';
+  
+  // Guardar el plan generado para poder guardarlo como bloque
+  window._lastChatPlan = { sub, topic, plan, duration };
+});
+
+document.getElementById('btn-chat-save').addEventListener('click', ()=>{
+  const plan = window._lastChatPlan;
+  if (!plan) {
+    alert('Primero genera una guía con "Generar guía personalizada".');
+    return;
+  }
+  
+  const date = document.getElementById('as-date').value;
+  const start = normalizeTime(document.getElementById('as-start').value);
+  if (!date || !start) {
+    alert('Elige un día y hora de inicio válida.');
+    return;
+  }
+  
+  const duration = plan.duration;
+  const end = addMin(start, duration);
+  
+  blocks.push({
+    id: uid(),
+    date: date,
+    type: 'estudio',
+    subjectId: plan.sub.id,
+    label: `📋 ${plan.sub.name} — guía personalizada: ${plan.topic ? plan.topic.name : 'repaso'}`,
+    start: start,
+    end: end,
+    done: false,
+    plan: plan.plan
+  });
+  
+  saveJSON('blocks', blocks);
+  renderWeeks();
+  document.getElementById('as-msg').className = 'msg ok';
+  document.getElementById('as-msg').textContent = '✅ Guía guardada como bloque de estudio.';
+});
+
+// ============================================================
+// COMIDA
+// ============================================================
 function renderMeals(){
   const grid = document.getElementById('meals-grid');
   grid.innerHTML = '';
@@ -1868,12 +2066,81 @@ function renderMealEntries(div, day){
   });
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-saveJSON('subjects', subjects);
-linkClassSubjects();
-saveJSON('recurring', recurring);
+// ============================================================
+// 🔥 SUGERENCIAS DE COMIDAS CON INVENTARIO
+// ============================================================
+const RECIPES = {
+  'rapido': [
+    { name: 'Huevos revueltos con tostadas', ingredients: ['huevos', 'pan', 'sal'], time: 10 },
+    { name: 'Sándwich de pollo', ingredients: ['pan', 'pollo', 'lechuga', 'tomate'], time: 15 },
+    { name: 'Tortilla de verduras', ingredients: ['huevos', 'cebolla', 'pimentón'], time: 15 },
+    { name: 'Ensalada rápida', ingredients: ['lechuga', 'tomate', 'aceite', 'vinagre'], time: 10 },
+    { name: 'Palta con pan', ingredients: ['pan', 'palta', 'sal'], time: 5 }
+  ],
+  'medio': [
+    { name: 'Arroz con pollo', ingredients: ['arroz', 'pollo', 'cebolla', 'zanahoria'], time: 30 },
+    { name: 'Pasta con salsa', ingredients: ['pasta', 'tomate', 'cebolla', 'ajo'], time: 25 },
+    { name: 'Hamburguesas caseras', ingredients: ['carne', 'pan', 'lechuga', 'tomate', 'queso'], time: 30 },
+    { name: 'Tortilla de papas', ingredients: ['huevos', 'papas', 'cebolla', 'aceite'], time: 35 },
+    { name: 'Fajitas de pollo', ingredients: ['pollo', 'cebolla', 'pimentón', 'tortillas'], time: 30 }
+  ],
+  'largo': [
+    { name: 'Cazuela de pollo', ingredients: ['pollo', 'papas', 'choclo', 'zapallo', 'arroz'], time: 60 },
+    { name: 'Lasagna', ingredients: ['pasta', 'carne', 'tomate', 'queso', 'cebolla'], time: 55 },
+    { name: 'Estofado de carne', ingredients: ['carne', 'papas', 'zanahoria', 'cebolla'], time: 50 },
+    { name: 'Pollo al horno', ingredients: ['pollo', 'papas', 'cebolla', 'ajo'], time: 60 },
+    { name: 'Pastel de choclo', ingredients: ['choclo', 'carne', 'cebolla', 'huevos'], time: 55 }
+  ]
+};
+
+document.getElementById('btn-save-inventory').addEventListener('click', ()=>{
+  const input = document.getElementById('inventory-input').value;
+  inventory = input.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
+  saveJSON('inventory', inventory);
+  alert('✅ Inventario guardado: ' + inventory.join(', '));
+});
+
+document.getElementById('btn-suggest-meals').addEventListener('click', ()=>{
+  const time = parseInt(document.getElementById('cook-time').value);
+  const suggestions = document.getElementById('meal-suggestions');
+  
+  if (!inventory.length) {
+    suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario de ingredientes.</p>';
+    return;
+  }
+  
+  let timeCategory = 'rapido';
+  if (time >= 45) timeCategory = 'largo';
+  else if (time >= 25) timeCategory = 'medio';
+  
+  const available = RECIPES[timeCategory] || [];
+  const scored = available.map(recipe => {
+    const match = recipe.ingredients.filter(ing => 
+      inventory.some(inv => ing.includes(inv) || inv.includes(ing))
+    );
+    return { ...recipe, matchCount: match.length, total: recipe.ingredients.length };
+  });
+  
+  scored.sort((a,b) => b.matchCount - a.matchCount);
+  const top = scored.slice(0, 4);
+  
+  if (!top.length || top[0].matchCount === 0) {
+    suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario. ¿Quieres agregar más ingredientes?</p>`;
+    return;
+  }
+  
+  suggestions.innerHTML = top.map(r => `
+    <div class="meal-suggestion-card">
+      <h5>🍳 ${r.name}</h5>
+      <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total} ingredientes</div>
+      <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
+    </div>
+  `).join('');
+});
+
+// ============================================================
+// INIT
+// ============================================================
 renderAll();
 </script>
 </body>
