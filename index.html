@@ -247,6 +247,15 @@ label.field-label:first-child{margin-top:0;}
 .day-col-grid.weekend{background:#f4f2ec;}
 .day-col-grid.today{background:color-mix(in srgb, var(--ink) 7%, var(--paper-raised));}
 .day-col-grid.drag-over{background:var(--amber-soft);}
+.eval-tags{
+  position:absolute; top:2px; left:2px; right:2px; z-index:5;
+  display:flex; flex-direction:column; gap:2px; pointer-events:none;
+}
+.eval-tag{
+  font-family:'IBM Plex Mono'; font-size:8.5px; line-height:1.3;
+  padding:2px 6px; border-radius:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  box-shadow:0 1px 2px rgba(0,0,0,0.1); border:1px solid rgba(0,0,0,0.08);
+}
 .block-abs{
   position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 34px 3px 6px; font-size:10.5px; line-height:1.3;
   overflow:hidden; cursor:grab; border:1px solid transparent; box-shadow:0 1px 2px rgba(0,0,0,0.06);
@@ -486,6 +495,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div><label class="field-label">Tipo</label>
           <select id="nb-type">
             <option value="estudio">Estudio</option>
+            <option value="ayudantia">Ayudantía</option>
             <option value="comida">Comida</option>
             <option value="traslado">Traslado</option>
             <option value="descanso">Descanso / sueño</option>
@@ -681,6 +691,7 @@ const CONFIG = {
   },
   RECURRING_TYPES: [
     {value:'clase', label:'Clase'},
+    {value:'ayudantia', label:'Ayudantía'},
     {value:'estudio', label:'Estudio'},
     {value:'comida', label:'Comida'},
     {value:'traslado', label:'Traslado'},
@@ -692,6 +703,7 @@ const CONFIG = {
   ],
   BLOCK_TYPES: [
     {value:'estudio', label:'Estudio'},
+    {value:'ayudantia', label:'Ayudantía'},
     {value:'comida', label:'Comida'},
     {value:'traslado', label:'Traslado'},
     {value:'descanso', label:'Descanso / sueño'},
@@ -702,6 +714,7 @@ const CONFIG = {
   ],
   TYPE_COLORS: {
     clase:'#dfe6e2',
+    ayudantia:'#e9edd5',
     estudio:'#dce8f2',
     comida:'#f4dfc0',
     traslado:'#dde3ec',
@@ -1345,6 +1358,24 @@ const App = {
         line.style.top = Utils.minToY(h*60, CONFIG.HOUR_START) + 'px';
         col.appendChild(line);
       }
+
+      const evals = [];
+      this.state.subjects.forEach(sub => {
+        sub.tests.forEach(t => {
+          if(t.date === dateStr) {
+            evals.push({ name: (t.name||'').trim() || 'Evaluación', subName: sub.name, color: sub.color });
+          }
+        });
+      });
+      if(evals.length) {
+        const tags = document.createElement('div');
+        tags.className = 'eval-tags';
+        tags.innerHTML = evals.map(ev =>
+          `<span class="eval-tag" style="background:${ev.color};color:${Utils.textOn(ev.color)}">📌 ${Utils.escape(ev.name)} · ${Utils.escape(ev.subName)}</span>`
+        ).join('');
+        col.appendChild(tags);
+      }
+
       body.appendChild(col);
       this.renderDayColumn(col, dateStr, d);
     }
@@ -1394,9 +1425,12 @@ const App = {
 
   createRecurringBlock(it, dateStr) {
     const c = it.ref;
-    const sub = (c.type === 'clase' || c.type === 'estudio') && c.subjectId
+    const sub = ['clase','estudio','ayudantia'].includes(c.type) && c.subjectId
       ? this.state.subjects.find(s => s.id === c.subjectId) : null;
-    const labelText = c.type === 'clase' ? (sub ? sub.name : c.subjectName) : (c.label || '');
+    let labelText;
+    if(c.type === 'clase') labelText = sub ? sub.name : c.subjectName;
+    else if(c.type === 'ayudantia') labelText = sub ? 'Ayudantía ' + sub.name : (c.label || 'Ayudantía');
+    else labelText = c.label || '';
     const color = sub ? sub.color : (CONFIG.TYPE_COLORS[c.type] || CONFIG.TYPE_COLORS.otro);
     const el = document.createElement('div');
     el.className = `block-abs fixed`;
@@ -1445,7 +1479,7 @@ const App = {
     this.state.recurring.forEach(c => {
       const row = document.createElement('div');
       row.className = 'class-row';
-      const secondaryField = c.type === 'clase' || c.type === 'estudio'
+      const secondaryField = ['clase','estudio','ayudantia'].includes(c.type)
         ? `<select data-cf="subjectId" data-id="${c.id}"><option value="">— elegir ramo —</option>${this.state.subjects.map(s => `<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${Utils.escape(s.name)}</option>`).join('')}</select>`
         : `<input type="text" data-cf="label" data-id="${c.id}" placeholder="Descripción" value="${Utils.escape(c.label||'')}">`;
       row.innerHTML = `
@@ -1513,9 +1547,10 @@ const App = {
       table.innerHTML = `<tr><td style="color:var(--ink-soft);">Agrega ramos primero.</td></tr>`;
       return;
     }
-    let rows = `<tr><th>Ramo</th><th>Cátedra</th><th>Objetivo</th><th>Programado</th><th>Balance</th></tr>`;
+    let rows = `<tr><th>Ramo</th><th>Cátedra</th><th>Ayd.</th><th>Objetivo</th><th>Programado</th><th>Balance</th></tr>`;
     subs.forEach(s => {
       const cat = this.weeklyMinutes(s.id, 'clase');
+      const ayd = this.weeklyMinutes(s.id, 'ayudantia');
       const stu = this.weeklyMinutes(s.id, 'estudio');
       const diff = stu - cat;
       let badge;
@@ -1525,6 +1560,7 @@ const App = {
       rows += `<tr>
         <td><span class="dot" style="background:${s.color}"></span>${Utils.escape(s.name)}</td>
         <td class="num">${cat ? Utils.hoursFmt(cat) : '—'}</td>
+        <td class="num">${ayd ? Utils.hoursFmt(ayd) : '—'}</td>
         <td class="num">${cat ? Utils.hoursFmt(cat) : '—'}</td>
         <td class="num">${stu ? Utils.hoursFmt(stu) : '—'}</td>
         <td>${badge}</td>
@@ -2294,11 +2330,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const s = App.state.subjects.find(x => x.id === target.value);
         c.subjectName = s ? s.name : '';
         if(c.type === 'estudio') c.label = s ? 'Estudio ' + s.name : '';
+        else if(c.type === 'ayudantia') c.label = s ? 'Ayudantía ' + s.name : 'Ayudantía';
       } else {
         c[f] = target.value;
       }
       App.saveJSON('recurring', App.state.recurring);
-      if(f === 'type') App.renderRecurringPanel();
+      if(f === 'type') {
+        const s = App.state.subjects.find(x => x.id === c.subjectId);
+        if(c.type === 'ayudantia') c.label = s ? 'Ayudantía ' + s.name : (c.label || 'Ayudantía');
+        else if(c.type === 'estudio') c.label = s ? 'Estudio ' + s.name : '';
+        App.renderRecurringPanel();
+      }
       App.renderWeeks();
       App.refreshSubjectHints();
       App.renderEstudio();
