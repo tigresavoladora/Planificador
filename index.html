@@ -140,6 +140,27 @@ label.field-label:first-child{margin-top:0;}
 .chip select{border:none; background:transparent; padding:0; font-family:inherit; font-size:inherit; color:inherit; width:auto;}
 .hours-hint{font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--pine-soft);}
 
+.color-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
+.color-row label.field-label{margin:0;}
+.cur-swatch{
+  appearance:none; border:2px solid rgba(0,0,0,0.15); cursor:pointer;
+  width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  transition: var(--transition);
+}
+.cur-swatch:hover{transform:scale(1.1);}
+.palette-pop{
+  display:none; flex-wrap:wrap; gap:6px; margin-top:8px; padding:10px;
+  background:var(--paper); border:1px solid var(--line); border-radius:8px;
+}
+.palette-pop.open{display:flex;}
+.pal-swatch{
+  appearance:none; border:2px solid transparent; cursor:pointer;
+  width:22px; height:22px; border-radius:6px; padding:0;
+  transition: var(--transition);
+}
+.pal-swatch:hover{transform:scale(1.15);}
+.pal-swatch.sel{border-color:var(--ink); box-shadow:inset 0 0 0 2px #fff;}
+
 .topics-list{display:flex; flex-direction:column; gap:5px; margin-top:6px;}
 .topic-row{display:flex; align-items:center; gap:6px;}
 .topic-row input[type=text]{flex:1; font-size:12.5px; padding:5px 8px;}
@@ -165,31 +186,6 @@ label.field-label:first-child{margin-top:0;}
 }
 .temario-chip.selected{background:var(--pine); border-color:var(--pine); color:#fff;}
 .link-btn{background:none; border:none; color:var(--pine-soft); font-family:'IBM Plex Mono'; font-size:10.5px; cursor:pointer; padding:0; margin-top:4px;}
-
-.asistente-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:20px; align-items:start;}
-.purpose-toggle{display:flex; gap:6px;}
-.purpose-toggle button{
-  flex:1; appearance:none; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink-soft);
-  padding:8px 6px; border-radius:7px; font-family:'IBM Plex Sans'; font-size:12px; cursor:pointer;
-  transition: var(--transition);
-}
-.purpose-toggle button.active{border-color:var(--pine); background:#eef3ef; color:var(--pine); font-weight:600;}
-.asistente-topic-list{display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:260px; overflow-y:auto;}
-.asistente-topic-opt{
-  display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:8px;
-  padding:8px 10px; cursor:pointer; font-size:12.5px;
-  transition: var(--transition);
-}
-.asistente-topic-opt.selected{border-color:var(--pine); background:#eef3ef;}
-.asistente-preview{border-left:3px solid var(--pine); padding-left:16px;}
-.asistente-preview .type-tag{
-  display:inline-block; font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase;
-  background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:2px 8px; margin-bottom:8px; color:var(--ink-soft);
-}
-.plan-step{margin-bottom:12px;}
-.plan-step .p-title{font-weight:600; font-size:13.5px; display:flex; justify-content:space-between;}
-.plan-step .p-title span.mins{font-family:'IBM Plex Mono'; font-size:11px; color:var(--pine-soft); font-weight:400;}
-.plan-step p{margin:4px 0 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
 
 .test-row{display:flex; gap:6px; align-items:center;}
 .test-row input[type=text]{flex:2;}
@@ -256,23 +252,48 @@ label.field-label:first-child{margin-top:0;}
   overflow:hidden; cursor:grab; border:1px solid transparent; box-shadow:0 1px 2px rgba(0,0,0,0.06);
   transition: var(--transition);
 }
-.block-abs.fixed{cursor:default; border-style:solid; border-width:1px;}
-.block-abs.has-plan{box-shadow:0 0 0 1px rgba(47,77,63,0.3), 0 1px 2px rgba(0,0,0,0.06);}
+.block-abs.fixed{cursor:default;}
 .block-abs.done{opacity:0.4; text-decoration:line-through;}
+.block-abs.swap-src{outline:2px solid var(--amber); outline-offset:1px;}
 .block-abs .b-range{font-family:'IBM Plex Mono'; font-size:8.5px; opacity:0.8; display:block;}
 .block-abs .b-actions{position:absolute; top:2px; right:3px; display:flex; gap:3px; background:rgba(255,255,255,0.85); border-radius:4px; padding:1px;}
 .block-abs .b-actions span{cursor:pointer; font-size:10px; opacity:0.8; border-radius:3px; padding:0 2px;}
 .block-abs .b-actions span:hover{opacity:1; background:rgba(255,255,255,0.9);}
-.type-clase{background:#dfe6e2; border-color:#b9c9c0;}
-.type-estudio{background:#e4ecf3; border-color:#c7d8e6;}
-.type-sugerido{background:#f3e9d3; border-color:#e3cc9a; border-style:dashed;}
-.type-gym{background:#f0dcc0; border-color:#e0c294;}
-.type-social{background:#e9e1f0; border-color:#d3c3e6;}
-.type-otro{background:#eee; border-color:#ddd;}
 
 .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; font-size:11.5px; color:var(--ink-soft);}
 .legend span{display:inline-flex; align-items:center; gap:5px;}
 .legend i{width:10px;height:10px;border-radius:3px; display:inline-block;}
+
+.swap-banner{
+  display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:90;
+  background:var(--pine); color:#fff; font-size:13px; padding:10px 18px; border-radius:24px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.25); white-space:nowrap;
+}
+.swap-banner.on{display:block;}
+
+.bal-table{width:100%; border-collapse:collapse; margin-top:8px;}
+.bal-table th{
+  text-align:left; font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase;
+  letter-spacing:0.05em; color:var(--ink-soft); padding:6px 8px; border-bottom:1px solid var(--line);
+}
+.bal-table td{padding:8px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle;}
+.bal-table tr:last-child td{border-bottom:none;}
+.bal-table .dot{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:8px; vertical-align:baseline;}
+.bal-table .num{font-family:'IBM Plex Mono'; font-size:12.5px;}
+.diff-badge{
+  font-family:'IBM Plex Mono'; font-size:10.5px; border-radius:12px; padding:2px 9px; white-space:nowrap;
+}
+.diff-badge.ok{background:#d7e6da; color:#245c3a;}
+.diff-badge.missing{background:#f3d3ca; color:#7a2c17;}
+.diff-badge.zero{background:#eee; color:#777;}
+
+.std-grid{display:grid; grid-template-columns:1.4fr 1fr 0.7fr 0.7fr auto; gap:8px; align-items:end;}
+.std-grid label.field-label{margin-top:0;}
+.recur-check{display:flex; align-items:center; gap:6px; margin-top:10px; font-size:12.5px; color:var(--ink-soft);}
+.recur-check input{width:auto;}
+.inline-msg{font-size:12.5px; margin-top:10px; min-height:16px;}
+.inline-msg.ok{color:var(--pine);}
+.inline-msg.error{color:var(--clay);}
 
 .meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
 .meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
@@ -336,7 +357,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   position:relative;
   animation:fade .25s ease;
 }
-.modal-box.wide{max-width:520px; max-height:80vh; overflow-y:auto;}
+.modal-box.wide{max-width:480px; max-height:80vh; overflow-y:auto;}
 .modal-box h3{font-size:19px; margin-bottom:4px;}
 .modal-box p.sub{font-size:12.5px; color:var(--ink-soft); margin:0 0 16px 0;}
 .modal-box .msg{font-size:12px; margin-top:10px; min-height:16px;}
@@ -345,13 +366,15 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 .modal-box .row-btns{display:flex; gap:8px; margin-top:16px;}
 .modal-box .row-btns button{flex:1;}
 .modal-box .close-x{
-  position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft); 
+  position:absolute; top:14px; right:16px; cursor:pointer; color:var(--ink-soft);
   font-size:16px; background:none; border:none;
   transition: var(--transition);
 }
 .modal-box .close-x:hover{color:var(--clay);}
-
-.chat-response{background:var(--paper); border-radius:8px; padding:14px; margin-top:10px; white-space:pre-wrap; font-size:13px; line-height:1.6;}
+.eb-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.eb-grid label.field-label{margin-top:10px;}
+#eb-palette{margin-top:8px;}
+.color-note{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono'; margin-top:8px;}
 
 .diet-btn {
   font-size: 11px !important;
@@ -377,8 +400,9 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   .philo-grid{grid-template-columns:1fr;}
   .pillars{grid-template-columns:1fr;}
   .add-block-grid{grid-template-columns:1fr 1fr;}
-  .asistente-grid{grid-template-columns:1fr;}
+  .std-grid{grid-template-columns:1fr 1fr;}
   .inventory-section{grid-template-columns:1fr;}
+  .eb-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -393,7 +417,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
         <div class="sub">Tu semestre, en un solo lugar</div>
       </div>
     </div>
-    <div class="mono" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:14px;" id="today-label"></div>
+    <div class="mono" style="font-size:12px; color:var(--ink-soft);" id="today-label"></div>
   </div>
   <div class="top-inner" style="margin-top:8px;">
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
@@ -417,7 +441,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <button data-view="filosofia" class="active">Filosofía</button>
     <button data-view="ramos">Ramos</button>
     <button data-view="semana">Semana</button>
-    <button data-view="asistente">Asistente</button>
+    <button data-view="estudio">Estudio</button>
     <button data-view="comida">Comida</button>
   </nav>
 </header>
@@ -442,9 +466,9 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     </div>
     <div class="philo-hint">Haz clic en cualquier texto para editarlo.</div>
     <div class="pillars">
-      <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Estudiar mejor, no más</h4><p>Active recall, repetición espaciada, ejercicios y certámenes antiguos.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Cuerpo y mente son parte del sistema</h4><p>Entrenamiento y salud mental tienen el mismo peso que los ramos.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Dormir bien y mantener vida social también es "me fue bien".</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--pine)"></div><h4>Mi semana primero</h4><p>Dormir, comer y trasladarme son la base fija; la U se adapta a esa rutina.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--amber)"></div><h4>Una hora de cátedra, una de estudio</h4><p>Cada hora de clase implica una hora de estudio personal del ramo.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--clay)"></div><h4>Sostenible, no heroico</h4><p>Huecos libres sin culpa y sin listas de tareas que generen ansiedad.</p></div>
     </div>
   </section>
 
@@ -456,20 +480,24 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   <!-- SEMANA -->
   <section class="view" id="view-semana">
     <div class="card pad add-block-panel">
-      <h3>Agregar bloque</h3>
+      <h3>Agregar bloque puntual</h3>
       <div class="add-block-grid">
         <div><label class="field-label">Día</label><input type="date" id="nb-date"></div>
         <div><label class="field-label">Tipo</label>
           <select id="nb-type">
             <option value="estudio">Estudio</option>
+            <option value="comida">Comida</option>
+            <option value="traslado">Traslado</option>
+            <option value="descanso">Descanso / sueño</option>
             <option value="gym">Gimnasio</option>
             <option value="social">Vida social</option>
+            <option value="libre">Libre</option>
             <option value="otro">Otro</option>
           </select>
         </div>
         <div><label class="field-label">Inicio</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="nb-start" value="18:00"></div>
         <div><label class="field-label">Fin</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="nb-end" value="19:00"></div>
-        <div><label class="field-label">Descripción</label><input type="text" id="nb-label" placeholder="Ej: repasar unidad 2"></div>
+        <div><label class="field-label">Descripción</label><input type="text" id="nb-label" placeholder="Ej: almorzar con amigos"></div>
         <button class="btn small" id="btn-add-block" data-action="add-block">+ agregar</button>
       </div>
     </div>
@@ -479,88 +507,72 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
       <div class="actions">
         <button class="btn ghost small" id="btn-prev-week">← Semana anterior</button>
         <button class="btn ghost small" id="btn-next-week">Semana siguiente →</button>
-        <button class="btn pine small" id="btn-predict" data-action="predict">Generar sugerencias</button>
+        <button class="btn pine small" id="btn-routine">Rutina base</button>
+        <button class="btn ghost small" id="btn-fill-free">Rellenar huecos con Libre</button>
         <button class="btn danger small" id="btn-clear-week" data-action="clear-week">Borrar semana</button>
       </div>
     </div>
     <div class="weeks-wrap" id="weeks-wrap"></div>
-    <div class="legend">
-      <span><i style="background:#dfe6e2"></i>Clase</span>
-      <span><i style="background:#e4ecf3"></i>Estudio</span>
-      <span><i style="background:#f3e9d3"></i>Sugerido</span>
-      <span><i style="background:#f0dcc0"></i>Gimnasio</span>
-      <span><i style="background:#e9e1f0"></i>Vida social</span>
-      <span><i style="background:#eee"></i>Otro</span>
-    </div>
+    <div class="legend" id="legend-row"></div>
 
     <div class="card pad horario-panel" style="margin-top:26px;">
-      <h3>Bloques recurrentes</h3>
+      <h3>Bloques recurrentes (tu horario fijo)</h3>
       <div id="recurring-list"></div>
       <button class="btn ghost small" id="btn-add-recurring" data-action="add-recurring">+ agregar bloque recurrente</button>
     </div>
   </section>
 
-  <!-- ASISTENTE -->
-  <section class="view" id="view-asistente">
-    <div class="card pad">
-      <div class="asistente-grid">
-        <div class="asistente-form">
-          <label class="field-label">Ramo</label>
-          <select id="as-subject"></select>
+  <!-- ESTUDIO -->
+  <section class="view" id="view-estudio">
+    <div class="card pad" style="margin-bottom:18px;">
+      <h3>Regla 1:1 — cada hora de cátedra, una hora de estudio</h3>
+      <table class="bal-table" id="bal-table"></table>
+      <p class="inline-msg" style="color:var(--ink-soft);">Las horas de cátedra salen de tus bloques recurrentes de tipo "Clase". Las horas programadas suman tus bloques recurrentes de estudio más los de esta semana.</p>
+    </div>
 
-          <label class="field-label">Propósito</label>
-          <div class="purpose-toggle">
-            <button type="button" data-purpose="mantenimiento" class="active">Mantener fresco</button>
-            <button type="button" data-purpose="prueba">Preparar prueba</button>
-          </div>
-
-          <div id="as-test-wrap" style="display:none;">
-            <label class="field-label">¿Para cuál prueba?</label>
-            <select id="as-test"></select>
-          </div>
-
-          <label class="field-label">Tema</label>
-          <div class="asistente-topic-list" id="as-topics"></div>
-          
-          <label class="field-label">Duración</label>
-          <select id="as-duration">
-            <option value="45">45 min</option>
-            <option value="60">60 min</option>
-            <option value="90" selected>90 min</option>
-            <option value="120">120 min</option>
+    <div class="card pad" style="margin-bottom:18px;">
+      <h3>Completar horas fijas</h3>
+      <p class="sub" style="font-size:12.5px; color:var(--ink-soft); margin:6px 0 12px 0;">Crea bloques de estudio recurrentes hasta cumplir la regla 1:1. Se colocan en los huecos de tu horario, de lunes a domingo.</p>
+      <div class="std-grid" style="grid-template-columns:auto auto;">
+        <div>
+          <label class="field-label">Duración de cada sesión</label>
+          <select id="gen-len">
+            <option value="60" selected>60 min</option>
+            <option value="90">90 min</option>
           </select>
-          
-          <label class="field-label">Día</label>
-          <input type="date" id="as-date">
-          
-          <label class="field-label">Hora de inicio</label>
-          <input type="text" inputmode="numeric" placeholder="HH:MM" id="as-start" value="18:00">
-          
-          <button class="btn pine" style="margin-top:16px; width:100%;" id="btn-generate-session" data-action="generate-session">Generar sesión</button>
-          
-          <div style="margin-top:20px; border-top:1px solid var(--line); padding-top:16px;">
-            <label class="field-label">Cuéntame qué necesitas</label>
-            <textarea id="as-chat-input" rows="3" placeholder="Ej: Mañana tengo prueba y no entiendo QuickSort..."></textarea>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <button class="btn pine small" id="btn-chat-plan" data-action="chat-plan">Generar guía</button>
-              <button class="btn ghost small" id="btn-chat-save" data-action="chat-save">Guardar como bloque</button>
-            </div>
-            <div id="as-chat-response" style="display:none;" class="chat-response"></div>
-          </div>
-          
-          <div class="msg" id="as-msg"></div>
         </div>
-        <div class="asistente-preview" id="as-preview">
-          <p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver la estructura de la sesión.</p>
+        <div style="align-self:end;">
+          <button class="btn pine" id="btn-gen-study">Generar bloques de estudio</button>
         </div>
       </div>
+      <div class="inline-msg" id="gen-msg"></div>
+    </div>
+
+    <div class="card pad">
+      <h3>Agregar estudio manual</h3>
+      <div class="std-grid">
+        <div><label class="field-label">Ramo</label><select id="est-subject"></select></div>
+        <div><label class="field-label">Día</label><input type="date" id="est-date"></div>
+        <div><label class="field-label">Inicio</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="est-start" value="18:00"></div>
+        <div><label class="field-label">Duración</label>
+          <select id="est-len">
+            <option value="45">45 min</option>
+            <option value="60" selected>60 min</option>
+            <option value="90">90 min</option>
+            <option value="120">120 min</option>
+          </select>
+        </div>
+        <div style="align-self:end;"><button class="btn pine" id="btn-add-study">+ agregar</button></div>
+      </div>
+      <label class="recur-check"><input type="checkbox" id="est-recur" checked> Repetir todas las semanas (horario fijo)</label>
+      <div class="inline-msg" id="est-msg"></div>
     </div>
   </section>
 
   <!-- COMIDA -->
   <section class="view" id="view-comida">
     <div class="meals-grid" id="meals-grid"></div>
-    
+
     <div class="card pad" style="margin-top:20px;">
       <h3>📦 Inventario y sugerencias</h3>
       <div class="inventory-section">
@@ -578,7 +590,7 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
             <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="keto" style="padding:4px 10px;">🥑 Keto</button>
             <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="sin-lactosa" style="padding:4px 10px;">🥛 Sin lactosa</button>
           </div>
-          
+
           <label class="field-label">Tiempo para cocinar</label>
           <select id="cook-time">
             <option value="15">15 min</option>
@@ -596,13 +608,28 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
 
 <footer class="foot">Datos locales · Sincronización con Firebase disponible</footer>
 
+<div class="swap-banner" id="swap-banner"></div>
+
 <!-- MODALES -->
-<div class="modal-overlay" id="plan-overlay">
+<div class="modal-overlay" id="edit-overlay">
   <div class="modal-box wide">
-    <button class="close-x" id="btn-close-plan">✕</button>
-    <h3 id="plan-title">Plan de sesión</h3>
-    <p class="sub" id="plan-sub"></p>
-    <div id="plan-steps"></div>
+    <button class="close-x" id="btn-close-edit">✕</button>
+    <h3>Editar bloque</h3>
+    <div class="eb-grid">
+      <div><label class="field-label">Día</label><input type="date" id="eb-date"></div>
+      <div><label class="field-label">Tipo</label><select id="eb-type"></select></div>
+      <div><label class="field-label">Inicio</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="eb-start"></div>
+      <div><label class="field-label">Fin</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="eb-end"></div>
+    </div>
+    <label class="field-label">Descripción</label>
+    <input type="text" id="eb-label">
+    <label class="field-label">Color</label>
+    <div class="palette-pop open" id="eb-palette"></div>
+    <p class="color-note" id="eb-color-note"></p>
+    <div class="row-btns">
+      <button class="btn danger" id="eb-delete">Eliminar</button>
+      <button class="btn pine" id="eb-save">Guardar</button>
+    </div>
   </div>
 </div>
 
@@ -645,7 +672,6 @@ const CONFIG = {
   PX_PER_HOUR: 48,
   DAYS: ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
   WEEKEND: [5,6],
-  HOURS_PER_CREDIT: 1,
   STATUS_CYCLE: ['sinver','debil','dominado'],
   STATUS_LABEL: {sinver:'sin ver', debil:'débil', dominado:'dominado'},
   STUDY_TYPES: {
@@ -656,9 +682,50 @@ const CONFIG = {
   RECURRING_TYPES: [
     {value:'clase', label:'Clase'},
     {value:'estudio', label:'Estudio'},
+    {value:'comida', label:'Comida'},
+    {value:'traslado', label:'Traslado'},
+    {value:'descanso', label:'Descanso / sueño'},
     {value:'gym', label:'Gimnasio'},
     {value:'social', label:'Vida social'},
+    {value:'libre', label:'Libre'},
     {value:'otro', label:'Otro'}
+  ],
+  BLOCK_TYPES: [
+    {value:'estudio', label:'Estudio'},
+    {value:'comida', label:'Comida'},
+    {value:'traslado', label:'Traslado'},
+    {value:'descanso', label:'Descanso / sueño'},
+    {value:'gym', label:'Gimnasio'},
+    {value:'social', label:'Vida social'},
+    {value:'libre', label:'Libre'},
+    {value:'otro', label:'Otro'}
+  ],
+  TYPE_COLORS: {
+    clase:'#dfe6e2',
+    estudio:'#dce8f2',
+    comida:'#f4dfc0',
+    traslado:'#dde3ec',
+    descanso:'#e7e1f1',
+    gym:'#efe0cf',
+    social:'#eae1f3',
+    libre:'#faf9f3',
+    otro:'#ececea'
+  },
+  PALETTE: [
+    '#7FA37A','#4E8068','#A7C7A9','#84A59D',
+    '#6C91BF','#3E6C8E','#A3C1DA','#88A09E',
+    '#D988A9','#C9748C','#E8B4B8','#E5989B',
+    '#E09F55','#C97B3D','#E7C27D','#D4A373',
+    '#9B7EDE','#7E6B8F','#C3B1E1','#6D6875',
+    '#C1666B','#8F5D5A','#5FA8A0','#3E8989',
+    '#8D99AE','#B0B7A6','#A98467','#FFB4A2'
+  ],
+  ROUTINE_TEMPLATE: [
+    {type:'otro', label:'Despertar', start:'07:00', end:'07:30'},
+    {type:'comida', label:'Desayuno', start:'07:30', end:'08:00'},
+    {type:'comida', label:'Almuerzo', start:'13:00', end:'14:00'},
+    {type:'comida', label:'Cena', start:'20:30', end:'21:00'},
+    {type:'descanso', label:'Rutina de sueño', start:'22:30', end:'23:00'}
   ],
   THEMES: {
     bosque: {
@@ -734,10 +801,7 @@ const Utils = {
   fmt: (d) => d.toISOString().slice(0,10),
   fmtLong: (d) => d.toLocaleDateString('es-CL', {day:'numeric', month:'short'}),
   escape: (str) => (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'),
-  randomColor: () => {
-    const palette = ['#2f4d3f','#c67a2f','#a9503b','#3b6e8f','#6a5a8c','#5c7b6c'];
-    return palette[Math.floor(Math.random()*palette.length)];
-  },
+  randomColor: () => CONFIG.PALETTE[Math.floor(Math.random()*CONFIG.PALETTE.length)],
   mondayOf: (d) => {
     const date = new Date(d);
     const day = (date.getDay()+6)%7;
@@ -746,6 +810,14 @@ const Utils = {
     return date;
   },
   timeToMin: (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; },
+  minToY: (min, startHour) => (min - startHour*60) * (CONFIG.PX_PER_HOUR/60),
+  yToTime: (y, startHour) => {
+    let min = startHour*60 + y/(CONFIG.PX_PER_HOUR/60);
+    min = Math.round(min/15)*15;
+    min = Math.max(startHour*60, Math.min(CONFIG.HOUR_END*60-15, min));
+    const h = Math.floor(min/60), m = min%60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+  },
   normalizeTime: (str) => {
     if(!str) return null;
     str = str.trim();
@@ -757,16 +829,9 @@ const Utils = {
     if(h>23 || min>59) return null;
     return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0');
   },
-  minToY: (min, startHour) => (min - startHour*60) * (CONFIG.PX_PER_HOUR/60),
-  yToTime: (y, startHour) => {
-    let min = startHour*60 + y/(CONFIG.PX_PER_HOUR/60);
-    min = Math.round(min/15)*15;
-    min = Math.max(startHour*60, Math.min(CONFIG.HOUR_END*60-15, min));
-    const h = Math.floor(min/60), m = min%60;
-    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-  },
   addMin: (t, delta) => {
     let min = Utils.timeToMin(t)+delta;
+    if(min >= 24*60) min = 24*60-1;
     const h = Math.floor(min/60), m = min%60;
     return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
   },
@@ -788,6 +853,34 @@ const Utils = {
       clearTimeout(timer);
       timer = setTimeout(() => fn(...args), delay);
     };
+  },
+  hexToRgb: (hex) => {
+    let h = hex.replace('#','');
+    if(h.length === 3) h = h.split('').map(c => c+c).join('');
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  },
+  rgbToHex: (r,g,b) => '#'+[r,g,b].map(v => Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join(''),
+  shade: (hex, f) => {
+    try {
+      const [r,g,b] = Utils.hexToRgb(hex);
+      return Utils.rgbToHex(r*f, g*f, b*f);
+    } catch(e) { return hex; }
+  },
+  lum: (hex) => {
+    try {
+      const [r,g,b] = Utils.hexToRgb(hex);
+      return (0.299*r + 0.587*g + 0.114*b) / 255;
+    } catch(e) { return 1; }
+  },
+  textOn: (hex) => Utils.lum(hex) > 0.62 ? '#12181c' : '#ffffff',
+  hoursFmt: (min) => {
+    const h = min/60;
+    let s = h.toFixed(1).replace('.0','').replace('.', ',');
+    return s + ' h';
+  },
+  dowOfDate: (dateStr) => {
+    const d = new Date(dateStr+'T00:00:00');
+    return (d.getDay()+6)%7;
   }
 };
 
@@ -810,8 +903,7 @@ const App = {
     weekStart: null,
     inventory: [],
     dietRestrictions: [],
-    asPurpose: 'mantenimiento',
-    _lastChatPlan: null,
+    pendingSwap: null,
     currentUser: null,
     cloudEnabled: false
   },
@@ -845,10 +937,10 @@ const App = {
 
   loadState() {
     const defaultSubjects = [
-      {id:'demo1', name:'Matemática II', color:'#a9503b', credits:'5', studyType:'practico', topics:[], tests:[]},
-      {id:'demo2', name:'Algoritmos', color:'#3b6e8f', credits:'5', studyType:'practico', topics:[], tests:[]},
-      {id:'demo3', name:'Arquitectura', color:'#c67a2f', credits:'4', studyType:'teorico', topics:[], tests:[]},
-      {id:'demo4', name:'Inglés 6', color:'#6a5a8c', credits:'3', studyType:'idioma', topics:[], tests:[]},
+      {id:'demo1', name:'Matemática II', color:'#C1666B', credits:'5', studyType:'practico', topics:[], tests:[]},
+      {id:'demo2', name:'Algoritmos', color:'#3E6C8E', credits:'5', studyType:'practico', topics:[], tests:[]},
+      {id:'demo3', name:'Arquitectura', color:'#E09F55', credits:'4', studyType:'teorico', topics:[], tests:[]},
+      {id:'demo4', name:'Inglés 6', color:'#9B7EDE', credits:'3', studyType:'idioma', topics:[], tests:[]},
     ];
 
     this.state.subjects = this.normalizeSubjects(
@@ -872,7 +964,7 @@ const App = {
     arr.forEach(s => {
       if(!s.id) s.id = Utils.uid();
       if(!s.name) s.name = 'Ramo sin nombre';
-      if(!s.color) s.color = Utils.randomColor();
+      if(!s.color || !/^#[0-9a-fA-F]{6}$/.test(s.color)) s.color = Utils.randomColor();
       if(typeof s.credits !== 'string' && typeof s.credits !== 'number') s.credits = '';
       if(!s.studyType || !CONFIG.STUDY_TYPES[s.studyType]) s.studyType = Utils.guessStudyType(s.name);
       if(!Array.isArray(s.topics)) s.topics = [];
@@ -897,19 +989,25 @@ const App = {
       if(!b.start) b.start = '18:00';
       if(!b.end) b.end = '19:00';
       if(typeof b.done !== 'boolean') b.done = false;
-      if(!b.type) b.type = 'otro';
+      if(b.type === 'sugerido') b.type = 'estudio';
+      const validTypes = CONFIG.BLOCK_TYPES.map(t => t.value).concat(['clase']);
+      if(!validTypes.includes(b.type)) b.type = 'otro';
+      delete b.plan;
+      if(b.color === undefined) b.color = null;
     });
     return arr;
   },
 
   normalizeRecurring(arr) {
     if(!Array.isArray(arr)) return [];
+    const validTypes = CONFIG.RECURRING_TYPES.map(t => t.value);
     arr.forEach(c => {
       if(!c.id) c.id = Utils.uid();
       if(typeof c.day !== 'number') c.day = 0;
       if(!c.start) c.start = '09:00';
       if(!c.end) c.end = '10:00';
-      if(!c.type) c.type = 'clase';
+      if(!validTypes.includes(c.type)) c.type = c.type === 'desayuno' || c.type === 'almuerzo' || c.type === 'cena' ? 'comida' : 'otro';
+      if(c.label === undefined) c.label = '';
     });
     return arr;
   },
@@ -965,17 +1063,54 @@ const App = {
     this.renderAll();
   },
 
+  weeklyMinutes(subjectId, kind) {
+    let total = 0;
+    this.state.recurring.forEach(c => {
+      if(c.type === kind && c.subjectId === subjectId) {
+        total += Math.max(0, Utils.timeToMin(c.end) - Utils.timeToMin(c.start));
+      }
+    });
+    if(kind === 'estudio') {
+      const startStr = Utils.fmt(this.state.weekStart);
+      const endDate = new Date(this.state.weekStart);
+      endDate.setDate(endDate.getDate() + 6);
+      const endStr = Utils.fmt(endDate);
+      this.state.blocks.forEach(b => {
+        if(b.type === 'estudio' && b.subjectId === subjectId && b.date >= startStr && b.date <= endStr) {
+          total += Math.max(0, Utils.timeToMin(b.end) - Utils.timeToMin(b.start));
+        }
+      });
+    }
+    return total;
+  },
+
+  resolveBlockColor(b) {
+    let c = null;
+    if(b.color && /^#[0-9a-fA-F]{6}$/.test(b.color)) {
+      c = b.color;
+    } else if(b.subjectId) {
+      const sub = this.state.subjects.find(s => s.id === b.subjectId);
+      if(sub) c = sub.color;
+    }
+    if(!c) c = CONFIG.TYPE_COLORS[b.type] || CONFIG.TYPE_COLORS.otro;
+    return { bg:c, border:Utils.shade(c, 0.72), text:Utils.textOn(c) };
+  },
+
   renderAll() {
     try {
       this.renderPhilosophy();
       this.renderSubjects();
       this.renderWeeks();
+      this.renderLegend();
       this.renderMeals();
-      this.renderAsistente();
+      this.renderEstudio();
       document.getElementById('inventory-input').value = this.state.inventory.join(', ');
       this.renderWeekRange();
       this.renderRecurringPanel();
-      
+
+      const tl = document.getElementById('today-label');
+      if(tl) tl.textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
+
       document.querySelectorAll('.diet-btn').forEach(btn => {
         const diet = btn.dataset.diet;
         if(this.state.dietRestrictions.includes(diet)) {
@@ -998,7 +1133,7 @@ const App = {
   renderSubjects() {
     const grid = document.getElementById('subjects-grid');
     grid.innerHTML = '';
-    
+
     this.state.subjects.forEach(sub => {
       const card = this.createSubjectCard(sub);
       grid.appendChild(card);
@@ -1017,8 +1152,15 @@ const App = {
     card.style.setProperty('--sub-color', sub.color);
     card.dataset.subjectId = sub.id;
 
-    const creditsNum = parseFloat(sub.credits);
-    const hoursHint = creditsNum ? `≈ ${Math.round(creditsNum*CONFIG.HOURS_PER_CREDIT)} h/semana` : 'agrega créditos';
+    const catMin = this.weeklyMinutes(sub.id, 'clase');
+    const stuMin = this.weeklyMinutes(sub.id, 'estudio');
+    const hoursHint = (catMin || stuMin)
+      ? `≈ ${Utils.hoursFmt(catMin)} cátedra · ${Utils.hoursFmt(stuMin)} estudio`
+      : 'agrega clases en Semana';
+
+    const paletteHtml = CONFIG.PALETTE.map(c =>
+      `<button class="pal-swatch${c.toLowerCase()===sub.color.toLowerCase()?' sel':''}" data-action="pick-sub-color" data-color="${c}" data-subject="${sub.id}" style="background:${c}" title="${c}"></button>`
+    ).join('');
 
     card.innerHTML = `
       <div class="head">
@@ -1034,6 +1176,11 @@ const App = {
         </span>
         <span class="hours-hint" data-hours-hint>${hoursHint}</span>
       </div>
+      <div class="color-row">
+        <label class="field-label">Color del ramo</label>
+        <button class="cur-swatch" data-action="toggle-sub-palette" data-subject="${sub.id}" style="background:${sub.color}"></button>
+      </div>
+      <div class="palette-pop" id="pal-${sub.id}">${paletteHtml}</div>
       <label class="field-label">Temas del ramo</label>
       <div class="topics-list" data-topiclist data-subject="${sub.id}"></div>
       <div class="add-topic-row">
@@ -1093,7 +1240,7 @@ const App = {
         toggle.dataset.testId = test.id;
         toggle.dataset.subjectId = sub.id;
         list.appendChild(toggle);
-        
+
         const box = document.createElement('div');
         box.className = 'temario-box';
         box.innerHTML = `<label class="field-label">Temas que entran en esta prueba</label><div class="temario-chip-row"></div>`;
@@ -1122,6 +1269,24 @@ const App = {
     if(!document.getElementById('nb-date').value) {
       document.getElementById('nb-date').value = Utils.fmt(new Date());
     }
+    const estDate = document.getElementById('est-date');
+    if(estDate && !estDate.value) {
+      estDate.min = Utils.fmt(this.state.weekStart);
+      estDate.value = Utils.fmt(new Date());
+    }
+  },
+
+  renderLegend() {
+    const wrap = document.getElementById('legend-row');
+    if(!wrap) return;
+    const parts = [];
+    this.state.subjects.forEach(s => {
+      parts.push(`<span><i style="background:${s.color}"></i>${Utils.escape(s.name)}</span>`);
+    });
+    [['comida','Comida'],['traslado','Traslado'],['descanso','Descanso / sueño'],['gym','Gimnasio'],['social','Vida social'],['libre','Libre'],['otro','Otro']].forEach(([t, label]) => {
+      parts.push(`<span><i style="background:${CONFIG.TYPE_COLORS[t]}"></i>${label}</span>`);
+    });
+    wrap.innerHTML = parts.join('');
   },
 
   renderWeeks() {
@@ -1173,7 +1338,7 @@ const App = {
       col.style.height = height + 'px';
       col.dataset.date = dateStr;
       col.dataset.day = d;
-      
+
       for(let h=CONFIG.HOUR_START; h<=CONFIG.HOUR_END; h++) {
         const line = document.createElement('div');
         line.className = 'hour-line';
@@ -1195,7 +1360,7 @@ const App = {
     const movable = this.state.blocks
       .filter(b => b.date === dateStr)
       .map(b => ({ start: Utils.timeToMin(b.start), end: Utils.timeToMin(b.end), kind:'movable', ref:b }));
-    
+
     const items = this.layoutOverlaps([...fixed, ...movable]);
     items.forEach(it => {
       const el = it.kind === 'recurring' ? this.createRecurringBlock(it, dateStr) : this.createMovableBlock(it);
@@ -1229,11 +1394,15 @@ const App = {
 
   createRecurringBlock(it, dateStr) {
     const c = it.ref;
-    const sub = c.type === 'clase' ? this.state.subjects.find(s => s.id === c.subjectId) : null;
+    const sub = (c.type === 'clase' || c.type === 'estudio') && c.subjectId
+      ? this.state.subjects.find(s => s.id === c.subjectId) : null;
     const labelText = c.type === 'clase' ? (sub ? sub.name : c.subjectName) : (c.label || '');
+    const color = sub ? sub.color : (CONFIG.TYPE_COLORS[c.type] || CONFIG.TYPE_COLORS.otro);
     const el = document.createElement('div');
-    el.className = `block-abs type-${c.type} fixed`;
-    if(sub) el.style.borderColor = sub.color;
+    el.className = `block-abs fixed`;
+    el.style.background = color;
+    el.style.borderColor = Utils.shade(color, 0.72);
+    el.style.color = Utils.textOn(color);
     el.innerHTML = `
       <div class="b-actions"><span data-action="skip-recurring" data-id="${c.id}" data-date="${dateStr}">✕</span></div>
       <span class="b-range">${c.start}–${c.end}</span>${Utils.escape(labelText)}
@@ -1243,13 +1412,24 @@ const App = {
 
   createMovableBlock(it) {
     const b = it.ref;
+    const colors = this.resolveBlockColor(b);
     const el = document.createElement('div');
-    el.className = `block-abs type-${b.type}` + (b.done?' done':'') + (b.plan?' has-plan':'');
+    el.className = `block-abs` + (b.done?' done':'');
     el.draggable = true;
     el.dataset.id = b.id;
+    el.style.background = colors.bg;
+    el.style.borderColor = colors.border;
+    el.style.color = colors.text;
+    if(b.type === 'libre' && !b.color) {
+      el.style.borderStyle = 'dashed';
+    }
+    if(App.state.pendingSwap && App.state.pendingSwap.id === b.id) {
+      el.classList.add('swap-src');
+    }
+    const canSwap = b.type === 'estudio' || b.type === 'libre';
     el.innerHTML = `
       <div class="b-actions">
-        ${b.plan ? '<span data-action="view-plan" data-id="'+b.id+'">📋</span>' : ''}
+        ${canSwap ? `<span data-action="start-swap" data-id="${b.id}" title="Intercambiar con un bloque Libre">⇄</span>` : ''}
         <span data-action="edit-block" data-id="${b.id}">✎</span>
         <span data-action="toggle-block" data-id="${b.id}">✓</span>
         <span data-action="delete-block" data-id="${b.id}">✕</span>
@@ -1265,8 +1445,8 @@ const App = {
     this.state.recurring.forEach(c => {
       const row = document.createElement('div');
       row.className = 'class-row';
-      const secondaryField = c.type === 'clase'
-        ? `<select data-cf="subjectId" data-id="${c.id}">${this.state.subjects.map(s => `<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${Utils.escape(s.name)}</option>`).join('')}</select>`
+      const secondaryField = c.type === 'clase' || c.type === 'estudio'
+        ? `<select data-cf="subjectId" data-id="${c.id}"><option value="">— elegir ramo —</option>${this.state.subjects.map(s => `<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${Utils.escape(s.name)}</option>`).join('')}</select>`
         : `<input type="text" data-cf="label" data-id="${c.id}" placeholder="Descripción" value="${Utils.escape(c.label||'')}">`;
       row.innerHTML = `
         <select data-cf="type" data-id="${c.id}">${CONFIG.RECURRING_TYPES.map(t => `<option value="${t.value}" ${c.type===t.value?'selected':''}>${t.label}</option>`).join('')}</select>
@@ -1311,122 +1491,51 @@ const App = {
     });
   },
 
-  renderAsistente() {
-    const subSel = document.getElementById('as-subject');
-    const currentSubId = subSel.value;
-    subSel.innerHTML = this.state.subjects.map(s => `<option value="${s.id}">${Utils.escape(s.name)}</option>`).join('');
-    if(currentSubId && this.state.subjects.some(s => s.id === currentSubId)) {
-      subSel.value = currentSubId;
-    }
-    if(!document.getElementById('as-date').value) {
-      document.getElementById('as-date').value = Utils.fmt(new Date());
-    }
-    this.renderAsistenteTestSelect();
-    this.renderAsistenteTopics();
-  },
-
-  renderAsistenteTestSelect() {
-    const subId = document.getElementById('as-subject').value;
-    const sub = this.state.subjects.find(s => s.id === subId);
-    const sel = document.getElementById('as-test');
-    if(!sub) { sel.innerHTML = ''; return; }
-    const upcoming = sub.tests.map(t => ({...t, d: Utils.daysUntil(t.date)})).filter(t => t.d !== null && t.d >= 0).sort((a,b) => a.d - b.d);
-    if(!upcoming.length) {
-      sel.innerHTML = `<option value="">(sin pruebas próximas)</option>`;
-      return;
-    }
-    sel.innerHTML = upcoming.map(t => `<option value="${t.id}">${Utils.escape(t.name||'Prueba')} · en ${t.d}d</option>`).join('');
-  },
-
-  renderAsistenteTopics() {
-    const subId = document.getElementById('as-subject').value;
-    const sub = this.state.subjects.find(s => s.id === subId);
-    const list = document.getElementById('as-topics');
-    list.innerHTML = '';
-    if(!sub || !sub.topics.length) {
-      list.innerHTML = `<p style="font-size:12px; color:var(--ink-soft);">Este ramo no tiene temas cargados.</p>`;
-      this.updateAsistentePreview(null, null);
-      return;
-    }
-    const selectedTest = this.getSelectedTest(sub);
-    const order = {debil:0, sinver:1, dominado:2};
-    const sorted = [...sub.topics].sort((a,b) => {
-      const aIn = selectedTest && selectedTest.temario.includes(a.id) ? 0:1;
-      const bIn = selectedTest && selectedTest.temario.includes(b.id) ? 0:1;
-      if(aIn !== bIn) return aIn - bIn;
-      return order[a.status] - order[b.status];
+  refreshSubjectHints() {
+    this.state.subjects.forEach(sub => {
+      const card = document.querySelector(`.subject-card[data-subject-id="${sub.id}"]`);
+      if(!card) return;
+      const hintEl = card.querySelector('[data-hours-hint]');
+      if(!hintEl) return;
+      const catMin = this.weeklyMinutes(sub.id, 'clase');
+      const stuMin = this.weeklyMinutes(sub.id, 'estudio');
+      hintEl.textContent = (catMin || stuMin)
+        ? `≈ ${Utils.hoursFmt(catMin)} cátedra · ${Utils.hoursFmt(stuMin)} estudio`
+        : 'agrega clases en Semana';
     });
-    sorted.forEach((topic, idx) => {
-      const inTemario = selectedTest && selectedTest.temario.includes(topic.id);
-      const opt = document.createElement('div');
-      opt.className = 'asistente-topic-opt' + (idx === 0 ? ' selected':'');
-      opt.dataset.action = 'select-topic-opt';
-      opt.dataset.topicId = topic.id;
-      opt.dataset.subjectId = sub.id;
-      opt.innerHTML = `
-        <span class="status-btn ${topic.status}" style="pointer-events:none;">${CONFIG.STATUS_LABEL[topic.status]}</span>
-        <span style="flex:1;">${Utils.escape(topic.name)}</span>
-        ${inTemario ? `<span class="badge temario">temario</span>` : ''}
-      `;
-      list.appendChild(opt);
-    });
-    this.updateAsistentePreview(sub, sorted[0]);
   },
 
-  getSelectedTest(sub) {
-    if(this.state.asPurpose !== 'prueba' || !sub) return null;
-    const testId = document.getElementById('as-test').value;
-    return sub.tests.find(t => t.id === testId) || null;
-  },
-
-  updateAsistentePreview(sub, topic) {
-    const box = document.getElementById('as-preview');
-    if(!sub || !topic) {
-      box.innerHTML = `<p style="color:var(--ink-soft); font-size:13px;">Elige un ramo y un tema para ver la estructura.</p>`;
+  renderEstudio() {
+    const table = document.getElementById('bal-table');
+    if(!table) return;
+    const subs = this.state.subjects;
+    if(!subs.length) {
+      table.innerHTML = `<tr><td style="color:var(--ink-soft);">Agrega ramos primero.</td></tr>`;
       return;
     }
-    const duration = Number(document.getElementById('as-duration').value);
-    const plan = this.buildStudyPlan(duration, topic.name, sub.studyType, this.state.asPurpose);
-    box.innerHTML = `<span class="type-tag">${CONFIG.STUDY_TYPES[sub.studyType]} · ${this.state.asPurpose==='prueba'?'preparando prueba':'manteniendo fresco'}</span>` +
-      `<h3 style="font-size:15px; margin-bottom:10px;">${Utils.escape(sub.name)} — ${Utils.escape(topic.name)}</h3>` +
-      plan.map(step => `
-        <div class="plan-step">
-          <div class="p-title">${Utils.escape(step.label)} <span class="mins">${step.minutes} min</span></div>
-          <p>${Utils.escape(step.desc)}</p>
-        </div>
-      `).join('');
-  },
+    let rows = `<tr><th>Ramo</th><th>Cátedra</th><th>Objetivo</th><th>Programado</th><th>Balance</th></tr>`;
+    subs.forEach(s => {
+      const cat = this.weeklyMinutes(s.id, 'clase');
+      const stu = this.weeklyMinutes(s.id, 'estudio');
+      const diff = stu - cat;
+      let badge;
+      if(cat === 0 && stu === 0) badge = `<span class="diff-badge zero">sin bloques</span>`;
+      else if(diff >= 0) badge = `<span class="diff-badge ok">${diff === 0 ? 'al día' : '+' + Utils.hoursFmt(diff)}</span>`;
+      else badge = `<span class="diff-badge missing">faltan ${Utils.hoursFmt(-diff)}</span>`;
+      rows += `<tr>
+        <td><span class="dot" style="background:${s.color}"></span>${Utils.escape(s.name)}</td>
+        <td class="num">${cat ? Utils.hoursFmt(cat) : '—'}</td>
+        <td class="num">${cat ? Utils.hoursFmt(cat) : '—'}</td>
+        <td class="num">${stu ? Utils.hoursFmt(stu) : '—'}</td>
+        <td>${badge}</td>
+      </tr>`;
+    });
+    table.innerHTML = rows;
 
-  buildStudyPlan(durationMin, topicName, studyType, purpose) {
-    const forExam = purpose === 'prueba';
-    let parts;
-
-    if(studyType === 'idioma') {
-      parts = [
-        {label:'Vocabulario y gramática', pct:0.20, desc:`Recuperación activa: recuerda en voz alta el vocabulario y reglas de "${topicName}".`},
-        {label:'Comprensión', pct:0.25, desc: forExam ? `Lee material similar a la prueba sobre "${topicName}".` : `Lee algo breve relacionado a "${topicName}".`},
-        {label:'Producción oral', pct:0.30, desc:`Habla en voz alta usando "${topicName}".`},
-        {label:'Producción escrita', pct:0.15, desc:`Escribe un párrafo usando "${topicName}".`},
-        {label:'Autoevaluación', pct:0.10, desc:'Revisa tus errores.'}
-      ];
-    } else if(studyType === 'practico') {
-      parts = [
-        {label:'Recuperación activa', pct:0.15, desc:`Recuerda las fórmulas de "${topicName}".`},
-        {label:'Ejercicios nuevos', pct:0.30, desc:`Resuelve ejercicios de "${topicName}".`},
-        {label: forExam ? 'Certámenes antiguos' : 'Ejercicios variados', pct:0.30, desc: forExam ? `Resuelve certámenes de "${topicName}".` : `Mezcla ejercicios de "${topicName}" con otros temas.`},
-        {label:'Banco de errores', pct:0.15, desc:'Anota tus errores.'},
-        {label:'Autoevaluación', pct:0.10, desc:'Explica cómo resolverías un ejercicio.'}
-      ];
-    } else {
-      parts = [
-        {label:'Recuperación activa', pct:0.20, desc:`Explica todo lo que recuerdes de "${topicName}".`},
-        {label:'Mapa conceptual', pct:0.20, desc:`Conecta "${topicName}" con otros conceptos.`},
-        {label: forExam ? 'Casos antiguos' : 'Aplicación práctica', pct:0.30, desc: forExam ? `Responde casos de "${topicName}".` : `Aplica "${topicName}" a un ejemplo nuevo.`},
-        {label:'Banco de errores', pct:0.15, desc:'Anota conceptos confusos.'},
-        {label:'Autoevaluación', pct:0.15, desc:'Enséñale a alguien el concepto.'}
-      ];
-    }
-    return parts.map(p => ({label:p.label, desc:p.desc, minutes: Math.max(5, Math.round(durationMin*p.pct))}));
+    const subSel = document.getElementById('est-subject');
+    const cur = subSel.value;
+    subSel.innerHTML = subs.map(s => `<option value="${s.id}">${Utils.escape(s.name)}</option>`).join('');
+    if(cur && subs.some(s => s.id === cur)) subSel.value = cur;
   }
 };
 
@@ -1437,24 +1546,258 @@ document.addEventListener('DOMContentLoaded', () => {
   App.loadState();
   App.renderAll();
 
+  // ---------- helpers UI ----------
+  function setMsg(id, text, cls) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.className = 'inline-msg ' + (cls || '');
+    el.textContent = text;
+  }
+
+  function cancelSwap() {
+    if(!App.state.pendingSwap) return;
+    App.state.pendingSwap = null;
+    document.getElementById('swap-banner').classList.remove('on');
+    App.renderWeeks();
+  }
+
+  function updateSwapBanner() {
+    const banner = document.getElementById('swap-banner');
+    const p = App.state.pendingSwap;
+    if(!p) { banner.classList.remove('on'); return; }
+    const src = App.state.blocks.find(b => b.id === p.id);
+    if(!src) { cancelSwap(); return; }
+    const other = src.type === 'estudio' ? 'Libre' : 'de Estudio';
+    banner.textContent = `⇄ Intercambiando "${src.label || src.type}" — haz clic en un bloque ${other} (Esc para cancelar)`;
+    banner.classList.add('on');
+  }
+
+  function trySwap(targetBlock) {
+    const p = App.state.pendingSwap;
+    if(!p || targetBlock.id === p.id) { if(targetBlock.id === p?.id) cancelSwap(); return false; }
+    const a = App.state.blocks.find(b => b.id === p.id);
+    const b = targetBlock;
+    if(!a) { cancelSwap(); return false; }
+    const pair = (x,y) => (x.type === 'estudio' && y.type === 'libre') || (x.type === 'libre' && y.type === 'estudio');
+    if(!pair(a,b)) return false;
+    const tmp = {date:a.date, start:a.start, end:a.end};
+    a.date = b.date; a.start = b.start; a.end = b.end;
+    b.date = tmp.date; b.start = tmp.start; b.end = tmp.end;
+    App.saveJSON('blocks', App.state.blocks);
+    cancelSwap();
+    App.renderWeeks();
+    return true;
+  }
+
+  // Rutina base
+  document.getElementById('btn-routine').addEventListener('click', () => {
+    let added = 0;
+    CONFIG.ROUTINE_TEMPLATE.forEach(item => {
+      for(let day=0; day<7; day++) {
+        const exists = App.state.recurring.some(c =>
+          c.type === item.type && (c.label||'') === item.label && c.day === day &&
+          c.start === item.start && c.end === item.end
+        );
+        if(!exists) {
+          App.state.recurring.push({
+            id: Utils.uid(), day,
+            type: item.type, subjectId: null, subjectName: '',
+            label: item.label, start: item.start, end: item.end
+          });
+          added++;
+        }
+      }
+    });
+    if(added) {
+      App.saveJSON('recurring', App.state.recurring);
+      App.renderRecurringPanel();
+      App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
+      alert(`Rutina base agregada (${added} bloques): despertar, desayuno, almuerzo, cena y rutina de sueño. Ajusta las horas en "Bloques recurrentes".`);
+    } else {
+      alert('La rutina base ya estaba cargada.');
+    }
+  });
+
+  // Rellenar huecos con bloques Libres
+  document.getElementById('btn-fill-free').addEventListener('click', () => {
+    const planned = [];
+    for(let d=0; d<7; d++) {
+      const date = new Date(App.state.weekStart);
+      date.setDate(date.getDate() + d);
+      const dateStr = Utils.fmt(date);
+      const dow = d;
+      const evs = [];
+      App.state.recurring.forEach(c => {
+        if(c.day === dow && !App.state.recurringExceptions.has(c.id+'|'+dateStr)) {
+          evs.push([Utils.timeToMin(c.start), Utils.timeToMin(c.end)]);
+        }
+      });
+      App.state.blocks.forEach(b => {
+        if(b.date === dateStr) evs.push([Utils.timeToMin(b.start), Utils.timeToMin(b.end)]);
+      });
+      evs.sort((a,b) => a[0]-b[0]);
+      const merged = [];
+      evs.forEach(iv => {
+        if(merged.length && iv[0] <= merged[merged.length-1][1]) {
+          merged[merged.length-1][1] = Math.max(merged[merged.length-1][1], iv[1]);
+        } else merged.push([...iv]);
+      });
+      let cursor = CONFIG.SUGGEST_MIN_HOUR * 60;
+      const limit = CONFIG.HOUR_END * 60;
+      const gaps = [];
+      merged.forEach(([s,e]) => {
+        if(s > cursor) gaps.push([cursor, Math.min(s, limit)]);
+        cursor = Math.max(cursor, e);
+      });
+      if(cursor < limit) gaps.push([cursor, limit]);
+      gaps.forEach(([gs,ge]) => {
+        let s = gs;
+        while(ge - s >= 45 && planned.length < 60) {
+          const len = Math.min(120, ge - s);
+          planned.push({
+            id: Utils.uid(), date: dateStr, type: 'libre', label: 'Libre',
+            start: String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'),
+            end: String(Math.floor((s+len)/60)).padStart(2,'0')+':'+String((s+len)%60).padStart(2,'0'),
+            done: false, color: null
+          });
+          s += len;
+        }
+      });
+    }
+    if(!planned.length) {
+      alert('No encontré huecos de 45 min o más entre las 08:00 y las 23:00.');
+      return;
+    }
+    if(confirm(`¿Crear ${planned.length} bloques "Libre" en los huecos de esta semana? Puedes intercambiarlos después con bloques de estudio.`)) {
+      App.state.blocks = App.state.blocks.concat(planned);
+      App.saveJSON('blocks', App.state.blocks);
+      App.renderWeeks();
+    }
+  });
+
+  // Generador de bloques de estudio (regla 1:1)
+  document.getElementById('btn-gen-study').addEventListener('click', () => {
+    const L = Number(document.getElementById('gen-len').value);
+    const deficits = App.state.subjects
+      .map(s => ({s, need: App.weeklyMinutes(s.id,'clase') - App.weeklyMinutes(s.id,'estudio')}))
+      .filter(x => x.need > 15);
+    if(!deficits.length) {
+      setMsg('gen-msg', 'Nada pendiente: todos los ramos cumplen la regla 1:1 (o no tienen clases cargadas).', '');
+      return;
+    }
+
+    const occ = [0,1,2,3,4,5,6].map(() => []);
+    App.state.recurring.forEach(c => {
+      if(c.day >= 0 && c.day <= 6) {
+        occ[c.day].push([Utils.timeToMin(c.start), Utils.timeToMin(c.end)]);
+      }
+    });
+
+    let rot = 0;
+    let guard = 0;
+    let created = 0;
+    let createdMin = 0;
+
+    while(guard++ < 300) {
+      let placedThisPass = 0;
+      for(const d of deficits) {
+        if(d.need <= 15) continue;
+        const len = Math.min(L, d.need);
+        let slot = null, slotDay = -1;
+        for(let k=0; k<7 && !slot; k++) {
+          const day = (rot + k) % 7;
+          const intervals = occ[day].slice().sort((a,b) => a[0]-b[0]);
+          for(let m=CONFIG.SUGGEST_MIN_HOUR*60; m+len<=CONFIG.HOUR_END*60; m+=30) {
+            const overlap = intervals.some(([os,oe]) => m < oe && m+len > os);
+            if(!overlap) { slot = m; slotDay = day; break; }
+          }
+        }
+        if(slot === null) continue;
+        const startT = String(Math.floor(slot/60)).padStart(2,'0')+':'+String(slot%60).padStart(2,'0');
+        const endT = String(Math.floor((slot+len)/60)).padStart(2,'0')+':'+String((slot+len)%60).padStart(2,'0');
+        App.state.recurring.push({
+          id: Utils.uid(), day: slotDay,
+          type: 'estudio', subjectId: d.s.id, subjectName: d.s.name,
+          label: 'Estudio ' + d.s.name, start: startT, end: endT
+        });
+        occ[slotDay].push([slot, slot+len]);
+        d.need -= len;
+        created++; createdMin += len; placedThisPass++;
+        rot = (rot + 1) % 7;
+      }
+      if(!placedThisPass) break;
+    }
+
+    if(created) {
+      App.saveJSON('recurring', App.state.recurring);
+      App.renderRecurringPanel();
+      App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
+      const remaining = deficits.reduce((sum,d) => sum + Math.max(0,d.need), 0);
+      let msg = `✅ ${created} bloques de estudio creados (${Utils.hoursFmt(createdMin)}).`;
+      if(remaining > 15) msg += ` Faltaron ${Utils.hoursFmt(remaining)} sin espacio libre: libera horario o usa sesiones más cortas.`;
+      setMsg('gen-msg', msg, 'ok');
+    } else {
+      setMsg('gen-msg', 'No encontré huecos disponibles. Revisa tu horario fijo.', 'error');
+    }
+  });
+
+  // Agregar estudio manual
+  document.getElementById('btn-add-study').addEventListener('click', () => {
+    const subId = document.getElementById('est-subject').value;
+    const sub = App.state.subjects.find(s => s.id === subId);
+    const date = document.getElementById('est-date').value;
+    const start = Utils.normalizeTime(document.getElementById('est-start').value);
+    const len = Number(document.getElementById('est-len').value);
+    const recur = document.getElementById('est-recur').checked;
+    if(!sub) { setMsg('est-msg', 'Elige un ramo.', 'error'); return; }
+    if(!date || !start) { setMsg('est-msg', 'Elige día y hora.', 'error'); return; }
+    const end = Utils.addMin(start, len);
+    if(recur) {
+      const day = Utils.dowOfDate(date);
+      App.state.recurring.push({
+        id: Utils.uid(), day, type: 'estudio',
+        subjectId: sub.id, subjectName: sub.name,
+        label: 'Estudio ' + sub.name, start, end
+      });
+      App.saveJSON('recurring', App.state.recurring);
+      App.renderRecurringPanel();
+    } else {
+      App.state.blocks.push({
+        id: Utils.uid(), date, type: 'estudio',
+        subjectId: sub.id, label: 'Estudio ' + sub.name,
+        start, end, done: false, color: null
+      });
+      App.saveJSON('blocks', App.state.blocks);
+    }
+    App.renderWeeks();
+    App.refreshSubjectHints();
+    App.renderEstudio();
+    setMsg('est-msg', `✅ Estudio de ${sub.name} agregado (${recur ? 'repite cada semana' : 'solo ese día'}).`, 'ok');
+  });
+
+  // ---------- delegación global de clics ----------
   document.addEventListener('click', (e) => {
-    // Suggest meals (fuera del data-action)
+    // Comidas sugeridas
     if(e.target.id === 'btn-suggest-meals' || e.target.closest('#btn-suggest-meals')) {
       const time = parseInt(document.getElementById('cook-time').value);
       const suggestions = document.getElementById('meal-suggestions');
       const restrictions = App.state.dietRestrictions;
-      
+
       if(!App.state.inventory.length) {
         suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
         return;
       }
-      
+
       let timeCategory = 'rapido';
       if(time >= 45) timeCategory = 'largo';
       else if(time >= 25) timeCategory = 'medio';
-      
+
       let available = CONFIG.RECIPES[timeCategory] || [];
-      
+
       if(restrictions.length) {
         available = available.filter(recipe => {
           if(recipe.diets && recipe.diets.length) {
@@ -1463,26 +1806,26 @@ document.addEventListener('DOMContentLoaded', () => {
           return true;
         });
       }
-      
+
       if(!available.length) {
         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que cumplan con tus restricciones (${restrictions.join(', ')}).</p>`;
         return;
       }
-      
+
       const scored = available.map(recipe => {
-        const match = recipe.ingredients.filter(ing => 
+        const match = recipe.ingredients.filter(ing =>
           App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
         );
         return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
       });
       scored.sort((a,b) => b.matchCount - a.matchCount);
       const top = scored.slice(0, 4);
-      
+
       if(!top.length || top[0].matchCount === 0) {
         suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario.</p>`;
         return;
       }
-      
+
       suggestions.innerHTML = top.map(r => {
         const dietLabels = r.diets?.map(d => {
           const labels = {
@@ -1494,7 +1837,7 @@ document.addEventListener('DOMContentLoaded', () => {
           };
           return labels[d] || d;
         }).join(' ') || '🍽️';
-        
+
         return `
           <div class="meal-suggestion-card">
             <h5>🍳 ${r.name} <span style="font-size:11px; color:var(--pine-soft);">${dietLabels}</span></h5>
@@ -1507,8 +1850,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const target = e.target.closest('[data-action]');
-    if(!target) return;
-    const action = target.dataset.action;
+    const action = target ? target.dataset.action : null;
+
+    // --- Intercambio estudio <-> libre ---
+    if(App.state.pendingSwap) {
+      if(action === 'start-swap') {
+        cancelSwap();
+        return;
+      }
+      if(action) {
+        cancelSwap();
+      } else {
+        const blockEl = e.target.closest('.block-abs[data-id]');
+        if(blockEl) {
+          const other = App.state.blocks.find(b => b.id === blockEl.dataset.id);
+          if(other && trySwap(other)) return;
+          cancelSwap();
+        } else {
+          cancelSwap();
+        }
+      }
+    }
+
+    if(action === 'start-swap') {
+      const block = App.state.blocks.find(b => b.id === target.dataset.id);
+      if(block && (block.type === 'estudio' || block.type === 'libre')) {
+        App.state.pendingSwap = {id: block.id};
+        updateSwapBanner();
+        App.renderWeeks();
+      }
+      return;
+    }
 
     // Diet buttons
     if(action === 'toggle-diet') {
@@ -1538,7 +1910,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
+      App.renderLegend();
+      App.renderEstudio();
     }
 
     if(action === 'delete-subject') {
@@ -1546,10 +1919,42 @@ document.addEventListener('DOMContentLoaded', () => {
       const sub = App.state.subjects.find(s => s.id === id);
       if(sub && confirm(`¿Eliminar ${sub.name}?`)) {
         App.state.subjects = App.state.subjects.filter(s => s.id !== id);
+        App.state.recurring.forEach(c => {
+          if(c.subjectId === id) { c.subjectId = null; c.subjectName = sub.name; }
+        });
+        App.state.blocks.forEach(b => { if(b.subjectId === id) b.subjectId = null; });
         App.saveJSON('subjects', App.state.subjects);
+        App.saveJSON('recurring', App.state.recurring);
         App.renderSubjects();
-        App.renderAsistente();
+        App.renderLegend();
+        App.renderWeeks();
+        App.renderRecurringPanel();
+        App.renderEstudio();
       }
+    }
+
+    if(action === 'toggle-sub-palette') {
+      const pop = document.getElementById('pal-' + target.dataset.subject);
+      if(pop) {
+        const wasOpen = pop.classList.contains('open');
+        document.querySelectorAll('.palette-pop.open').forEach(p => p.classList.remove('open'));
+        if(!wasOpen) pop.classList.add('open');
+      }
+      return;
+    }
+
+    if(action === 'pick-sub-color') {
+      const subId = target.dataset.subject;
+      const color = target.dataset.color;
+      const sub = App.state.subjects.find(s => s.id === subId);
+      if(!sub) return;
+      sub.color = color;
+      App.saveJSON('subjects', App.state.subjects);
+      App.renderSubjects();
+      App.renderWeeks();
+      App.renderLegend();
+      App.renderEstudio();
+      return;
     }
 
     if(action === 'add-topic') {
@@ -1563,7 +1968,6 @@ document.addEventListener('DOMContentLoaded', () => {
       App.saveJSON('subjects', App.state.subjects);
       inp.value = '';
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'cycle-topic') {
@@ -1576,7 +1980,6 @@ document.addEventListener('DOMContentLoaded', () => {
       topic.status = CONFIG.STATUS_CYCLE[(idx + 1) % CONFIG.STATUS_CYCLE.length];
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'delete-topic') {
@@ -1588,7 +1991,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sub.tests.forEach(t => { t.temario = t.temario.filter(id => id !== topicId); });
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'add-test') {
@@ -1598,7 +2000,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sub.tests.push({id: Utils.uid(), name: '', date: '', temario: []});
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'delete-test') {
@@ -1609,7 +2010,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sub.tests = sub.tests.filter(t => t.id !== testId);
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'toggle-temario-chip') {
@@ -1626,7 +2026,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       App.saveJSON('subjects', App.state.subjects);
       App.renderSubjects();
-      App.renderAsistente();
     }
 
     if(action === 'toggle-temario-box') {
@@ -1640,6 +2039,8 @@ document.addEventListener('DOMContentLoaded', () => {
       App.saveJSON('recurring', App.state.recurring);
       App.renderRecurringPanel();
       App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
     }
 
     if(action === 'skip-recurring') {
@@ -1652,9 +2053,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(action === 'delete-block') {
       const id = target.dataset.id;
+      if(App.state.pendingSwap && App.state.pendingSwap.id === id) cancelSwap();
       App.state.blocks = App.state.blocks.filter(b => b.id !== id);
       App.saveJSON('blocks', App.state.blocks);
       App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
     }
 
     if(action === 'toggle-block') {
@@ -1671,34 +2075,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const id = target.dataset.id;
       const block = App.state.blocks.find(b => b.id === id);
       if(!block) return;
-      const newLabel = prompt('Descripción', block.label);
-      if(newLabel === null) return;
-      const newStart = prompt('Hora de inicio (HH:MM)', block.start);
-      if(newStart === null) return;
-      const newEnd = prompt('Hora de término (HH:MM)', block.end);
-      if(newEnd === null) return;
-      block.label = newLabel.trim() || block.label;
-      block.start = Utils.normalizeTime(newStart) || block.start;
-      block.end = Utils.normalizeTime(newEnd) || block.end;
-      App.saveJSON('blocks', App.state.blocks);
-      App.renderWeeks();
-    }
-
-    if(action === 'view-plan') {
-      const id = target.dataset.id;
-      const block = App.state.blocks.find(b => b.id === id);
-      if(block && block.plan) {
-        document.getElementById('plan-title').textContent = block.label;
-        document.getElementById('plan-sub').textContent = `${block.start}–${block.end}`;
-        const wrap = document.getElementById('plan-steps');
-        wrap.innerHTML = block.plan.map(step => `
-          <div class="plan-step">
-            <div class="p-title">${Utils.escape(step.label)} <span class="mins">${step.minutes} min</span></div>
-            <p>${Utils.escape(step.desc)}</p>
-          </div>
-        `).join('');
-        document.getElementById('plan-overlay').classList.add('open');
-      }
+      openEditModal(block);
+      return;
     }
 
     if(action === 'add-block') {
@@ -1706,10 +2084,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const type = document.getElementById('nb-type').value;
       const start = Utils.normalizeTime(document.getElementById('nb-start').value);
       const end = Utils.normalizeTime(document.getElementById('nb-end').value);
-      const label = document.getElementById('nb-label').value.trim();
-      if(!date || !label) { alert('Falta el día o la descripción.'); return; }
+      const labelInput = document.getElementById('nb-label').value.trim();
+      if(!date) { alert('Falta el día.'); return; }
       if(!start || !end) { alert('Hora inválida.'); return; }
-      App.state.blocks.push({id: Utils.uid(), date, type, label, start, end, done: false});
+      const defaultLabel = CONFIG.BLOCK_TYPES.find(t => t.value === type)?.label || '';
+      App.state.blocks.push({
+        id: Utils.uid(), date, type,
+        label: labelInput || defaultLabel,
+        start, end, done: false, color: null
+      });
       App.saveJSON('blocks', App.state.blocks);
       document.getElementById('nb-label').value = '';
       App.renderWeeks();
@@ -1752,103 +2135,6 @@ document.addEventListener('DOMContentLoaded', () => {
       App.renderMeals();
     }
 
-    if(action === 'select-topic-opt') {
-      const subId = target.dataset.subjectId;
-      const sub = App.state.subjects.find(s => s.id === subId);
-      const topicId = target.dataset.topicId;
-      const topic = sub?.topics.find(t => t.id === topicId);
-      document.querySelectorAll('.asistente-topic-opt').forEach(o => o.classList.remove('selected'));
-      target.classList.add('selected');
-      App.updateAsistentePreview(sub, topic);
-    }
-
-    if(action === 'generate-session') {
-      const subId = document.getElementById('as-subject').value;
-      const sub = App.state.subjects.find(s => s.id === subId);
-      const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
-      const msg = document.getElementById('as-msg');
-      if(!sub || !selectedOpt) { msg.className='msg error'; msg.textContent='Elige un ramo y un tema.'; return; }
-      const topic = sub.topics.find(t => t.id === selectedOpt.dataset.topicId);
-      const duration = Number(document.getElementById('as-duration').value);
-      const date = document.getElementById('as-date').value;
-      const start = Utils.normalizeTime(document.getElementById('as-start').value);
-      if(!date || !start) { msg.className='msg error'; msg.textContent='Elige día y hora.'; return; }
-      const end = Utils.addMin(start, duration);
-      const selectedTest = App.getSelectedTest(sub);
-      const testNote = selectedTest ? ` (${selectedTest.name||'prueba'})` : '';
-      App.state.blocks.push({
-        id: Utils.uid(),
-        date,
-        type: 'estudio',
-        subjectId: sub.id,
-        label: `Estudiar ${sub.name} — ${topic.name}${testNote}`,
-        start, end,
-        done: false,
-        plan: App.buildStudyPlan(duration, topic.name, sub.studyType, App.state.asPurpose)
-      });
-      App.saveJSON('blocks', App.state.blocks);
-      App.renderWeeks();
-      msg.className='msg ok';
-      msg.textContent = '✅ Sesión agregada a tu semana.';
-    }
-
-    if(action === 'chat-plan') {
-      const subId = document.getElementById('as-subject').value;
-      const sub = App.state.subjects.find(s => s.id === subId);
-      const userInput = document.getElementById('as-chat-input').value.trim();
-      const responseDiv = document.getElementById('as-chat-response');
-      if(!sub) { responseDiv.innerHTML = '<span style="color:var(--clay)">Selecciona un ramo.</span>'; responseDiv.style.display='block'; return; }
-      if(!userInput) { responseDiv.innerHTML = '<span style="color:var(--clay)">Escribe qué necesitas.</span>'; responseDiv.style.display='block'; return; }
-      
-      let bestTopic = null, bestScore = 0;
-      sub.topics.forEach(t => {
-        const words = t.name.toLowerCase().split(' ');
-        let score = words.filter(w => userInput.toLowerCase().includes(w)).length;
-        if(score > bestScore) { bestScore = score; bestTopic = t; }
-      });
-      const topic = bestTopic || sub.topics[0];
-      const duration = Number(document.getElementById('as-duration').value);
-      const plan = App.buildStudyPlan(duration, topic ? topic.name : sub.name, sub.studyType, App.state.asPurpose);
-      
-      let response = `📚 <strong>Guía para ${sub.name}</strong>\n\n`;
-      response += `🔍 "${userInput}"\n\n📌 Plan (${duration} min):\n\n`;
-      plan.forEach((step, i) => {
-        response += `${i+1}. ${step.label} (${step.minutes} min)\n   ${step.desc}\n\n`;
-      });
-      response += `💡 Enfócate en: ${topic ? topic.name : 'los temas principales'}`;
-      
-      responseDiv.innerHTML = response.replace(/\n/g, '<br>');
-      responseDiv.style.display = 'block';
-      App.state._lastChatPlan = { sub, topic, plan, duration };
-    }
-
-    if(action === 'chat-save') {
-      const plan = App.state._lastChatPlan;
-      if(!plan) { alert('Primero genera una guía.'); return; }
-      const date = document.getElementById('as-date').value;
-      const start = Utils.normalizeTime(document.getElementById('as-start').value);
-      if(!date || !start) { alert('Elige día y hora.'); return; }
-      const end = Utils.addMin(start, plan.duration);
-      App.state.blocks.push({
-        id: Utils.uid(),
-        date,
-        type: 'estudio',
-        subjectId: plan.sub.id,
-        label: `📋 ${plan.sub.name} — guía: ${plan.topic ? plan.topic.name : 'repaso'}`,
-        start, end,
-        done: false,
-        plan: plan.plan
-      });
-      App.saveJSON('blocks', App.state.blocks);
-      App.renderWeeks();
-      document.getElementById('as-msg').className = 'msg ok';
-      document.getElementById('as-msg').textContent = '✅ Guía guardada como bloque.';
-    }
-
-    if(action === 'predict') {
-      generateSuggestions();
-    }
-
     if(action === 'clear-week') {
       const end = new Date(App.state.weekStart);
       end.setDate(end.getDate() + 6);
@@ -1860,6 +2146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         App.state.blocks = App.state.blocks.filter(b => !(b.date >= startStr && b.date <= endStr));
         App.saveJSON('blocks', App.state.blocks);
         App.renderWeeks();
+        App.refreshSubjectHints();
+        App.renderEstudio();
       }
     }
 
@@ -1869,23 +2157,97 @@ document.addEventListener('DOMContentLoaded', () => {
       App.saveJSON('inventory', App.state.inventory);
       alert('✅ Inventario guardado: ' + App.state.inventory.join(', '));
     }
+  });
 
-    if(action === 'close-plan') {
-      document.getElementById('plan-overlay').classList.remove('open');
+  // ---------- Modal de edición de bloque ----------
+  let editingBlockId = null;
+  let editingColorChoice = '__auto';
+
+  function buildPaletteInto(container, selected) {
+    container.innerHTML =
+      `<button class="pal-swatch${selected==='__auto'?' sel':''}" data-c="__auto" title="Automático (según ramo o tipo)" style="background:conic-gradient(#C1666B,#E09F55,#E7C27D,#7FA37A,#5FA8A0,#6C91BF,#9B7EDE,#C1666B);"></button>` +
+      CONFIG.PALETTE.map(c =>
+        `<button class="pal-swatch${c===selected?' sel':''}" data-c="${c}" style="background:${c}" title="${c}"></button>`
+      ).join('');
+    container.querySelectorAll('.pal-swatch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editingColorChoice = btn.dataset.c;
+        container.querySelectorAll('.pal-swatch').forEach(x => x.classList.remove('sel'));
+        btn.classList.add('sel');
+      });
+    });
+  }
+
+  function openEditModal(block) {
+    editingBlockId = block.id;
+    editingColorChoice = block.color || '__auto';
+    document.getElementById('eb-date').value = block.date || Utils.fmt(new Date());
+    document.getElementById('eb-type').innerHTML = CONFIG.BLOCK_TYPES
+      .map(t => `<option value="${t.value}" ${block.type===t.value?'selected':''}>${t.label}</option>`).join('');
+    document.getElementById('eb-type').value = block.type;
+    document.getElementById('eb-start').value = block.start;
+    document.getElementById('eb-end').value = block.end;
+    document.getElementById('eb-label').value = block.label || '';
+    buildPaletteInto(document.getElementById('eb-palette'), editingColorChoice);
+    const note = document.getElementById('eb-color-note');
+    if(block.subjectId) {
+      const sub = App.state.subjects.find(s => s.id === block.subjectId);
+      note.textContent = `"Auto" usa el color del ramo ${sub ? sub.name : ''}.`;
+    } else {
+      note.textContent = '"Auto" usa el color según el tipo de bloque.';
     }
-    if(action === 'close-login') {
-      document.getElementById('login-overlay').classList.remove('open');
+    document.getElementById('edit-overlay').classList.add('open');
+  }
+
+  document.getElementById('eb-save').addEventListener('click', () => {
+    const block = App.state.blocks.find(b => b.id === editingBlockId);
+    if(!block) { closeEditModal(); return; }
+    const date = document.getElementById('eb-date').value;
+    const start = Utils.normalizeTime(document.getElementById('eb-start').value);
+    const end = Utils.normalizeTime(document.getElementById('eb-end').value);
+    if(!date || !start || !end) { alert('Fecha u hora inválida.'); return; }
+    block.date = date;
+    block.type = document.getElementById('eb-type').value;
+    block.start = start;
+    block.end = end;
+    block.label = document.getElementById('eb-label').value.trim();
+    block.color = editingColorChoice === '__auto' ? null : editingColorChoice;
+    App.saveJSON('blocks', App.state.blocks);
+    closeEditModal();
+    App.renderWeeks();
+    App.refreshSubjectHints();
+    App.renderEstudio();
+  });
+
+  document.getElementById('eb-delete').addEventListener('click', () => {
+    const block = App.state.blocks.find(b => b.id === editingBlockId);
+    if(!block) { closeEditModal(); return; }
+    if(confirm(`¿Eliminar el bloque "${block.label || block.type}"?`)) {
+      if(App.state.pendingSwap && App.state.pendingSwap.id === block.id) cancelSwap();
+      App.state.blocks = App.state.blocks.filter(b => b.id !== block.id);
+      App.saveJSON('blocks', App.state.blocks);
+      closeEditModal();
+      App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
     }
   });
 
-  // INPUT EVENTS
+  function closeEditModal() {
+    editingBlockId = null;
+    document.getElementById('edit-overlay').classList.remove('open');
+  }
+
+  document.getElementById('btn-close-edit').addEventListener('click', closeEditModal);
+
+  // ---------- INPUT EVENTS ----------
   const saveSubject = Utils.debounce(() => {
     App.saveJSON('subjects', App.state.subjects);
   }, 500);
 
   document.addEventListener('input', (e) => {
     const target = e.target;
-    
+
     if(target.dataset.field === 'name' || target.dataset.field === 'credits' || target.dataset.field === 'studyType') {
       const subId = target.dataset.subject;
       const sub = App.state.subjects.find(s => s.id === subId);
@@ -1893,11 +2255,9 @@ document.addEventListener('DOMContentLoaded', () => {
       sub[target.dataset.field] = target.value;
       saveSubject();
       if(target.dataset.field === 'credits') {
-        const card = target.closest('.subject-card');
-        const c = parseFloat(sub.credits);
-        card.querySelector('[data-hours-hint]').textContent = c ? `≈ ${Math.round(c*CONFIG.HOURS_PER_CREDIT)} h/semana` : 'agrega créditos';
+        App.refreshSubjectHints();
       }
-      if(target.dataset.field === 'studyType') App.renderAsistente();
+      if(target.dataset.field === 'studyType') App.renderEstudio();
     }
 
     if(target.dataset.tpf === 'name') {
@@ -1908,7 +2268,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if(topic) {
         topic.name = target.value;
         saveSubject();
-        App.renderAsistente();
       }
     }
 
@@ -1920,7 +2279,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if(test) {
         test[target.dataset.tf] = target.value;
         saveSubject();
-        App.renderAsistente();
       }
     }
 
@@ -1932,15 +2290,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if(f === 'day') c.day = Number(target.value);
       else if(f === 'start' || f === 'end') { const t = Utils.normalizeTime(target.value); if(t) c[f] = t; }
       else if(f === 'subjectId') {
-        c[f] = target.value;
+        c[f] = target.value || null;
         const s = App.state.subjects.find(x => x.id === target.value);
         c.subjectName = s ? s.name : '';
+        if(c.type === 'estudio') c.label = s ? 'Estudio ' + s.name : '';
       } else {
         c[f] = target.value;
       }
       App.saveJSON('recurring', App.state.recurring);
       if(f === 'type') App.renderRecurringPanel();
       App.renderWeeks();
+      App.refreshSubjectHints();
+      App.renderEstudio();
     }
 
     if(target.dataset.mf) {
@@ -1968,6 +2329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     App.saveJSON('weekStart', App.state.weekStart.toISOString());
     App.renderWeeks();
     App.renderWeekRange();
+    App.renderEstudio();
   });
 
   document.getElementById('btn-next-week').addEventListener('click', () => {
@@ -1975,6 +2337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     App.saveJSON('weekStart', App.state.weekStart.toISOString());
     App.renderWeeks();
     App.renderWeekRange();
+    App.renderEstudio();
   });
 
   // Drag & Drop
@@ -2006,11 +2369,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!col) return;
     e.preventDefault();
     col.classList.remove('drag-over');
-    
+
     const id = e.dataTransfer.getData('text/plain');
     const block = App.state.blocks.find(b => b.id === id);
     if(!block) return;
-    
+
     const rect = col.getBoundingClientRect();
     const offsetY = e.clientY - rect.top;
     const duration = Utils.timeToMin(block.end) - Utils.timeToMin(block.start);
@@ -2018,9 +2381,17 @@ document.addEventListener('DOMContentLoaded', () => {
     block.date = col.dataset.date;
     block.start = newStart;
     block.end = Utils.addMin(newStart, duration);
-    if(block.type === 'sugerido') block.type = 'estudio';
     App.saveJSON('blocks', App.state.blocks);
     App.renderWeeks();
+  });
+
+  // Tecla Esc: cancelar intercambio / cerrar modales
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+      if(App.state.pendingSwap) cancelSwap();
+      document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
+      document.querySelectorAll('.palette-pop.open').forEach(p => p.classList.remove('open'));
+    }
   });
 
   // Tabs
@@ -2030,35 +2401,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('view-' + btn.dataset.view).classList.add('active');
+      if(btn.dataset.view === 'estudio') App.renderEstudio();
+      if(btn.dataset.view === 'semana') { App.renderWeeks(); App.renderWeekRange(); }
     });
-  });
-
-  // Purpose toggle
-  document.querySelectorAll('.purpose-toggle button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.purpose-toggle button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      App.state.asPurpose = btn.dataset.purpose;
-      document.getElementById('as-test-wrap').style.display = App.state.asPurpose === 'prueba' ? 'block' : 'none';
-      App.renderAsistenteTestSelect();
-      App.renderAsistenteTopics();
-    });
-  });
-
-  // Asistente changes
-  document.getElementById('as-subject').addEventListener('change', () => {
-    App.renderAsistenteTestSelect();
-    App.renderAsistenteTopics();
-  });
-
-  document.getElementById('as-test').addEventListener('change', App.renderAsistenteTopics.bind(App));
-
-  document.getElementById('as-duration').addEventListener('change', () => {
-    const subId = document.getElementById('as-subject').value;
-    const sub = App.state.subjects.find(s => s.id === subId);
-    const selectedOpt = document.querySelector('.asistente-topic-opt.selected');
-    const topic = sub && selectedOpt ? sub.topics.find(t => t.id === selectedOpt.dataset.topicId) : null;
-    App.updateAsistentePreview(sub, topic);
   });
 
   // Theme
@@ -2091,137 +2436,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', () => document.getElementById('theme-menu').classList.remove('open'));
   applyTheme(localStorage.getItem('theme') || 'bosque');
-
-  // Función de predicción
-  function generateSuggestions() {
-    const startStr = Utils.fmt(App.state.weekStart);
-    const endDate = new Date(App.state.weekStart);
-    endDate.setDate(endDate.getDate() + 6);
-    const endStr = Utils.fmt(endDate);
-    
-    const blocksToKeep = [];
-    App.state.blocks.forEach(b => {
-      if(b.type !== 'sugerido') { blocksToKeep.push(b); return; }
-      if(b.date < startStr || b.date > endStr) { blocksToKeep.push(b); return; }
-      const hasCollision = App.state.blocks.some(existing =>
-        existing.id !== b.id &&
-        existing.type !== 'sugerido' &&
-        existing.date === b.date &&
-        Utils.timeToMin(existing.start) < Utils.timeToMin(b.end) &&
-        Utils.timeToMin(existing.end) > Utils.timeToMin(b.start)
-      );
-      if(!hasCollision) blocksToKeep.push(b);
-    });
-    App.state.blocks = blocksToKeep;
-
-    const horizon = 21;
-    const info = App.state.subjects.map(sub => {
-      const creditsNum = parseFloat(sub.credits) || 3;
-      const baseSessions = Math.min(4, Math.max(1, Math.round(creditsNum * CONFIG.HOURS_PER_CREDIT / 1.5)));
-      const upcoming = sub.tests
-        .map(t => ({...t, d: Utils.daysUntil(t.date)}))
-        .filter(t => t.d !== null && t.d >= 0 && t.d <= horizon)
-        .sort((a,b) => a.d - b.d);
-      const nearest = upcoming[0] || null;
-      const priorityBoost = /matemática/i.test(sub.name) ? 1.6 : 1;
-      const urgency = nearest ? priorityBoost / Math.max(nearest.d, 1) : 0;
-      return {sub, nearest, baseSessions, urgency};
-    });
-
-    const totalUrgency = info.reduce((s,w) => s + w.urgency, 0);
-    const bonusPool = Math.round(info.length * 1.2);
-    info.forEach(w => {
-      const bonus = totalUrgency > 0 ? Math.round((w.urgency/totalUrgency) * bonusPool) : 0;
-      w.totalSessions = w.baseSessions + bonus;
-    });
-
-    if(info.every(w => w.totalSessions === 0)) {
-      alert('Agrega créditos o fechas de prueba para generar sugerencias.');
-      return;
-    }
-
-    info.forEach(w => {
-      if(w.totalSessions <= 0) return;
-      const purpose = w.nearest ? 'prueba' : 'mantenimiento';
-      const desired = [];
-      if(w.totalSessions <= 1) desired.push(0);
-      else {
-        for(let k=0; k<w.totalSessions; k++) {
-          desired.push(Math.round(k * 6 / (w.totalSessions - 1)));
-        }
-      }
-      let placed = 0;
-      desired.forEach(centerIdx => {
-        if(placed >= w.totalSessions) return;
-        for(let offset=0; offset<7 && placed<w.totalSessions; offset++) {
-          for(const cand of [centerIdx - offset, centerIdx + offset]) {
-            if(cand < 0 || cand >= 7) continue;
-            const d = new Date(App.state.weekStart);
-            d.setDate(d.getDate() + cand);
-            const dow = (d.getDay() + 6) % 7;
-            const dateStr = Utils.fmt(d);
-            const already = App.state.blocks.some(b => b.date === dateStr && b.subjectId === w.sub.id);
-            if(already) continue;
-            
-            const occupied = [...App.state.recurring
-              .filter(c => c.day === dow && !App.state.recurringExceptions.has(c.id+'|'+dateStr))
-              .map(c => [Utils.timeToMin(c.start), Utils.timeToMin(c.end)]),
-              ...App.state.blocks.filter(b => b.date === dateStr).map(b => [Utils.timeToMin(b.start), Utils.timeToMin(b.end)])
-            ];
-            const minStart = CONFIG.SUGGEST_MIN_HOUR * 60;
-            let slot = null;
-            for(let m=17*60; m<=CONFIG.HOUR_END*60-90; m+=30) {
-              const end = m+90;
-              const overlaps = occupied.some(([os,oe]) => m < oe && end > os);
-              if(!overlaps) { slot = [m, end]; break; }
-            }
-            if(!slot) {
-              for(let m=minStart; m<17*60; m+=30) {
-                const end = m+90;
-                const overlaps = occupied.some(([os,oe]) => m < oe && end > os);
-                if(!overlaps) { slot = [m, end]; break; }
-              }
-            }
-            if(!slot) continue;
-            
-            const topic = (() => {
-              let candidates = w.sub.topics.filter(t => t.status !== 'dominado');
-              if(w.nearest && w.nearest.temario.length) {
-                const inTemario = candidates.filter(t => w.nearest.temario.includes(t.id));
-                if(inTemario.length) candidates = inTemario;
-              }
-              if(!candidates.length) candidates = w.sub.topics;
-              if(!candidates.length) return null;
-              const order = {debil:0, sinver:1, dominado:2};
-              candidates = [...candidates].sort((a,b) => order[a.status] - order[b.status]);
-              return candidates[placed % candidates.length];
-            })();
-            
-            const testNote = w.nearest ? ` (${w.nearest.name||'prueba'} en ${w.nearest.d}d)` : ' (mantenimiento)';
-            const label = topic ? `Estudiar ${w.sub.name} — ${topic.name}${testNote}` : `Estudiar ${w.sub.name}${testNote}`;
-            const h = Math.floor(slot[0]/60), m = slot[0]%60;
-            const h2 = Math.floor(slot[1]/60), m2 = slot[1]%60;
-            App.state.blocks.push({
-              id: Utils.uid(),
-              date: dateStr,
-              type: 'sugerido',
-              subjectId: w.sub.id,
-              label,
-              start: String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
-              end: String(h2).padStart(2,'0')+':'+String(m2).padStart(2,'0'),
-              done: false,
-              plan: App.buildStudyPlan(90, topic ? topic.name : w.sub.name, w.sub.studyType, purpose)
-            });
-            placed++;
-            break;
-          }
-        }
-      });
-    });
-
-    App.saveJSON('blocks', App.state.blocks);
-    App.renderWeeks();
-  }
 
   // Firebase
   const firebaseConfig = {
@@ -2277,7 +2491,7 @@ document.addEventListener('DOMContentLoaded', () => {
         App.renderAll();
         widget.innerHTML = `<span class="sync-dot on" id="sync-dot"></span><span id="account-status">${Utils.escape(user.email)}</span><button id="btn-logout">Cerrar sesión</button>`;
         document.getElementById('btn-logout').addEventListener('click', () => auth.signOut());
-        
+
         db.collection('users').doc(user.uid).get().then(doc => {
           if(doc.exists) {
             const cloudData = doc.data();
@@ -2365,10 +2579,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     reader.readAsText(file);
     e.target.value = '';
-  });
-
-  document.getElementById('btn-close-plan').addEventListener('click', () => {
-    document.getElementById('plan-overlay').classList.remove('open');
   });
 
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
