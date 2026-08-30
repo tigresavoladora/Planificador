@@ -269,9 +269,13 @@ label.field-label:first-child{margin-top:0;}
 .block-abs.done{opacity:0.4; text-decoration:line-through;}
 .block-abs.swap-src{outline:2px solid var(--amber); outline-offset:1px;}
 .block-abs .b-range{font-family:'IBM Plex Mono'; font-size:8.5px; opacity:0.8; display:block;}
-.block-abs .b-actions{position:absolute; top:2px; right:3px; display:flex; gap:3px; background:rgba(255,255,255,0.85); border-radius:4px; padding:1px;}
-.block-abs .b-actions span{cursor:pointer; font-size:10px; opacity:0.8; border-radius:3px; padding:0 2px;}
-.block-abs .b-actions span:hover{opacity:1; background:rgba(255,255,255,0.9);}
+.block-abs .b-actions{position:absolute; top:1px; right:2px; display:flex; flex-direction:column; gap:1px; background:rgba(255,255,255,0.92); border-radius:5px; padding:1px; box-shadow:0 1px 2px rgba(0,0,0,0.15); z-index:5;}
+.block-abs .b-actions span{cursor:pointer; font-size:11px; line-height:1; opacity:0.85; border-radius:3px; padding:3px 4px; display:flex; align-items:center; justify-content:center; min-width:18px; min-height:16px;}
+.block-abs .b-actions span:hover{opacity:1; background:rgba(0,0,0,0.12);}
+.block-abs.sm .b-actions{flex-direction:row;}
+.block-abs.sm .b-actions span{padding:2px 4px; min-height:14px;}
+.block-abs.xs .b-actions{flex-direction:row; top:0; right:0; background:transparent; box-shadow:none;}
+.block-abs.xs .b-actions span{padding:2px 4px; min-height:14px; background:rgba(255,255,255,0.85); margin:0 1px;}
 
 .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; font-size:11.5px; color:var(--ink-soft);}
 .legend span{display:inline-flex; align-items:center; gap:5px;}
@@ -2214,11 +2218,39 @@ document.addEventListener('DOMContentLoaded', () => {
       App.saveJSON('inventory', App.state.inventory);
       alert('✅ Inventario guardado: ' + App.state.inventory.join(', '));
     }
+
+    // Clic en el cuerpo de un bloque (no botón de acción) → según tipo
+    if(!action && !App.state.pendingSwap && !wasDragging) {
+      const blockEl = e.target.closest('.block-abs[data-id]');
+      if(blockEl) {
+        e.preventDefault();
+        if(blockEl.classList.contains('fixed')) {
+          // Recurrente: ofrecer eliminar definitivamente sin acertar el iconito
+          const id = blockEl.dataset.id;
+          const c = App.state.recurring.find(x => x.id === id);
+          if(c) openConfirm(
+            `¿Eliminar "Bloque recurrente" definitivamente?`,
+            `Se borrará este horario fijo de TODAS las semanas${c.label ? ` (${c.label})` : ''}.`,
+            () => {
+              App.state.recurring = App.state.recurring.filter(x => x.id !== id);
+              App.saveJSON('recurring', App.state.recurring);
+              App.renderRecurringPanel();
+              App.renderWeeks();
+              App.refreshSubjectHints();
+              App.renderEstudio();
+            }
+          );
+        } else {
+          openEditModal(App.state.blocks.find(b => b.id === blockEl.dataset.id));
+        }
+      }
+    }
   });
 
   // ---------- Modal de edición de bloque ----------
   let editingBlockId = null;
   let editingColorChoice = '__auto';
+  let wasDragging = false;
 
   function buildPaletteInto(container, selected) {
     container.innerHTML =
@@ -2438,6 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('dragstart', (e) => {
+    wasDragging = true;
     const block = e.target.closest('.block-abs');
     if(block && block.dataset.id) {
       e.dataTransfer.setData('text/plain', block.dataset.id);
@@ -2446,6 +2479,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('dragend', (e) => {
+    setTimeout(() => { wasDragging = false; }, 0);
     const block = e.target.closest('.block-abs');
     if(block) block.style.opacity = '1';
   });
