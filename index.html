@@ -1445,7 +1445,10 @@ const App = {
     el.style.borderColor = Utils.shade(color, 0.72);
     el.style.color = Utils.textOn(color);
     el.innerHTML = `
-      <div class="b-actions"><span data-action="skip-recurring" data-id="${c.id}" data-date="${dateStr}">✕</span></div>
+      <div class="b-actions">
+        <span data-action="delete-recurring" data-id="${c.id}" title="Eliminar definitivamente (todas las semanas)">🗑</span>
+        <span data-action="skip-recurring" data-id="${c.id}" data-date="${dateStr}" title="Ocultar solo esta semana">✕</span>
+      </div>
       <span class="b-range">${c.start}–${c.end}</span>${Utils.escape(labelText)}
     `;
     el.title = `${labelText} · ${c.start}–${c.end}`;
@@ -2080,12 +2083,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(action === 'delete-recurring') {
       const id = target.dataset.id;
-      App.state.recurring = App.state.recurring.filter(c => c.id !== id);
-      App.saveJSON('recurring', App.state.recurring);
-      App.renderRecurringPanel();
-      App.renderWeeks();
-      App.refreshSubjectHints();
-      App.renderEstudio();
+      const c = App.state.recurring.find(x => x.id === id);
+      if(!c) return;
+      openConfirm(
+        `¿Eliminar "Bloque recurrente" definitivamente?`,
+        `Se borrará este horario fijo de TODAS las semanas${c.label ? ` (${c.label})` : ''}. Esta acción no se puede deshacer.`,
+        () => {
+          App.state.recurring = App.state.recurring.filter(x => x.id !== id);
+          App.saveJSON('recurring', App.state.recurring);
+          App.renderRecurringPanel();
+          App.renderWeeks();
+          App.refreshSubjectHints();
+          App.renderEstudio();
+        }
+      );
+      return;
     }
 
     if(action === 'skip-recurring') {
@@ -2284,6 +2296,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('btn-close-edit').addEventListener('click', closeEditModal);
+
+  // ---------- Modal de confirmación ----------
+  let confirmCallback = null;
+
+  function openConfirm(title, message, onYes) {
+    document.getElementById('confirm-title').textContent = title || '¿Estás seguro?';
+    document.getElementById('confirm-message').textContent = message || '';
+    confirmCallback = onYes || null;
+    document.getElementById('confirm-overlay').classList.add('open');
+  }
+
+  function closeConfirm() {
+    confirmCallback = null;
+    document.getElementById('confirm-overlay').classList.remove('open');
+  }
+
+  document.getElementById('confirm-yes').addEventListener('click', () => {
+    const cb = confirmCallback;
+    closeConfirm();
+    if(cb) cb();
+  });
+
+  document.getElementById('confirm-no').addEventListener('click', closeConfirm);
 
   // ---------- INPUT EVENTS ----------
   const saveSubject = Utils.debounce(() => {
