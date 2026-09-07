@@ -322,12 +322,13 @@ label.field-label:first-child{margin-top:0;}
 .menu-head:first-child{background:transparent; color:var(--ink-soft); text-align:left;}
 .menu-rowlabel{display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:600; padding:8px 6px; border-radius:10px; text-align:left; white-space:nowrap;}
 .menu-rowlabel .me-emoji{font-size:14px;}
-.menu-cell{position:relative; min-height:44px; border-radius:10px; background:var(--paper); display:flex; align-items:center;}
+.menu-cell{position:relative; min-height:44px; border-radius:10px; background:var(--paper); display:flex; align-items:stretch; padding:0;}
 .menu-cell.editable{background:#fff; border:1px solid var(--line);}
 .menu-cell.editable:hover{border-color:var(--pine-soft);}
-.menu-cell input{width:100%; border:none; outline:none; background:transparent; font-size:11.5px; font-family:'IBM Plex Sans',sans-serif; padding:8px 22px 8px 8px; color:var(--ink); height:100%;}
-.menu-cell input:focus{box-shadow:inset 0 -2px 0 var(--pine-soft);}
-.menu-cell .cell-del{position:absolute; right:3px; top:3px; font-size:10px; color:var(--ink-soft); opacity:.55; cursor:pointer; padding:2px; border-radius:4px; line-height:1;}
+.menu-cell textarea{width:100%; border:none; outline:none; background:transparent; font-size:11.5px; font-family:'IBM Plex Sans',sans-serif; padding:8px 22px 8px 8px; color:var(--ink); resize:none; overflow:hidden; min-height:44px; height:44px; line-height:1.35;}
+.menu-cell textarea:focus{box-shadow:inset 0 -2px 0 var(--pine-soft);}
+.menu-cell.editable:hover textarea{min-width:0;}
+.menu-cell .cell-del{position:absolute; right:3px; top:3px; font-size:10px; color:var(--ink-soft); opacity:.55; cursor:pointer; padding:2px; border-radius:4px; line-height:1; z-index:2;}
 .menu-cell .cell-del:hover{opacity:1; background:rgba(0,0,0,.08);}
 .menu-cell.empty{display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); font-size:11px; opacity:.7; background:transparent; border:1px dashed var(--line);}
 .menu-cell.empty:hover{opacity:1; border-color:var(--pine-soft); color:var(--pine); background:var(--paper);}
@@ -1562,7 +1563,7 @@ const App = {
         const entry = (this.state.meals[day]||[]).find(e => (e.name||'').trim() === name);
         if(entry) {
           html += `<div class="menu-cell editable">
-            <input type="text" placeholder="..." value="${Utils.escape(entry.value||'')}" data-mf="value" data-day="${day}" data-id="${entry.id}">
+            <textarea rows="1" placeholder="..." data-mf="value" data-day="${day}" data-id="${entry.id}">${Utils.escape(entry.value||'')}</textarea>
             <span class="cell-del" data-action="delete-meal" data-day="${day}" data-id="${entry.id}" title="Quitar">✕</span>
           </div>`;
         } else {
@@ -1577,6 +1578,12 @@ const App = {
       <button class="btn pine small" data-action="add-meal-row">Agregar fila</button>
     </div>`;
     grid.innerHTML = html;
+    grid.querySelectorAll('textarea[data-mf]').forEach(ta => autoGrowField(ta));
+  },
+
+  autoGrowField(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.max(36, el.scrollHeight + 4) + 'px';
   },
 
   refreshSubjectHints() {
@@ -2473,6 +2480,7 @@ document.addEventListener('click', (e) => {
         entry[target.dataset.mf] = target.value;
         App.saveJSON('meals', App.state.meals);
       }
+      if(target.tagName === 'TEXTAREA') App.autoGrowField(target);
     }
 
     if(target.id && target.id.startsWith('philo-')) {
