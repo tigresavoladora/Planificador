@@ -604,36 +604,6 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
   <!-- COMIDA -->
   <section class="view" id="view-comida">
     <div class="meals-grid" id="meals-grid"></div>
-
-    <div class="card pad" style="margin-top:20px;">
-      <h3>📦 Inventario y sugerencias</h3>
-      <div class="inventory-section">
-        <div>
-          <label class="field-label">Ingredientes disponibles</label>
-          <textarea id="inventory-input" rows="4" placeholder="Arroz, pollo, tomate, huevos..."></textarea>
-          <button class="btn ghost small" id="btn-save-inventory" data-action="save-inventory" style="margin-top:6px;">Guardar inventario</button>
-        </div>
-        <div>
-          <label class="field-label">Restricciones alimentarias</label>
-          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
-            <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="vegetariano" style="padding:4px 10px;">🌱 Vegetariano</button>
-            <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="vegano" style="padding:4px 10px;">🌿 Vegano</button>
-            <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="celiaco" style="padding:4px 10px;">🌾 Celíaco</button>
-            <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="keto" style="padding:4px 10px;">🥑 Keto</button>
-            <button class="btn ghost small diet-btn" data-action="toggle-diet" data-diet="sin-lactosa" style="padding:4px 10px;">🥛 Sin lactosa</button>
-          </div>
-
-          <label class="field-label">Tiempo para cocinar</label>
-          <select id="cook-time">
-            <option value="15">15 min</option>
-            <option value="30" selected>30 min</option>
-            <option value="60">60 min</option>
-          </select>
-          <button class="btn pine small" id="btn-suggest-meals" style="margin-top:6px;">Sugerir comidas</button>
-          <div id="meal-suggestions" style="margin-top:12px;"></div>
-        </div>
-      </div>
-    </div>
   </section>
 
 </main>
@@ -852,6 +822,33 @@ const CONFIG = {
   }
 };
 
+// ------------------------------------------------------------
+// Menú de comidas: emoji y color pastel por tipo de comida
+// ------------------------------------------------------------
+function mealEmoji(name) {
+  const n = (name||'').toLowerCase();
+  if(n.includes('desayuno')) return '🥐';
+  if(n.includes('almuerzo')) return '🍚';
+  if(n.includes('once')) return '🍵';
+  if(n.includes('colación') || n.includes('colacion')) return '🍎';
+  if(n.includes('merienda') || n.includes('snack')) return '🍪';
+  if(n.includes('cena')) return '🍽️';
+  if(n.includes('postre')) return '🍮';
+  return '🍴';
+}
+
+function mealBg(name) {
+  const n = (name||'').toLowerCase();
+  if(n.includes('desayuno')) return '#fbe7d9';
+  if(n.includes('almuerzo')) return '#ffe2ce';
+  if(n.includes('once')) return '#f3e5ee';
+  if(n.includes('colación') || n.includes('colacion')) return '#e3efe0';
+  if(n.includes('merienda') || n.includes('snack')) return '#f1e6f4';
+  if(n.includes('cena')) return '#dce8f3';
+  if(n.includes('postre')) return '#fde3e7';
+  return '#efece7';
+}
+
 // ============================================================
 // UTILIDADES
 // ============================================================
@@ -1015,7 +1012,6 @@ const App = {
     this.state.dietRestrictions = this.loadJSON('dietRestrictions', []);
     if(!Array.isArray(this.state.inventory)) this.state.inventory = [];
     if(!Array.isArray(this.state.dietRestrictions)) this.state.dietRestrictions = [];
-    document.getElementById('inventory-input').value = this.state.inventory.join(', ');
   },
 
   normalizeSubjects(arr) {
@@ -1163,21 +1159,11 @@ const App = {
       this.renderLegend();
       this.renderMeals();
       this.renderEstudio();
-      document.getElementById('inventory-input').value = this.state.inventory.join(', ');
       this.renderWeekRange();
       this.renderRecurringPanel();
 
       const tl = document.getElementById('today-label');
       if(tl) tl.textContent = new Date().toLocaleDateString('es-CL', {weekday:'long', day:'numeric', month:'long'});
-
-      document.querySelectorAll('.diet-btn').forEach(btn => {
-        const diet = btn.dataset.diet;
-        if(this.state.dietRestrictions.includes(diet)) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
     } catch(err) {
       console.error('Error en render:', err);
     }
@@ -1551,33 +1537,47 @@ const App = {
   renderMeals() {
     const grid = document.getElementById('meals-grid');
     grid.innerHTML = '';
+    const all = {};
     CONFIG.DAYS.slice(0,7).forEach(day => {
-      const div = document.createElement('div');
-      div.className = 'card pad meal-day';
-      div.innerHTML = `<h4>${day}</h4><div class="meal-entries" data-entries data-day="${day}"></div>
-        <div class="add-meal-row">
-          <input type="text" placeholder="Ej: Desayuno" data-newmealname data-day="${day}">
-          <button class="btn ghost small" data-action="add-meal" data-day="${day}">+</button>
-        </div>`;
-      grid.appendChild(div);
-      this.renderMealEntries(div, day);
+      (this.state.meals[day] || []).forEach(e => { const n = (e.name||'').trim(); if(n) all[n] = true; });
     });
-  },
+    let names = Object.keys(all);
+    const order = ['Desayuno','Almuerzo','Once','Colación','Merienda','Cena','Postre'];
+    names.sort((a,b) => {
+      const ia = order.indexOf(a), ib = order.indexOf(b);
+      if(ia !== -1 && ib !== -1) return ia - ib;
+      if(ia !== -1) return -1;
+      if(ib !== -1) return 1;
+      return a.localeCompare(b);
+    });
+    const shortDays = {Lunes:'Lun',Martes:'Mar',Miércoles:'Mié',Jueves:'Jue',Viernes:'Vie',Sábado:'Sáb',Domingo:'Dom'};
 
-  renderMealEntries(div, day) {
-    const wrap = div.querySelector('[data-entries]');
-    wrap.innerHTML = '';
-    (this.state.meals[day] || []).forEach(entry => {
-      const row = document.createElement('div');
-      row.className = 'meal-entry';
-      row.innerHTML = `
-        <input type="text" class="meal-name" value="${Utils.escape(entry.name)}" data-mf="name" data-day="${day}" data-id="${entry.id}">
-        <input type="text" class="meal-value" placeholder="qué vas a comer" value="${Utils.escape(entry.value)}" data-mf="value" data-day="${day}" data-id="${entry.id}">
-        <span class="icon-btn" data-action="delete-meal" data-day="${day}" data-id="${entry.id}">✕</span>
-      `;
-      wrap.appendChild(row);
+    let html = `<div class="menu-grid-wrap"><div class="menu-grid">`;
+    html += `<div class="menu-head">Comida</div>`;
+    CONFIG.DAYS.slice(0,7).forEach(d => html += `<div class="menu-head">${shortDays[d]||d}</div>`);
+
+    names.forEach(name => {
+      html += `<div class="menu-rowlabel" style="background:${mealBg(name)}"><span class="me-emoji">${mealEmoji(name)}</span>${Utils.escape(name)}</div>`;
+      CONFIG.DAYS.slice(0,7).forEach(day => {
+        const entry = (this.state.meals[day]||[]).find(e => (e.name||'').trim() === name);
+        if(entry) {
+          html += `<div class="menu-cell editable">
+            <input type="text" placeholder="..." value="${Utils.escape(entry.value||'')}" data-mf="value" data-day="${day}" data-id="${entry.id}">
+            <span class="cell-del" data-action="delete-meal" data-day="${day}" data-id="${entry.id}" title="Quitar">✕</span>
+          </div>`;
+        } else {
+          html += `<div class="menu-cell empty" data-action="add-meal-cell" data-day="${day}" data-name="${Utils.escape(name)}" title="Agregar aquí">+</div>`;
+        }
+      });
     });
-  },
+
+    html += `</div></div>`;
+    html += `<div class="menu-add-row">
+      <input type="text" id="new-meal-type" placeholder="Nuevo tipo de comida (ej: Merienda)">
+      <button class="btn pine small" data-action="add-meal-row">Agregar fila</button>
+    </div>`;
+    grid.innerHTML = html;
+  }
 
   refreshSubjectHints() {
     this.state.subjects.forEach(sub => {
@@ -1870,75 +1870,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- delegación global de clics ----------
-  document.addEventListener('click', (e) => {
-    // Comidas sugeridas
-    if(e.target.id === 'btn-suggest-meals' || e.target.closest('#btn-suggest-meals')) {
-      const time = parseInt(document.getElementById('cook-time').value);
-      const suggestions = document.getElementById('meal-suggestions');
-      const restrictions = App.state.dietRestrictions;
-
-      if(!App.state.inventory.length) {
-        suggestions.innerHTML = '<p style="color:var(--clay);">Primero guarda tu inventario.</p>';
-        return;
-      }
-
-      let timeCategory = 'rapido';
-      if(time >= 45) timeCategory = 'largo';
-      else if(time >= 25) timeCategory = 'medio';
-
-      let available = CONFIG.RECIPES[timeCategory] || [];
-
-      if(restrictions.length) {
-        available = available.filter(recipe => {
-          if(recipe.diets && recipe.diets.length) {
-            return restrictions.every(r => recipe.diets.includes(r));
-          }
-          return true;
-        });
-      }
-
-      if(!available.length) {
-        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que cumplan con tus restricciones (${restrictions.join(', ')}).</p>`;
-        return;
-      }
-
-      const scored = available.map(recipe => {
-        const match = recipe.ingredients.filter(ing =>
-          App.state.inventory.some(inv => ing.includes(inv) || inv.includes(ing))
-        );
-        return {...recipe, matchCount: match.length, total: recipe.ingredients.length};
-      });
-      scored.sort((a,b) => b.matchCount - a.matchCount);
-      const top = scored.slice(0, 4);
-
-      if(!top.length || top[0].matchCount === 0) {
-        suggestions.innerHTML = `<p style="color:var(--ink-soft);">No encontré recetas que coincidan con tu inventario.</p>`;
-        return;
-      }
-
-      suggestions.innerHTML = top.map(r => {
-        const dietLabels = r.diets?.map(d => {
-          const labels = {
-            'vegetariano': '🌱',
-            'vegano': '🌿',
-            'celiaco': '🌾',
-            'keto': '🥑',
-            'sin-lactosa': '🥛'
-          };
-          return labels[d] || d;
-        }).join(' ') || '🍽️';
-
-        return `
-          <div class="meal-suggestion-card">
-            <h5>🍳 ${r.name} <span style="font-size:11px; color:var(--pine-soft);">${dietLabels}</span></h5>
-            <div class="meta">⏱ ${r.time} min · Coincidencia: ${r.matchCount}/${r.total}</div>
-            <div class="ingredients">📦 ${r.ingredients.join(', ')}</div>
-          </div>
-        `;
-      }).join('');
-      return;
-    }
-
+document.addEventListener('click', (e) => {
     const target = e.target.closest('[data-action]');
     const action = target ? target.dataset.action : null;
 
@@ -1969,21 +1901,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSwapBanner();
         App.renderWeeks();
       }
-      return;
-    }
-
-    // Diet buttons
-    if(action === 'toggle-diet') {
-      target.classList.toggle('active');
-      const diet = target.dataset.diet;
-      if(target.classList.contains('active')) {
-        if(!App.state.dietRestrictions.includes(diet)) {
-          App.state.dietRestrictions.push(diet);
-        }
-      } else {
-        App.state.dietRestrictions = App.state.dietRestrictions.filter(d => d !== diet);
-      }
-      App.saveJSON('dietRestrictions', App.state.dietRestrictions);
       return;
     }
 
@@ -2234,6 +2151,30 @@ document.addEventListener('DOMContentLoaded', () => {
       App.renderMeals();
     }
 
+    if(action === 'add-meal-cell') {
+      const day = target.dataset.day;
+      const name = target.dataset.name;
+      if(!Array.isArray(App.state.meals[day])) App.state.meals[day] = [];
+      if(!App.state.meals[day].some(e => (e.name||'').trim() === name)) {
+        App.state.meals[day].push({id: Utils.uid(), name, value: ''});
+        App.saveJSON('meals', App.state.meals);
+        App.renderMeals();
+      }
+    }
+
+    if(action === 'add-meal-row') {
+      const name = document.getElementById('new-meal-type').value.trim();
+      if(!name) return;
+      CONFIG.DAYS.slice(0,7).forEach(day => {
+        if(!Array.isArray(App.state.meals[day])) App.state.meals[day] = [];
+        if(!App.state.meals[day].some(e => (e.name||'').trim() === name)) {
+          App.state.meals[day].push({id: Utils.uid(), name, value: ''});
+        }
+      });
+      App.saveJSON('meals', App.state.meals);
+      App.renderMeals();
+    }
+
     if(action === 'clear-week') {
       const end = new Date(App.state.weekStart);
       end.setDate(end.getDate() + 6);
@@ -2248,13 +2189,6 @@ document.addEventListener('DOMContentLoaded', () => {
         App.refreshSubjectHints();
         App.renderEstudio();
       }
-    }
-
-    if(action === 'save-inventory') {
-      const input = document.getElementById('inventory-input').value;
-      App.state.inventory = input.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
-      App.saveJSON('inventory', App.state.inventory);
-      alert('✅ Inventario guardado: ' + App.state.inventory.join(', '));
     }
 
     // Clic en el cuerpo de un bloque (no botón de acción) → según tipo
