@@ -312,13 +312,27 @@ label.field-label:first-child{margin-top:0;}
 .inline-msg.ok{color:var(--pine);}
 .inline-msg.error{color:var(--clay);}
 
-.meals-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px;}
-.meal-day h4{font-family:'IBM Plex Sans'; font-size:13.5px; margin-bottom:8px;}
-.meal-entry{display:flex; gap:5px; margin-bottom:6px; align-items:center;}
-.meal-entry input.meal-name{width:88px; font-size:11px; font-family:'IBM Plex Mono'; flex-shrink:0;}
-.meal-entry input.meal-value{flex:1; font-size:12px;}
-.add-meal-row{display:flex; gap:5px; margin-top:8px;}
-.add-meal-row input{flex:1; font-size:12px;}
+.meals-grid{display:block;}
+.menu-wrap{background:var(--paper-raised); border:1px solid var(--line); border-radius:14px; padding:16px; box-shadow:var(--shadow);}
+.menu-title{font-family:'Newsreader',serif; font-size:16px; margin:0 0 4px 2px; display:flex; align-items:center; gap:8px;}
+.menu-sub{font-size:11.5px; color:var(--ink-soft); margin:0 0 12px 2px;}
+.menu-grid{display:grid; grid-template-columns:132px repeat(7,1fr); gap:6px; min-width:820px;}
+.menu-grid-wrap{overflow-x:auto; padding-bottom:4px;}
+.menu-head{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-align:center; padding:8px 4px; border-radius:8px; background:var(--pine); color:#f4f1ea; letter-spacing:.4px;}
+.menu-head:first-child{background:transparent; color:var(--ink-soft); text-align:left;}
+.menu-rowlabel{display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:600; padding:8px 6px; border-radius:10px; text-align:left; white-space:nowrap;}
+.menu-rowlabel .me-emoji{font-size:14px;}
+.menu-cell{position:relative; min-height:44px; border-radius:10px; background:var(--paper); display:flex; align-items:center;}
+.menu-cell.editable{background:#fff; border:1px solid var(--line);}
+.menu-cell.editable:hover{border-color:var(--pine-soft);}
+.menu-cell input{width:100%; border:none; outline:none; background:transparent; font-size:11.5px; font-family:'IBM Plex Sans',sans-serif; padding:8px 22px 8px 8px; color:var(--ink); height:100%;}
+.menu-cell input:focus{box-shadow:inset 0 -2px 0 var(--pine-soft);}
+.menu-cell .cell-del{position:absolute; right:3px; top:3px; font-size:10px; color:var(--ink-soft); opacity:.55; cursor:pointer; padding:2px; border-radius:4px; line-height:1;}
+.menu-cell .cell-del:hover{opacity:1; background:rgba(0,0,0,.08);}
+.menu-cell.empty{display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); font-size:11px; opacity:.7; background:transparent; border:1px dashed var(--line);}
+.menu-cell.empty:hover{opacity:1; border-color:var(--pine-soft); color:var(--pine); background:var(--paper);}
+.menu-add-row{display:flex; gap:8px; margin-top:14px; align-items:center;}
+.menu-add-row input{flex:1; max-width:360px; font-size:12px; font-family:'IBM Plex Sans',sans-serif;}
 
 .inventory-section{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
 .inventory-box{background:var(--paper); border-radius:8px; padding:14px;}
@@ -647,6 +661,30 @@ footer.foot{text-align:center; color:var(--ink-soft); font-size:11.5px; padding:
     <div class="row-btns">
       <button class="btn danger" id="eb-delete">Eliminar</button>
       <button class="btn pine" id="eb-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="recur-edit-overlay">
+  <div class="modal-box wide">
+    <button class="close-x" id="btn-close-recur-edit">&times;</button>
+    <h3>Editar bloque recurrente</h3>
+    <div class="eb-grid">
+      <div><label class="field-label">D&iacute;a</label><select id="recur-day"></select></div>
+      <div><label class="field-label">Tipo</label><select id="recur-type"></select></div>
+      <div><label class="field-label">Inicio</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="recur-start"></div>
+      <div><label class="field-label">Fin</label><input type="text" inputmode="numeric" placeholder="HH:MM" id="recur-end"></div>
+    </div>
+    <div id="recur-subject-wrap">
+      <label class="field-label">Ramo</label><select id="recur-subject"></select>
+    </div>
+    <div id="recur-label-wrap">
+      <label class="field-label">Descripci&oacute;n</label>
+      <input type="text" id="recur-label">
+    </div>
+    <div class="row-btns">
+      <button class="btn danger" id="recur-delete">Eliminar</button>
+      <button class="btn pine" id="recur-save">Guardar</button>
     </div>
   </div>
 </div>
@@ -2225,21 +2263,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if(blockEl) {
         e.preventDefault();
         if(blockEl.classList.contains('fixed')) {
-          // Recurrente: ofrecer eliminar definitivamente sin acertar el iconito
+          // Recurrente: abrir edición desde la grilla
           const id = blockEl.dataset.id;
           const c = App.state.recurring.find(x => x.id === id);
-          if(c) openConfirm(
-            `¿Eliminar "Bloque recurrente" definitivamente?`,
-            `Se borrará este horario fijo de TODAS las semanas${c.label ? ` (${c.label})` : ''}.`,
-            () => {
-              App.state.recurring = App.state.recurring.filter(x => x.id !== id);
-              App.saveJSON('recurring', App.state.recurring);
-              App.renderRecurringPanel();
-              App.renderWeeks();
-              App.refreshSubjectHints();
-              App.renderEstudio();
-            }
-          );
+          if(c) openRecurEditModal(c);
         } else {
           openEditModal(App.state.blocks.find(b => b.id === blockEl.dataset.id));
         }
@@ -2351,6 +2378,88 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('confirm-no').addEventListener('click', closeConfirm);
+
+  // ---------- Edición de bloque recurrente ----------
+  let editingRecurringId = null;
+
+  function openRecurEditModal(c) {
+    editingRecurringId = c.id;
+    document.getElementById('recur-day').innerHTML = CONFIG.DAYS.slice(0,7)
+      .map((d,i) => `<option value="${i}" ${c.day==i?'selected':''}>${d}</option>`).join('');
+    document.getElementById('recur-type').innerHTML = CONFIG.RECURRING_TYPES
+      .map(t => `<option value="${t.value}" ${c.type===t.value?'selected':''}>${t.label}</option>`).join('');
+    document.getElementById('recur-start').value = c.start;
+    document.getElementById('recur-end').value = c.end;
+    const linked = ['clase','estudio','ayudantia'].includes(c.type);
+    document.getElementById('recur-subject-wrap').style.display = linked ? '' : 'none';
+    document.getElementById('recur-label-wrap').style.display = linked ? 'none' : '';
+    document.getElementById('recur-subject').innerHTML =
+      `<option value="">— elegir ramo —</option>` +
+      App.state.subjects.map(s => `<option value="${s.id}" ${c.subjectId===s.id?'selected':''}>${Utils.escape(s.name)}</option>`).join('');
+    document.getElementById('recur-label').value = c.label || '';
+    document.getElementById('recur-edit-overlay').classList.add('open');
+  }
+
+  function closeRecurEditModal() {
+    editingRecurringId = null;
+    document.getElementById('recur-edit-overlay').classList.remove('open');
+  }
+
+  function saveRecurEdit() {
+    const c = App.state.recurring.find(x => x.id === editingRecurringId);
+    if(!c) { closeRecurEditModal(); return; }
+    c.day = Number(document.getElementById('recur-day').value);
+    c.type = document.getElementById('recur-type').value;
+    const s = Utils.normalizeTime(document.getElementById('recur-start').value);
+    const en = Utils.normalizeTime(document.getElementById('recur-end').value);
+    if(!s || !en) { alert('Hora inválida.'); return; }
+    c.start = s; c.end = en;
+    const linked = ['clase','estudio','ayudantia'].includes(c.type);
+    if(linked) {
+      c.subjectId = document.getElementById('recur-subject').value || null;
+      const sub = App.state.subjects.find(x => x.id === c.subjectId);
+      c.subjectName = sub ? sub.name : '';
+      c.label = sub
+        ? (c.type === 'estudio' ? 'Estudio ' + sub.name : c.type === 'ayudantia' ? 'Ayudantía ' + sub.name : sub.name)
+        : (c.type === 'ayudantia' ? 'Ayudantía' : '');
+    } else {
+      c.subjectId = null; c.subjectName = '';
+      c.label = document.getElementById('recur-label').value.trim();
+    }
+    App.saveJSON('recurring', App.state.recurring);
+    closeRecurEditModal();
+    App.renderRecurringPanel();
+    App.renderWeeks();
+    App.refreshSubjectHints();
+    App.renderEstudio();
+  }
+
+  document.getElementById('recur-save').addEventListener('click', saveRecurEdit);
+  document.getElementById('btn-close-recur-edit').addEventListener('click', closeRecurEditModal);
+
+  document.getElementById('recur-delete').addEventListener('click', () => {
+    const c = App.state.recurring.find(x => x.id === editingRecurringId);
+    if(!c) { closeRecurEditModal(); return; }
+    openConfirm(
+      `¿Eliminar "Bloque recurrente" definitivamente?`,
+      `Se borrará este horario fijo de TODAS las semanas${c.label ? ` (${c.label})` : ''}. Esta acción no se puede deshacer.`,
+      () => {
+        App.state.recurring = App.state.recurring.filter(x => x.id !== c.id);
+        App.saveJSON('recurring', App.state.recurring);
+        closeRecurEditModal();
+        App.renderRecurringPanel();
+        App.renderWeeks();
+        App.refreshSubjectHints();
+        App.renderEstudio();
+      }
+    );
+  });
+
+  document.getElementById('recur-type').addEventListener('change', () => {
+  const linked = ['clase','estudio','ayudantia'].includes(document.getElementById('recur-type').value);
+  document.getElementById('recur-subject-wrap').style.display = linked ? '' : 'none';
+  document.getElementById('recur-label-wrap').style.display = linked ? 'none' : '';
+});
 
   // ---------- INPUT EVENTS ----------
   const saveSubject = Utils.debounce(() => {
