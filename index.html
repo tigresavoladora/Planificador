@@ -325,7 +325,7 @@ label.field-label:first-child{margin-top:0;}
 .menu-cell{position:relative; min-height:44px; border-radius:10px; background:var(--paper); display:flex; align-items:stretch; padding:0;}
 .menu-cell.editable{background:#fff; border:1px solid var(--line);}
 .menu-cell.editable:hover{border-color:var(--pine-soft);}
-.menu-cell textarea{width:100%; border:none; outline:none; background:transparent; font-size:11.5px; font-family:'IBM Plex Sans',sans-serif; padding:8px 22px 8px 8px; color:var(--ink); resize:none; overflow:hidden; min-height:44px; height:44px; line-height:1.35; field-sizing:content;}
+.menu-cell textarea{width:100%; border:none; outline:none; background:transparent; font-size:11.5px; font-family:'IBM Plex Sans',sans-serif; padding:8px 22px 8px 8px; color:var(--ink); resize:none; overflow:hidden; min-height:44px; height:44px; line-height:1.35; box-sizing:border-box;}
 .menu-cell textarea:focus{box-shadow:inset 0 -2px 0 var(--pine-soft);}
 .menu-cell.editable:hover textarea{min-width:0;}
 .menu-cell .cell-del{position:absolute; right:3px; top:3px; font-size:10px; color:var(--ink-soft); opacity:.55; cursor:pointer; padding:2px; border-radius:4px; line-height:1; z-index:2;}
@@ -1579,23 +1579,18 @@ const App = {
     </div>`;
     grid.innerHTML = html;
     requestAnimationFrame(() => {
-      grid.querySelectorAll('textarea[data-mf]').forEach(ta => this.autoGrowField(ta));
+      requestAnimationFrame(() => {
+        grid.querySelectorAll('textarea[data-mf]').forEach(ta => this.autoGrowField(ta));
+      });
     });
-    if(window.ResizeObserver) {
-      if(!this._mealResizeObs) {
-        this._mealResizeObs = new ResizeObserver(() => {
-          const g = document.getElementById('meals-grid');
-          if(!g) return;
-          g.querySelectorAll('textarea[data-mf]').forEach(ta => this.autoGrowField(ta));
-        });
-      }
-      this._mealResizeObs.observe(grid);
-    }
   },
 
   autoGrowField(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.max(36, el.scrollHeight + 4) + 'px';
+    if(!el) return;
+    el.style.height = '44px';
+    const h = el.scrollHeight + 2;
+    el.style.height = Math.min(200, Math.max(44, h)) + 'px';
+    el.style.overflowY = (el.scrollHeight > 200) ? 'auto' : 'hidden';
   },
 
   refreshSubjectHints() {
